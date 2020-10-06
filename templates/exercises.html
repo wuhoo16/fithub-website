@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block head %}
+{% endblock %}
+
+{% block body %}
+
+    <h1>Welcome to a list of all exercises! </h1>
+    <h2>Total number of exercises: {{ exercisesArray|length }}</h2>
+    {% for e in exercisesArray %}
+        {% for image in e.images %}
+            <img src='{{ image }}' alt="{{ e.name }}">
+        {% endfor %}
+        <ul>
+            <li>Name: {{ e.name }}</li>
+            <li>Description: {{ e.description }}</li>
+            <li>Category: {{ e.category }}</li>
+            <li>Muscles: {{ e.muscles }}</li>
+            <li>Secondary Muscles: {{ e.muscles_secondary }}</li>
+            <li>Equipment: {{ e.equipment }}</li>
+            
+            <li>Comments: {{ e.comments }}</li>
+        </ul>
+    {% endfor %}
+
+{% endblock %}
