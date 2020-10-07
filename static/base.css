@@ -3,6 +3,15 @@
     align-content: center;
 }
 
-#modelGrid .row .col-md-4 a {
-    color: darkblue;
+#modelGrid .row .col-md-4 .card .card-body .card-title {
+    color: white;
+}
+
+.channelAttributesList li {
+    color: white;
+}
+
+#modelGrid .row .col-md-4 .card .card-img-top {
+    width: 360px;
+    height: 270px;
 }
