@@ -1,0 +1,8 @@
+#modelGrid .row .col-md-4 {
+    outline: 2px solid black;
+    align-content: center;
+}
+
+#modelGrid .row .col-md-4 a {
+    color: darkblue;
+}
