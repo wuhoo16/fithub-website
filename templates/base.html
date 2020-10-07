@@ -8,27 +8,27 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/base.css">
-    <title>Base template for IMDB Webpages</title>
     {% block head %} {% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark" style="margin-bottom: 25px">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
             <span class="navbar-toggler-icon"></span>
         </button>
         <a class="navbar-brand" href="/">
-            <img src="/static/barbellLogo.jpg" alt="Barbell Logo" style="width: 75px;">
+            <img src="/static/barbellLogo.jpg" alt="Barbell Logo" style="width: 30px; height: 30px">
         </a>
         <div class="collapse navbar-collapse" id="collapsibleNavbar">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="/exercises">Exercises</a>
+                    <a class="nav-link" href="{{ url_for('exercises') }}">Exercises</a>
+                </li>
+                <!-- TODO: CHANGE THIS TO url_for('equipments') ONCE CHRISTOPER FINISHES EQUIPMENT MODEL PAGE -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('equipments') }}">Equipment</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="">Equipment</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="">Trainers</a>
+                    <a class="nav-link" href="{{ url_for('channels') }}">Youtube Channels</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/about">About</a>

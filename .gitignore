@@ -1,0 +1,8 @@
+# Ignore Mac system files
+/.DS_store
+
+# Ignore all project files
+/.idea
+
+# Ignore virtual environment folders
+/venv
