@@ -20,15 +20,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02ac0d6b-cc53-43d1-a080-105cbb8d585e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/autoAddTest.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/css/main.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/equipmentPage.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/TeamA13.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/retrieve_api_json_test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/base.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/about.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/channels.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/channelsInstance.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/exercises.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/homepage.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/remoteBranchTesting.txt" beforeDir="false" afterPath="$PROJECT_DIR$/remoteBranchTesting.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/static/css/main.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/equipmentPage.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/equipment.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +46,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Python Script" />
         <option value="HTML File" />
       </list>
     </option>
@@ -58,6 +67,13 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$USER_HOME$/PycharmProjects/Tutorial4_Take3" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\chand\GIT_STUFF_GOES_HERE\EE461L\IMDBProject\TeamA13\static" />
+    </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -83,13 +99,33 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state x="1023" y="172" key="FileChooserDialogImpl" timestamp="1601750889038">
+    <state x="447" y="75" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1602037492942">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
-    <state x="1023" y="172" key="FileChooserDialogImpl/0.0.1536.834@0.0.1536.834" timestamp="1601750889038" />
+    <state x="447" y="75" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.834@0.0.1536.834" timestamp="1602037492942" />
+    <state x="153" y="222" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1602109570999">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="153" y="222" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.834@0.0.1536.834" timestamp="1602109570999" />
+    <state x="1023" y="172" key="FileChooserDialogImpl" timestamp="1602035070084">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="1023" y="172" key="FileChooserDialogImpl/0.0.1536.834@0.0.1536.834" timestamp="1602035070084" />
+    <state x="455" y="22" width="981" height="707" key="SettingsEditor" timestamp="1602038041182">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="455" y="22" width="981" height="707" key="SettingsEditor/0.0.1536.834@0.0.1536.834" timestamp="1602038041182" />
     <state x="1060" y="331" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1601750922588">
       <screen x="0" y="0" width="1536" height="834" />
     </state>
     <state x="1060" y="331" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.834@0.0.1536.834" timestamp="1601750922588" />
+    <state x="611" y="203" key="refactoring.ChangeSignatureDialog" timestamp="1602110823518">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="611" y="203" key="refactoring.ChangeSignatureDialog/0.0.1536.834@0.0.1536.834" timestamp="1602110823518" />
+    <state x="431" y="155" width="672" height="678" key="search.everywhere.popup" timestamp="1602110882921">
+      <screen x="0" y="0" width="1536" height="834" />
+    </state>
+    <state x="431" y="155" width="672" height="678" key="search.everywhere.popup/0.0.1536.834@0.0.1536.834" timestamp="1602110882921" />
   </component>
 </project>

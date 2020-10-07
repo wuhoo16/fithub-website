@@ -1,0 +1,18 @@
+#modelGrid .row .col-md-4 {
+    outline: 2px solid black;
+    align-content: center;
+}
+
+#modelGrid .row .col-md-4 .card .card-body .card-title {
+    color: white;
+}
+
+.channelAttributesList li {
+    color: white;
+}
+
+#modelGrid .row .col-md-4 .card .card-img-top {
+    width: 360px;
+    height: 270px;
+}
+© 2020 GitHub, Inc.

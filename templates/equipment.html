@@ -15,17 +15,25 @@
     {% else %}
     <table>
         <tr>
-            <th>Equipment</th>
-            <th>[PARAM]</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Rating</th>
+            <th>Reviews</th>
+            <th>Extensions</th>
+            <th>Seller</th>
+            <th>Snippet</th>
         </tr>
         {% for eq in equipments %}
             <tr>
-                <!-- TODO: one <td> per parameter in eq object -->
-                <!-- TODO: find out how we're storing equipment objects-->
                 <td>
-                    <a href="/{{eq.id}}">{{ eq.content }}</a>
+                    <a href="/{{eq.name}}">{{ eq.name }}</a>
                 </td>
-                <td>eq.[PARAM]</td>
+                <td>{{ eq.price }}</td>
+                <td>{{ eq.rating }}</td>
+                <td>{{ eq.reviews }}</td>
+                <td>{{ eq.extensions }}</td>
+                <td>{{ eq.seller }}</td>
+                <td>{{ eq.snippet }}</td>
             </tr>
         {% endfor %}
     </table>
