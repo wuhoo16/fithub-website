@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+<!-- REQUIRED PARAMS: equipments -->
+
+{% block head %}
+    <title>Equipment List</title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1 style="text-align: center">Equipment List</h1>
+
+    {% if equipments|length < 1 %}
+    <h4 style="text-align: center">There's no equipment available. That's odd.</h4>
+    {% else %}
+    <table>
+        <tr>
+            <th>Equipment</th>
+            <th>[PARAM]</th>
+        </tr>
+        {% for eq in equipments %}
+            <tr>
+                <!-- TODO: one <td> per parameter in eq object -->
+                <!-- TODO: find out how we're storing equipment objects-->
+                <td>
+                    <a href="/{{eq.id}}">{{ eq.content }}</a>
+                </td>
+                <td>eq.[PARAM]</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+</div>
+{% endblock %}
