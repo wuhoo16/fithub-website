@@ -175,8 +175,8 @@ def setup():
     # Build the API client to access Youtube Data V3 API
     api_service_name = "youtube"
     api_version = "v3"
-    # DEVELOPER_KEY = "AIzaSyBE-YXbak2UQlYM3hnKuiGoxxlt9VALgCk"
-    DEVELOPER_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk'
+    DEVELOPER_KEY = "AIzaSyBE-YXbak2UQlYM3hnKuiGoxxlt9VALgCk"
+    # DEVELOPER_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk'
     youtube = build(
         api_service_name, api_version, developerKey=DEVELOPER_KEY)
 
