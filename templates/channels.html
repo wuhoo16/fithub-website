@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Youtube Channel Model Page</title>
+{% endblock %}
+
+
+{% block body %}
+    <div class="container-fluid bg-light">
+        <h1 class="modelHeader">Welcome to the Youtube Channel Model page!</h1>
+        <p class="modelDescription">This model page includes a database of many different Youtube fitness channels that can be sorted by subscriber count,
+        view count, and/or number of total videos. In addition, channels will be internally tagged with up to 3 exercise tags that correspond with their
+        most popular videos to help filter channels based on specific exercises. Each page will show a grid of 9 channels: </p>
+        <div class="container-fluid bg-secondary" id="modelGrid">
+        {% set numFullRows = channelArray|length // 3 %}
+        {% set numLeftOverChannels = channelArray|length % 3 %}
+        {% for i in range(numFullRows) %}
+            <div class="row" id="row{{ i|string }}">
+                <div class="col-md-4">
+                    <h2>Channel Name: {{ channelArray[3*i].name }}</h2>
+                    <img src="{{ channelArray[3*i].thumbnailURL }}" alt="{{ channelArray[3*i].name }}" width="360px" height="270px">
+                    <ul>
+                        <li>Description: {{ channelArray[3*i].description }}</li>
+                        <li>Number of Subscribers: {{ channelArray[3*i].subscriberCount }}</li>
+                        <li>Number of Total Views: {{ channelArray[3*i].viewCount }}</li>
+                        <li>Number of Videos: {{ channelArray[3*i].videoCount }}</li>
+                        <li>
+                            <a href="{{ url_for('channels_instance', channelName=channelArray[3*i].name, channelObject=channelArray[3*i]) }}">
+                                Click here for more information about {{ channelArray[3*i].name }}'s channel!
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-4">
+                    <h2>Channel Name: {{ channelArray[3*i+1].name }}</h2>
+                    <img src="{{ channelArray[3*i+1].thumbnailURL }}" alt="{{ channelArray[3*i+1].name }}" width="360px" height="270px">
+                    <ul>
+                        <li>Description: {{ channelArray[3*i+1].description }}</li>
+                        <li>Number of Subscribers: {{ channelArray[3*i+1].subscriberCount }}</li>
+                        <li>Number of Total Views: {{ channelArray[3*i+1].viewCount }}</li>
+                        <li>Number of Videos: {{ channelArray[3*i+1].videoCount }}</li>
+                        <li>
+                            <a href="{{ url_for('channels_instance', channelName=channelArray[3*i+1].name, channelObject=channelArray[3*i+1]) }}">
+                                Click here for more information about {{ channelArray[3*i+1].name }}'s channel!
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-md-4">
+                    <h2>Channel Name: {{ channelArray[3*i+2].name }}</h2>
+                    <img src="{{ channelArray[3*i+2].thumbnailURL }}" alt="{{ channelArray[3*i+2].name }}" width="360px" height="270px">
+                    <ul>
+                        <li>Description: {{ channelArray[3*i+2].description }}</li>
+                        <li>Number of Subscribers: {{ channelArray[3*i+2].subscriberCount }}</li>
+                        <li>Number of Total Views: {{ channelArray[3*i+2].viewCount }}</li>
+                        <li>Number of Videos: {{ channelArray[3*i+2].videoCount }}</li>
+                        <li>
+                            <a href="{{ url_for('channels_instance', channelName=channelArray[3*i+2].name, channelObject=channelArray[3*i+2]) }}">
+                                Click here for more information about {{ channelArray[3*i+2].name }}'s channel!
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+
+        <!-- Now if there are leftover channels, we place the leftover channels into bottom-most row, using indexing from back of the array -->
+        {% if numLeftOverChannels > 0 %}
+            <div class="row" id="bottomRow">
+            {% for i in range(-numLeftOverChannels, 0) %}
+                <div class="col-md-4">
+                    <h2>Channel Name: {{ channelArray[i].name }}</h2>
+                    <img src="{{ channelArray[i].thumbnailURL }}" alt="{{ channelArray[i].name }}" width="360px" height="270px">
+                    <ul>
+                        <li>Description: {{ channelArray[i].description }}</li>
+                        <li>Number of Subscribers: {{ channelArray[i].subscriberCount }}</li>
+                        <li>Number of Total Views: {{ channelArray[i].viewCount }}</li>
+                        <li>Number of Videos: {{ channelArray[i].videoCount }}</li>
+                        <li>
+                            <a href="{{ url_for('channels_instance', channelName=channelArray[i].name, channelObject=channelArray[i]) }}">
+                                Click here for more information about {{ channelArray[i].name }}'s channel!
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+
+        </div>
+    </div>
+{% endblock %}
