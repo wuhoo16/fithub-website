@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>Exercise Instance Page</title>
+{% endblock %}
+
+
+{% block body %}
+    {% for e in exercisesArray %}
+        {% if e.id == exercise_id %}
+            <h1>{{ e.name }}</h1>
+            {% for image in e.images %}
+                <img src="{{ image }}" alt="{{ e.name }}">
+            {% endfor %}    
+            <br>
+            <p>Description: {{ e.description }}</p>
+            <p>Category: {{ e.category }}</p>
+            <p>Equipment: {{ e.equipment }}</p>
+            {% if e.muscles %}
+                <p>Muscles: {{ e.muscles }}</p>
+            {% else %}
+                <p>Muscles: None listed</p>    
+            {% endif %}   
+            {% if e.muscles_secondary %}
+                <p>Secondary Muscles: {{ e.muscles_secondary }}</p>
+            {% else %}
+                <p>Seconday Muscles: None listed</p>    
+            {% endif %}   
+            {% if e.comments %}
+                <p>Comments: </p>
+                {% for c in e.comments %}
+                    <p>{{ c }}</p>
+                {% endfor %} 
+            {% else %}
+                <p>Comments: None</p>    
+            {% endif %}   
+            
+        {% endif %}
+    {% endfor %}
+    
+{% endblock %}

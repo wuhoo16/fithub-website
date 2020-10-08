@@ -2,12 +2,15 @@ import os
 import json
 import requests
 import pprint as pp
+import re
 
 from googleapiclient.discovery import build
 from flask import Flask, render_template, url_for, request, redirect
 from collections import defaultdict
 from math import ceil
 
+API_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk'
+SEARCH_ENGINE_ID = '598e742e6c308d255'
 
 class Channel:
     def __init__(self, snippetDict, statisticsDict):
@@ -18,8 +21,11 @@ class Channel:
         self.viewCount = statisticsDict['viewCount']
         self.videoCount = statisticsDict['videoCount']
 
+exercisesArray = []     # declared globally for now, so instance pages can be populated
+
 class Exercise:
-    def __init__(self, name, description, category, muscles, muscles_secondary, equipment, images, comments):
+    def __init__(self, exercise_id, name, description, category, muscles, muscles_secondary, equipment, images, comments):
+        self.id = exercise_id
         self.name = name
         self.description = description
         self.category = category
@@ -65,97 +71,127 @@ def get_channel_statistics(youtubeClient, channelID):
     return getChannelStatisticsRequest.execute()['items'][0]['statistics']
 
 
-def get_json(url, data, headers):
-    response = requests.get(url=url, data=data, headers=headers)
-    return response.json()
+def get_json(exercise_URL, category_URL, muscle_URL, equipment_URL, image_URL, comment_URL, data, headers):
+    """
+    This method gets a response from all URLs needed from the wger REST API, parses it into json, and returns the json
+    :return: JSON message
+    """
+    exercise =  requests.get(url=exercise_URL, data=data, headers=headers).json()
+    category = requests.get(url=category_URL, data=data, headers=headers).json()
+    muscle = requests.get(url=muscle_URL, data=data, headers=headers).json()
+    equipment = requests.get(url=equipment_URL, data=data, headers=headers).json()
+    image = requests.get(url=image_URL, data=data, headers=headers).json()
+    comment = requests.get(url=comment_URL, data=data, headers=headers).json()
+    return exercise, category, muscle, equipment, image, comment
 
+def cleanhtml(raw_html):
+    """
+    This method takes a raw HTML string and returns a string without the HTML elements
+    """
+    clean = re.compile('<.*?>')
+    clean_text = re.sub(clean, '', raw_html)
+    return clean_text
 
 def get_exercises():
-    exerciseArray = []
+    """
+    This method makes all API calls to wger and returns an array of Exercise objects to use for Flask.
+    :return: array of Exercise objects
+    """
+    # exerciseArray = []
 
     root_URL = 'https://wger.de/api/v2/'  # add &status=2 to only get approved exercises
     data = '{"key": "value"}'
     headers = {'Accept': 'application/json'}
-    response = requests.get(url=root_URL, data=data, headers=headers)
-    response_data = response.json()
+    response_data = requests.get(url=root_URL, data=data, headers=headers).json()
 
-    # exercise_URL = response_data["exercise"]
-    # exercise_URL = 'https://wger.de/api/v2/exercise/?limit=100'
-    exercise_URL = 'https://wger.de/api/v2/exercise/?limit=224&status=2&language=2'  # english, approved exercises: total 224
+    exercise_URL = 'https://wger.de/api/v2/exercise/?limit=224&status=2&language=2'  # english & approved exercises: total 224
     category_URL = response_data["exercisecategory"]
     muscle_URL = response_data["muscle"]
     equipment_URL = response_data["equipment"]
-    # image_URL = response_data["exerciseimage"]
     image_URL = 'https://wger.de/api/v2/exerciseimage/?limit=204'
-    # comment_URL = response_data["exercisecomment"]
     comment_URL = 'https://wger.de/api/v2/exercisecomment/?limit=113'
 
-    exercise_data = get_json(exercise_URL, data, headers)
-    category_data = get_json(category_URL, data, headers)
-    muscle_data = get_json(muscle_URL, data, headers)
-    equipment_data = get_json(equipment_URL, data, headers)
-    image_data = get_json(image_URL, data, headers)
-    comment_data = get_json(comment_URL, data, headers)
+    exercise_data, category_data, muscle_data, equipment_data, image_data, comment_data = get_json(exercise_URL, category_URL, muscle_URL, equipment_URL, image_URL, comment_URL, data, headers)
 
-    nextURL = exercise_data["next"]
     results = exercise_data["results"]
     for x in results:
-        exerciseID = x["id"]
+        if x["name"] and x["description"] and x["category"] and x["equipment"]: # only exercises with complete info (110 exercises)
+            exerciseID = x["id"]
 
-        # get category name using ID
-        categoryID = x["category"]
-        categoryResults = category_data["results"]
-        categoryName = ""
-        for result in categoryResults:
-            if result["id"] == categoryID:
-                categoryName = result["name"]
-                break
+            # strip description of html elements
+            description  = cleanhtml(x["description"])
 
-        # get muscle name using ID
-        musclesList = []
-        muscles = x["muscles"]
-        muscleResults = muscle_data["results"]  # put this line in the get_json function
-        for m in muscles:
-            for result in muscleResults:
-                if result["id"] == m:
-                    musclesList.append(result["name"])  # do we want "is_front" ?
+            # get category name using ID
+            categoryID = x["category"]
+            categoryResults = category_data["results"]
+            categoryName = ""
+            for result in categoryResults:
+                if result["id"] == categoryID:
+                    categoryName = result["name"]
+                    break
 
-        # get secondary muscle name using ID
-        sec_musclesList = []
-        sec_muscles = x["muscles_secondary"]
-        for m2 in sec_muscles:
-            for result in muscleResults:
-                if result["id"] == m2:
-                    sec_musclesList.append(result["name"])  # do we want "is_front" ?
+            # get muscle name using ID
+            musclesList = []
+            muscles = x["muscles"]
+            muscleResults = muscle_data["results"]  # put this line in the get_json function
+            for m in muscles:
+                for result in muscleResults:
+                    if result["id"] == m:
+                        musclesList.append(result["name"])  # do we want "is_front" ?
+            muscles_string = ", ".join(musclesList)               
 
-        # get equipment name using ID
-        equipment_list = []
-        equipment = x["equipment"]
-        equip_results = equipment_data["results"]
-        for e in equipment:
-            for result in equip_results:
-                if result["id"] == e:
-                    equipment_list.append(result["name"])
+            # get secondary muscle name using ID
+            sec_musclesList = []
+            sec_muscles = x["muscles_secondary"]
+            for m2 in sec_muscles:
+                for result in muscleResults:
+                    if result["id"] == m2:
+                        sec_musclesList.append(result["name"])  # do we want "is_front" ?
+            sec_muscles_string = ", ".join(sec_musclesList)               
 
-        # get image URL using exercise # (if exists) -----> need to go through all exercise images list *********
-        images = []  # list of image URLs --------> save image in db instead of going to website?
-        image_results = image_data["results"]
-        for result in image_results:
-            if result["exercise"] == exerciseID:
-                images.append(result["image"])
+            # get equipment name using ID
+            equipment_list = []
+            equipment = x["equipment"]
+            equip_results = equipment_data["results"]
+            for e in equipment:
+                for result in equip_results:
+                    if result["id"] == e:
+                        equipment_list.append(result["name"])
+            equipment_string = ", ".join(equipment_list)            
 
-        # get exercise comment using exercise # (if exists)
-        comments = []  # list of image URLs --------> save image in db instead of going to website?
-        comment_results = comment_data["results"]
-        for result in comment_results:
-            if result["exercise"] == exerciseID:
-                comments.append(result["comment"])
+            # get image URL using exercise
+            images = [] 
+            image_results = image_data["results"]
+            for result in image_results:
+                if result["exercise"] == exerciseID:
+                    images.append(result["image"])
+            images.extend(get_images(x["name"]))        
 
-        exercise = Exercise(x["name"], x["description"], categoryName, musclesList, sec_musclesList, equipment_list,
-                            images, comments)
-        exerciseArray.append(exercise)
-        # pp(exercise)
-    return exerciseArray
+            # get exercise comment using exercise 
+            comments = []
+            comment_results = comment_data["results"]
+            for result in comment_results:
+                if result["exercise"] == exerciseID:
+                    comments.append(result["comment"])
+
+            exercise = Exercise(exerciseID, x["name"], description, categoryName, muscles_string, sec_muscles_string, equipment_string,
+                                images, comments)
+            exercisesArray.append(exercise)
+    # return exercisesArray
+
+def get_images(search_string):
+    """
+    This method makes a request to the Google Custom Search API and returns the 10 images in the search result
+    """
+    url = f"https://customsearch.googleapis.com/customsearch/v1?searchType=image&key={API_KEY}&cx={SEARCH_ENGINE_ID}&q={search_string}"
+    data = requests.get(url).json()
+    search_items = data.get("items")
+    images = []
+    if search_items:
+        for item in search_items:
+            image_link = item["link"]
+            images.append(image_link)
+    return images    
 
 
 def setup():
@@ -209,7 +245,8 @@ def index():
 # channels model page
 @app.route("/exercises", methods=['GET'])
 def exercises():
-    exercisesArray = get_exercises()
+    if(exercisesArray == []):
+        get_exercises()
     return render_template('exercises.html', exercisesArray=exercisesArray)
 
 
@@ -241,6 +278,11 @@ def about():
 @app.route("/channels/<string:channelName>", methods=['GET'])
 def channels_instance(channelName):
     return render_template('channelsInstance.html', channelName=channelName)
+
+# exercise instance pages
+@app.route("/exercises/<int:exercise_id>", methods=['GET'])
+def exercise_instance(exercise_id):
+    return render_template('exerciseInstance.html', exercise_id=exercise_id, exercisesArray=exercisesArray)    
 
 
 if __name__ == "__main__":
