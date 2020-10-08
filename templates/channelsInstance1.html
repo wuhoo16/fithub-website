@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% block head %}
 <title>jensenol11</title>
 {% endblock %} {% block body %}
-<div class="container-fluid pt-3">
+<div class="container-fluid pt-3" class="centered">
   <h1>Welcome to jensenol11's Channel!</h1>
   <img
     src="https://yt3.ggpht.com/a/AATXAJx7k0oT3Ub-kC37i5MoDnu27i8B4rDJmUYplfg7=s88-c-k-c0xffffffff-no-rj-mo"
@@ -29,8 +29,10 @@
   </div>
   <div class="border border-dark rounded mx-auto my-2">
     <h5>Keywords</h5>
-    <div><label>Fitness</label></div>
-    <div><label>Lifestyle (parent topic)</label></div>
+    <label class="border border-dark rounded mx-1 my-2">Fitness</label>
+    <label class="border border-dark rounded mx-1 my-2">
+      Lifestyle (parent topic)
+    </label>
   </div>
 </div>
 {% endblock %}

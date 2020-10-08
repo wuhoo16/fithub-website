@@ -1,17 +1,22 @@
 #modelGrid .row .col-md-4 {
-    outline: 2px solid black;
-    align-content: center;
+  outline: 2px solid black;
+  align-content: center;
 }
 
 #modelGrid .row .col-md-4 .card .card-body .card-title {
-    color: white;
+  color: white;
 }
 
 .channelAttributesList li {
-    color: white;
+  color: white;
 }
 
 #modelGrid .row .col-md-4 .card .card-img-top {
-    width: 360px;
-    height: 270px;
+  width: 360px;
+  height: 270px;
+}
+
+.carousel-control-next,
+.carousel-control-prev {
+  filter: invert(100%);
 }
