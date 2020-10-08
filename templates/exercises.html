@@ -1,26 +1,92 @@
 {% extends 'base.html' %}
 
 {% block head %}
+    <title>Exercises Model Page</title>
 {% endblock %}
 
 {% block body %}
+    <div class="container-fluid bg-light">
+        <h1 class="modelHeader">Welcome to the Exercises page! </h1>
+        <p class=modelDescription>This model page includes a database of 100+ different exercises.</p>
+        <div class="container-fluid bg-secondary" id="modelGrid">
+        {% set numFullRows = exercisesArray|length // 3 %}
+        {% set numLeftOverChannels = exercisesArray|length % 3 %}
+        {% for i in range(numFullRows) %}    
+            <div class="row" id="row{{ i|string }}">
+                <div class="col-md-4">
+                    <div class="card bg-secondary border-0">
+                        <img class="card-img-top img-fluid" src="{{ exercisesArray[3*i].images[0] }}" alt="{{ exercisesArray[3*i].name }}">
+                        <div class="card-body">
+                            <h2 class="card-title">{{ exercisesArray[3*i].name }}</h2>
+                            <p class="card-text">
+                                <ul class="exerciseAttributesList">
+                                    <li><b>Description:</b> {{ exercisesArray[3*i].description }}</li>
+                                    <li><b>Category:</b> {{ exercisesArray[3*i].category }}</li>
+                                    <li><b>Equipment:</b> {{ exercisesArray[3*i].equipment }}</li>
+                                </ul>
+                            </p>
+                            <a href="{{ url_for('exercise_instance', exercise_id=exercisesArray[3*i].id, exerciseObject=exercisesArray[3*i]) }}" class="btn btn-primary">More Details</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-secondary border-0">
+                        <img class="card-img-top img-fluid" src="{{ exercisesArray[3*i+1].images[0] }}" alt="{{ exercisesArray[3*i+1].name }}">
+                        <div class="card-body">
+                            <h2 class="card-title">{{ exercisesArray[3*i+1].name }}</h2>
+                            <p class="card-text">
+                                <ul class="exerciseAttributesList">
+                                    <li><b>Description:</b> {{ exercisesArray[3*i+1].description }}</li>
+                                    <li><b>Category:</b> {{ exercisesArray[3*i+1].category }}</li>
+                                    <li><b>Equipment:</b> {{ exercisesArray[3*i+1].equipment }}</li>
+                                </ul>
+                            </p>
+                            <a href="{{ url_for('exercise_instance', exercise_id=exercisesArray[3*i+1].id, exerciseObject=exercisesArray[3*i+1]) }}" class="btn btn-primary">More Details</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-secondary border-0">
+                        <img class="card-img-top img-fluid" src="{{ exercisesArray[3*i+2].images[0] }}" alt="{{ exercisesArray[3*i+2].name }}">
+                        <div class="card-body">
+                            <h2 class="card-title">{{ exercisesArray[3*i+2].name }}</h2>
+                            <p class="card-text">
+                                <ul class="exerciseAttributesList">
+                                    <li><b>Description:</b> {{ exercisesArray[3*i+2].description }}</li>
+                                    <li><b>Category:</b> {{ exercisesArray[3*i+2].category }}</li>
+                                    <li><b>Equipment:</b> {{ exercisesArray[3*i+2].equipment }}</li>
+                                </ul>
+                            </p>
+                            <a href="{{ url_for('exercise_instance', exercise_id=exercisesArray[3*i+2].id, exerciseObject=exercisesArray[3*i+2]) }}" class="btn btn-primary">More Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}    
 
-    <h1>Welcome to a list of all exercises! </h1>
-    <h2>Total number of exercises: {{ exercisesArray|length }}</h2>
-    {% for e in exercisesArray %}
-        {% for image in e.images %}
-            <img src='{{ image }}' alt="{{ e.name }}">
-        {% endfor %}
-        <ul>
-            <li>Name: {{ e.name }}</li>
-            <li>Description: {{ e.description }}</li>
-            <li>Category: {{ e.category }}</li>
-            <li>Muscles: {{ e.muscles }}</li>
-            <li>Secondary Muscles: {{ e.muscles_secondary }}</li>
-            <li>Equipment: {{ e.equipment }}</li>
-            
-            <li>Comments: {{ e.comments }}</li>
-        </ul>
-    {% endfor %}
+        {% if numLeftOverChannels > 0 %}
+            <div class="row" id="bottomRow">
+            {% for i in range(-numLeftOverChannels, 0) %}
+                <div class="col-md-4">
+                    <div class="card bg-secondary border-0">
+                        <img class="card-img-top img-fluid" src="{{ exercisesArray[i].images[0] }}" alt="{{ exercisesArray[i].name }}">
+                        <div class="card-body">
+                            <h2 class="card-title">{{ exercisesArray[i].name }}</h2>
+                            <p class="card-text">
+                                <ul class="exerciseAttributesList">
+                                    <li><b>Description:</b> {{ exercisesArray[i].description }}</li>
+                                    <li><b>Category:</b> {{ exercisesArray[i].category }}</li>
+                                    <li><b>Equipment:</b> {{ exercisesArray[i].equipment }}</li>
+                                </ul>
+                            </p>
+                            <a href="{{ url_for('exercise_instance', exercise_id=exercisesArray[i].id, exerciseObject=exercisesArray[i]) }}" class="btn btn-primary">More Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}    
+            </div>
+        {% endif %}    
+        </div>
+    </div>    
 
 {% endblock %}
