@@ -3,41 +3,67 @@
 <!-- PASSED PARAM NAME: equipmentArray -->
 
 {% block head %}
-    <title>Equipment List</title>
+    <title>Equipment Model Page</title>
 {% endblock %}
 
 {% block body %}
-<div class="content">
-    <h1 style="text-align: center">Equipment List</h1>
+    <div class="container-fluid bg-light">
+        <h1 class="pageTitle">Equipment List</h1>
+        <p class="pageSubtitle">
+            [DESCRIPTION GOES HERE]
+        </p>
+        <div class="container-fluid bg-secondary" id="equipmentGrid">
+            {% set numRows = equipmentArray|length // 3 %}
+            {% set remainder = equipmentArray|length % 3 %}
+            {% for i in range(numRows) %}
+                <div class="row" id="row {{ i|string }}">
+                {% for offset in range(3) %}
+                    <div class="col-md-4">
+                        <div class="card bg-secondary border-0">
+                            <img class="card-img-top img-fluid" src="{{ equipmentArray[3*i+offset].images[0] }}" onerror="this.onerror=null; this.src='{{ equipmentArray[3*i+offset].images[1] }}'"; alt="{{ equipmentArray[3*i+offset].name }}">
+                            <div class="card-body">
+                                <h2 class="card-title">{{ equipmentArray[3*i+offset].name }}</h2>
+                                <p class="card-text">
+                                    <ul class="equipmentData">
+                                        <li>Price: {{ equipmentArray[i].price }}</li>
+                                        <li>Rating: {{ equipmentArray[3*i+offset].rating }}</li>
+                                        <li>Number of Reviews: {{ equipmentArray[3*i+offset].reviews }}</li>
+                                    </ul>
+                                </p>
+                                <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
+                                <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[3*i+offset].id, equipmentObject=equipmentArray[3*i+offset]) }}" class="btn btn-primary">More Details</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endfor %}
 
-    {% if equipmentArray|length < 1 %}
-    <h4 style="text-align: center">There's no equipment available. That's odd.</h4>
-    {% else %}
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Rating</th>
-            <th>Reviews</th>
-            <th>Extensions</th>
-            <th>Seller</th>
-            <th>Snippet</th>
-        </tr>
-        {% for eq in equipmentArray %}
-            <tr>
-                <td>
-                    <a href="{{ url_for('equipment_instance', equipmentID=eq.id) }}">{{ eq.name }}</a>
-                </td>
-                <td>{{ eq.price }}</td>
-                <td>{{ eq.rating }}</td>
-                <td>{{ eq.reviews }}</td>
-                <td>{{ eq.extensions }}</td>
-                <td>{{ eq.seller }}</td>
-                <td>{{ eq.snippet }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    {% endif %}
+            {% if remainder > 0 %}
+                <div class="row" id="bottomRow">
+                {% for i in range(-remainder, 0) %}
+                    <div class="col-md-4">
+                        <div class="card bg-secondary border-0">
+                            <img class="card-img-top img-fluid" src="{{ equipmentArray[i].images[0] }}" alt="{{ equipmentArray[i].name }}">
+                            <div class="card-body">
+                                <h2 class="card-title">{{ equipmentArray[i].name }}</h2>
+                                <p class="card-text">
+                                    <ul class="equipmentData">
+                                        <!-- TODO: find out what attributes are most important to put in card data -->
+                                        <li>Price: {{ equipmentArray[i].price }}</li>
+                                        <li>Rating: {{ equipmentArray[i].rating }}</li>
+                                        <li>Number of Reviews: {{ equipmentArray[i].reviews }}</li>
+                                    </ul>
+                                </p>
+                                <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
+                                <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[i].id, equipmentObject=equipmentArray[i]) }}" class="btn btn-primary">More Equipment Details</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
 
-</div>
+        </div>
+    </div>
 {% endblock %}

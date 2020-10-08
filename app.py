@@ -36,7 +36,7 @@ class Exercise:
 
 # Class for equipment object
 class Equipment:
-    def __init__(self, id, name, price, rating, reviews, seller, snippet, extensions, url):
+    def __init__(self, id, name, price, rating, reviews, seller, snippet, extensions, images, url):
         self.id = id  # unique id generated in the backend to help create dynamic URLs
         self.name = name  # called 'title' in JSON
         self.price = price
@@ -45,6 +45,7 @@ class Equipment:
         self.seller = seller
         self.snippet = snippet
         self.extensions = extensions
+        self.images = images
         self.url = url
 
 
@@ -173,11 +174,17 @@ def initialize_exercises_array():
             exercisesArray.append(exercise)
 
 
-def get_google_images(search_string):
+def get_google_images(search_string, file_type=None):
     """
-    This method makes a request to the Google Custom Search API and returns the 10 images in the search result
+    This method makes a request to the Google Custom Search API and returns the 10 images in the search result as a
+    list of strings, where each string represents an image URL. Can pass in additional optional params
+    :param search_string: query string that will be searched
+    :return: List of image URLs
     """
-    url = f"https://customsearch.googleapis.com/customsearch/v1?searchType=image&key={API_KEY}&cx={SEARCH_ENGINE_ID}&q={search_string}"
+    if file_type is not None:
+        url = f"https://customsearch.googleapis.com/customsearch/v1?searchType=image&key={API_KEY}&cx={SEARCH_ENGINE_ID}&q={search_string}&fileType={file_type}"
+    else:
+        url = f"https://customsearch.googleapis.com/customsearch/v1?searchType=image&key={API_KEY}&cx={SEARCH_ENGINE_ID}&q={search_string}"
     data = requests.get(url).json()
     search_items = data.get("items")
     images = []
@@ -212,10 +219,12 @@ def initialize_equipment_array():
         # Parse the JSON response and only keep products that have 'rating' and 'reviews' to prevent KeyError exception
         if 'rating' in result.keys() and 'reviews' in result.keys():
             global equipmentIdCounter
-            eq = Equipment(equipmentIdCounter, result["title"], result["price"], result["rating"], result["reviews"], result["seller"],
-                           result["snippet"], result["extensions"], result["url"])
-            equipmentArray.append(eq)
-            equipmentIdCounter += 1
+            images = get_google_images(result["title"])
+            if len(images) > 0:  # Only keep data if at least 1 image can be found for it
+                eq = Equipment(equipmentIdCounter, result["title"], result["price"], result["rating"], result["reviews"], result["seller"],
+                               result["snippet"], result["extensions"], images, result["url"])
+                equipmentArray.append(eq)
+                equipmentIdCounter += 1
 
 
 # channels: methods calling Youtube DATA API
@@ -307,7 +316,7 @@ def exercises():
     return render_template('exercises.html', exercisesArray=exercisesArray)
 
 
-# equipments model page <TODO: GET THE PYTHON API METHOD AND HTML FILE FROM CHRISTOPHER's branch>
+# equipments model page
 @app.route("/equipment", methods=['GET'])
 def equipments():
     if len(equipmentArray) == 0:
@@ -339,8 +348,8 @@ def exercise_instance(exercise_id):
 
 # equipment instance pages
 @app.route("/equipments/<int:equipmentID>", methods=['GET'])
-def equipment_instance(equipmentID):
-    return render_template('equipmentInstance.html', equipmentID=equipmentID, equipmentArray=equipmentArray)
+def equipment_instance(equipmentID, equipmentObject):
+    return render_template('equipmentInstance.html', equipmentID=equipmentID, equipmentObject=equipmentObject)
 
 
 # channel instance pages
