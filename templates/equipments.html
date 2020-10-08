@@ -17,7 +17,7 @@
             {% set remainder = equipmentArray|length % 3 %}
             {% for row in range(numRows) %}
                 <div class="row" id="row {{ row|string }}">
-                {% for col in range(row) %}
+                {% for col in range(3) %}
                     <div class="col-md-4">
                         <div class="card bg-secondary border-8">
                             <img class="card-img-top img-fluid" src="{{ equipmentArray[3*row+col].images[0] }}" alt="{{ equipmentArray[3*row+col].name }}">
@@ -57,7 +57,7 @@
                                     </ul>
                                 </p>
                                 <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
-                                <a href="{{ url_for('equipment_instance', equipment_id=equipmentArray[col].id, thisEquipment=equipmentArray[i]) }}" class="btn btn-primary">More Details</a>
+                                <a href="{{ url_for('equipment_instance', equipment_id=equipmentArray[col].id, thisEquipment=equipmentArray[col]) }}" class="btn btn-primary">More Details</a>
                             </div>
                         </div>
                     </div>
