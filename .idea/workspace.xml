@@ -20,23 +20,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="02ac0d6b-cc53-43d1-a080-105cbb8d585e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/TeamA13.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/retrieve_api_json_test.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/base.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/about.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/channels.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/channelsInstance.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/exercises.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/templates/homepage.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/equipmentInstance.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/remoteBranchTesting.txt" beforeDir="false" afterPath="$PROJECT_DIR$/remoteBranchTesting.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/css/main.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/equipmentPage.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/equipment.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/about.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/about.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/channels.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/channels.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/channelsInstance.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/channelsInstance.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/equipment.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/equipment.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/exercises.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/exercises.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
