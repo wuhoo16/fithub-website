@@ -9,7 +9,7 @@ from flask import Flask, render_template, url_for, request, redirect
 from collections import defaultdict
 from math import ceil
 
-API_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk'
+API_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk' # michelle's
 SEARCH_ENGINE_ID = '598e742e6c308d255'
 
 class Channel:
