@@ -1,2 +1,0 @@
-testing if pycharm automatically git adds new files
-test passed sort of: git adds newly created files, doesn't git add new changes
