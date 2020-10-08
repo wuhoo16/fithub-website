@@ -116,18 +116,69 @@
         <hr/>
 
         <h1>Additional Information</h1>
-        <h4>Data and Links:</h4>
+        <h4>Data and Links:</h4> Links to data sources, description of how data was obtained and stored in the database
         <p>
-            {@Michelle insert links to WGER page, wtv google image API you use, SERPSTACK API, and youtube DATA V3 API pages + how we used descriptions here}
+            <ul>
+                <li>
+                    <a href="https://developers.google.com/youtube/v3/getting-started">Youtube Data V3 API Guide</a>
+                    <p>This API was used to setup and activate the Youtube API. It includes supported API operations and syntax examples to get different details about channels related to fitness.
+                    Channels, search, playlists, and video were used.
+                    </p>
+                </li>
+                <li>
+                    <a href="https://wger.de/en/software/api">wger REST API</a>
+                    <p>This API was used to grab data on 700+ exercises with information like exercise category, muscle groups, equipment, images, comments, etc. 
+                    Out of the 700+ exercises, only 110 exercises were used since they were approved, in english, and had information for name, description, category, and equipment.
+                    The request made to the API was parsed into a JSON format. Then, the 110 exercises were filtered out along with specific information for each exercise. 
+                    Since over half of the exercises didn't come with images, the Google Custom Search JSON API was used to search for images related to each exercise.
+                    </p>
+                </li>
+                <li>
+                    <a href="https://developers.google.com/custom-search/v1/overview">Google Custom Search JSON API</a>
+                    <p>
+                        This API was used to do a Google image search. We sent an HTTP GET request to the URI and passed in specific parameters like image file type, API key, search engine key, and search string.
+                        The call returns a response which contains a Search instance. The Search instance contains information from the search result which we used to grab the image URLs.
+                        The image URLs were saved corresponding to the exercise.
+                    </p>
+                </li>
+                <li>
+                    <a href="https://serpstack.com/documentation">SERPSTACK API Documentation</a>
+                    <p>
+                        SERPSTACK was the API we used for finding results for fitness equipment. First, we did a pull to get an
+                        example JSON file of the search results, then used the information in the JSON file to construct a
+                        method for making a list of Equipment objects. We then used this list in the Equipment page to list
+                        search results in a grid.
+                    </p>
+                </li>
+            </ul>
         </p>
+
         <br>
-        <h4>Tools:</h4>
+        <h4>Tools:</h4> Tools used, description of how they were used
         <p>
-            {@Michelle insert tools used - uhh Github and Slack}
+            <ul>
+                <li>
+                    <b>GitHub</b>
+                    <p>
+                        GitHub was our source for collaboration and code merging. Most individual work was done in individual
+                        branches and was then merged to the 'dev' branch.
+                        We also used issue tracking to fix problems with our project and GitHub project boards to keep track of user stories. 
+                    </p>
+                </li>
+                <li>
+                    <b>Slack</b>
+                    <p>
+                        Our group used Slack for communication and for assigning tasks. We integrated our Slack with our Github
+                        repository so we would be notified about updates, issues, and tasks.
+                        In Slack, we have several channels like general, imdb-web-app, sources-and-links, and aboutme to organize our communication better.
+                    </p>
+                </li>
+            </ul>
         </p>
         <br>
         <h4>Github Link:</h4>
         <a href="https://github.com/UT-SWLab/TeamA13">Github Repository for UT-SWLab/TeamA13</a>
+        <br>
     </div>
 
 {% endblock %}
