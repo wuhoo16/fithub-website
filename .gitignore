@@ -7,8 +7,12 @@
 # Ignore all project files
 **/.idea
 
+# Ignore all pycache files
+**/__pycache__
+
 # Ignore virtual environment folders
 **/venv
+**/env
 
 # Ignore README file so dev branch does not update to match other branch's README
 **/README.md
