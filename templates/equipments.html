@@ -1,8 +1,43 @@
 {% extends 'base.html' %}
 
+<!-- PASSED PARAM NAME: equipmentArray -->
+
 {% block head %}
+    <title>Equipment List</title>
 {% endblock %}
 
 {% block body %}
-    <h1>Replace this whole file with the equipmeants.html from Christopher's branch!</h1>
+<div class="content">
+    <h1 style="text-align: center">Equipment List</h1>
+
+    {% if equipmentArray|length < 1 %}
+    <h4 style="text-align: center">There's no equipment available. That's odd.</h4>
+    {% else %}
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Rating</th>
+            <th>Reviews</th>
+            <th>Extensions</th>
+            <th>Seller</th>
+            <th>Snippet</th>
+        </tr>
+        {% for eq in equipmentArray %}
+            <tr>
+                <td>
+                    <a href="{{ url_for('equipment_instance', equipmentID=eq.id) }}">{{ eq.name }}</a>
+                </td>
+                <td>{{ eq.price }}</td>
+                <td>{{ eq.rating }}</td>
+                <td>{{ eq.reviews }}</td>
+                <td>{{ eq.extensions }}</td>
+                <td>{{ eq.seller }}</td>
+                <td>{{ eq.snippet }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+</div>
 {% endblock %}
