@@ -45,10 +45,15 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
 
 
   Christopher Saenz
-    EID: cgs2258
-    GitHub ID: ChriSaenz
-    Phase 1 Estimated Completion Time:
-    Phase 1 Actual Completion Time:
+   - EID: cgs2258
+   - GitHub ID: ChriSaenz
+   - Tasks:
+      - SERPSTACK API Setup and Integration: Estimated Completion Hours: 3
+      - SERPSTACK API Setup and Integration: Actual Completion Hours: 4
+      - Equipment Model Page Design: Estimated Completion Hours: 4
+      - Equipment Model Page Design: Actual Completion Hours: 7
+      - About Page Content: Estimated Completion Hours: 1
+      - About Page Content: Estimated Completion Hours: 0.5
 
 
   Michelle Wen
