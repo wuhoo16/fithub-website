@@ -39,8 +39,8 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
     Phase 1 Actual Completion Time:
 
   Kaylee N Trevino
-    EID: knt658
-    GitHub ID: kntrevi1
+    - EID: knt658
+    - GitHub ID: kntrevi1
     - Tasks:
       - Flask framework: Estimated Completion Hours: 1
       - Flask framework: Actual Completion Hours: 2
