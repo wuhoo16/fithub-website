@@ -1,13 +1,9 @@
 import os
-import json
 import requests
-import pprint as pp
 import re
 
 from googleapiclient.discovery import build
 from flask import Flask, render_template, url_for, request, redirect
-from collections import defaultdict
-from math import ceil
 
 # Global variables definitions
 API_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk' # michelle's
@@ -179,6 +175,7 @@ def get_google_images(search_string, file_type=None):
     This method makes a request to the Google Custom Search API and returns the 10 images in the search result as a
     list of strings, where each string represents an image URL. Can pass in additional optional params
     :param search_string: query string that will be searched
+    :param file_type: Optional file-type parameter to limit resulting extension types in the result
     :return: List of image URLs
     """
     if file_type is not None:
