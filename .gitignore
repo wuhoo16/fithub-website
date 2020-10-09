@@ -1,11 +1,17 @@
+# Ignore all hidden and gitignore files
+**/.
+
 # Ignore Mac system files
-/.DS_store
+**/.DS_store
 
 # Ignore all project files
-/.idea
+**/.idea
 
 # Ignore virtual environment folders
-/venv
+**/venv
 
 # Ignore README file so dev branch does not update to match other branch's README
-/README.md
+**/README.md
+
+# Other local-testing or project-specific files
+/apiTesting.py
