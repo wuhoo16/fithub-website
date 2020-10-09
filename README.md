@@ -44,8 +44,8 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
     - Tasks:
       - Flask framework: Estimated Completion Hours: 1
       - Flask framework: Actual Completion Hours: 2
-      - Youtube API testing and backend infrastructure: Estimated Completion Hours: 3
-      - Youtube API testing and backend infrastructure: Actual Completion Hours: 4
+      - Youtube API testing & backend infrastructure: Estimated Completion Hours: 3
+      - Youtube API testing & backend infrastructure: Actual Completion Hours: 4
       - Youtube Channel model page design: Estimated Completion Hours: 2
       - Youtube Channel model page design: Actual Completion Hours: 3
       - Youtube Channel three instance page designs: Estimated Completion Hours: 4
