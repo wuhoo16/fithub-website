@@ -446,7 +446,14 @@ def about():
 # exercise instance pages
 @app.route("/exercises/<int:exercise_id>", methods=['GET'])
 def exercise_instance(exercise_id):
-    return render_template('exerciseInstance.html', exercise_id=exercise_id, exercisesArray=exercisesArray)
+    if exercise_id == 345:
+        return render_template('exerciseInstance1.html')
+    elif exercise_id == 227:
+        return render_template('exerciseInstance2.html')
+    elif exercise_id == 343:
+        return render_template('exerciseInstance3.html')
+    else:
+        return render_template('exerciseInstance.html', exercise_id=exercise_id, exercisesArray=exercisesArray)
 
 
 # equipment instance pages
