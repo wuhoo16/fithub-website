@@ -248,7 +248,6 @@ def execute_youtube_search_API(youtubeClient, searchTerm, part="snippet", maxRes
     )
     return channelSearchRequest.execute()['items']
 
-
 def execute_channels_statistics_API(youtubeClient, channelID):
     """
     Call the Youtube Data API with youtube client and channel ID to return 'statistics' dictionary describing that channel.
@@ -261,7 +260,6 @@ def execute_channels_statistics_API(youtubeClient, channelID):
         id=channelID
     )
     return getChannelStatisticsRequest.execute()['items'][0]['statistics']
-
 
 def initialize_channel_array():
     """
@@ -288,7 +286,6 @@ def initialize_channel_array():
     # Call helper methods to initialize Channel arrays
     for item in execute_youtube_search_API(youtube, 'bicep curl'):
         channelArray.append(Channel(item['snippet'], execute_channels_statistics_API(youtube, item['snippet']['channelId'])))
-
     for item in execute_youtube_search_API(youtube, 'squats'):
         channelArray.append(Channel(item['snippet'], execute_channels_statistics_API(youtube, item['snippet']['channelId'])))
 
@@ -353,10 +350,22 @@ def equipment_instance(equipmentID, equipmentObject):
 
 
 # channel instance pages
-@app.route("/channels/<string:channelID>", methods=['GET'])
-def channel_instance(channelID):
-    return render_template('channelInstance.html', channelID=channelID, channelArray=channelArray)
 
+# @app.route("/channels/<string:channelID>", methods=['GET'])
+# def channel_instance(channelID):
+#     return render_template('channelInstance.html', channelID=channelID, channelArray=channelArray)
+
+@app.route("/channels/UCZvdYkjBXBSxhosgkWkDyvQ", methods=['GET']) 
+def channel_instance1():
+    return render_template('channelInstance1.html')
+
+@app.route("/channels/UCb67rmuez0SKOQbZ4vCRDHQ", methods=['GET']) 
+def channel_instance1():
+    return render_template('channelInstance2.html')
+
+@app.route("/channels/UC_gbQ9J76mYJ5S3zVTANM_w", methods=['GET']) 
+def channel_instance1():
+    return render_template('channelInstance3.html')
 
 # Start the Flask web-application when app.py file is run
 if __name__ == "__main__":
