@@ -39,12 +39,3 @@
   filter: invert(100%);
 }
 
-#modelGrid .row .col-md-4 .card .card-img-top {
-  width: 360px;
-  height: 270px;
-}
-
-#equipmentGrid .row .col-md-4 .card .card-img-top {
-  width: 360px;
-  height: 270px;
-}

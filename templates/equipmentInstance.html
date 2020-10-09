@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 
+<!-- Param Name: equipmentObject -->
+
 {% block head %}
     <title>Equipment Instance Page</title>
 {% endblock %}
 
 
 {% block body %}
-    <h1> Welcome the the equipment instance page!</h1>
+    <h1>{{ equipmentObject.name }}</h1>
 {% endblock %}
