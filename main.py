@@ -376,7 +376,6 @@ def execute_channels_statistics_API(youtubeClient, channelID):
 
 # All global array initializations done below
 # Note these arrays will serve as a master-list of all instances to help with the model pages
-# TODO: In the future when we add sorting feature we will query DB directly to return filtered collection objects)
 # ==================================================================================================================
 def initialize_exercises_array_from_db():
     exercisesCursor = db.exercises.find()
@@ -489,5 +488,5 @@ if __name__ == "__main__":
         initialize_equipment_array_from_db()
     if len(channelArray) == 0:
         initialize_channel_array_from_db()
-    app.run(port=8080, debug=True, use_reloader=True)
+    app.run()
 
