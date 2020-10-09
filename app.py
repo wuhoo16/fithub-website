@@ -355,17 +355,16 @@ def equipment_instance(equipmentID, equipmentObject):
 # def channel_instance(channelID):
 #     return render_template('channelInstance.html', channelID=channelID, channelArray=channelArray)
 
-@app.route("/channels/UCZvdYkjBXBSxhosgkWkDyvQ", methods=['GET']) 
-def channel_instance1():
-    return render_template('channelInstance1.html')
-
-@app.route("/channels/UCb67rmuez0SKOQbZ4vCRDHQ", methods=['GET']) 
-def channel_instance1():
-    return render_template('channelInstance2.html')
-
-@app.route("/channels/UC_gbQ9J76mYJ5S3zVTANM_w", methods=['GET']) 
-def channel_instance1():
-    return render_template('channelInstance3.html')
+@app.route("/channels/<string:channelID>", methods=['GET']) 
+def channel_instance(channelID):
+    if (channelID == "UCb67rmuez0SKOQbZ4vCRDHQ"):
+        return render_template('channelsInstance1.html')
+    elif (channelID == "UCZvdYkjBXBSxhosgkWkDyvQ"):
+        return render_template('channelsInstance2.html')
+    elif (channelID == "UC_gbQ9J76mYJ5S3zVTANM_w"):
+        return render_template('channelsInstance3.html')
+    else:
+        return render_template('channels.html')
 
 # Start the Flask web-application when app.py file is run
 if __name__ == "__main__":
