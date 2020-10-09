@@ -39,9 +39,22 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
     Phase 1 Actual Completion Time:
 
   Kaylee N Trevino
-    EID: 
+    EID: knt658
     GitHub ID: kntrevi1
-    Phase 1 Estimated Completion Time:
-    Phase 1 Actual Completion Time:
+    - Tasks:
+      - Flask framework: Estimated Completion Hours: 1
+      - Flask framework: Actual Completion Hours: 2
+      - Youtube API testing and backend infrastructure: Estimated Completion Hours: 3
+      - Youtube API testing and backend infrastructure: Actual Completion Hours: 4
+      - Youtube Channel model page design: Estimated Completion Hours: 2
+      - Youtube Channel model page design: Actual Completion Hours: 3
+      - Youtube Channel three instance page designs: Estimated Completion Hours: 4
+      - Youtube Channel three instance page designs: Actual Completion Hours: 6
+      - Github branch/code integration: Estimated Completion Hours: 1
+      - Github branch/code integration: Actual Completion Hours: 3
+      - Home/Splash Page Design and Content: Estimated Completion Hours: 2
+      - Home/Splash Page Design and Content: Actual Completion Hours: 4
+      - Starting .py file to populate database in MongoDB: Estimated Completion Hours: 2
+      - Starting .py file to populate database in MongoDB: Actual Completion Hours: 3
   
 Website Link:
