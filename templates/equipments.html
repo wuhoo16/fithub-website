@@ -32,7 +32,7 @@
                                     </ul>
                                 </p>
                                 <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
-                                <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[3*i+offset].id, equipmentObject=equipmentArray[3*i+offset]) }}" class="btn btn-primary">More Details</a>
+                                <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[3*i+offset].id) }}" class="btn btn-primary">More Details</a>
                             </div>
                         </div>
                     </div>
@@ -45,7 +45,7 @@
                 {% for i in range(-remainder, 0) %}
                     <div class="col-md-4">
                         <div class="card bg-secondary border-0">
-                            <img class="card-img-top img-fluid" src="{{ equipmentArray[i].images[0] }}" alt="{{ equipmentArray[i].name }}">
+                            <img class="card-img-top img-fluid" src="{{ equipmentArray[i].images[0] }}" onerror="this.onerror=null; this.src='{{ equipmentArray[i].images[1] }}'"; alt="{{ equipmentArray[i].name }}">
                             <div class="card-body">
                                 <h2 class="card-title">{{ equipmentArray[i].name }}</h2>
                                 <p class="card-text">
@@ -57,7 +57,7 @@
                                     </ul>
                                 </p>
                                 <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
-                                <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[i].id, equipmentObject=equipmentArray[i]) }}" class="btn btn-primary">More Equipment Details</a>
+                                <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[i].id) }}" class="btn btn-primary">More Equipment Details</a>
                             </div>
                         </div>
                     </div>
