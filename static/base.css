@@ -4,8 +4,8 @@
 }
 
 #equipmentGrid .row .col-md-4 {
-    outline: 2px solid black;
-    align-content: center;
+  outline: 2px solid black;
+  align-content: center;
 }
 
 #modelGrid .row .col-md-4 .card .card-body .card-title {
@@ -39,12 +39,12 @@
   filter: invert(100%);
 }
 
-#modelGrid .row .col-md-4 .card .card-img-top {
-  width: 360px;
-  height: 270px;
+.header-pic {
+  width: 20%;
+  height: 20%;
 }
 
-#equipmentGrid .row .col-md-4 .card .card-img-top {
-  width: 360px;
-  height: 270px;
+.instance-pic {
+  width: 30%;
+  height: 40%;
 }
