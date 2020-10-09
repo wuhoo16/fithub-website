@@ -8,9 +8,10 @@
 
 {% block body %}
     <div class="container-fluid bg-light">
-        <h1 class="pageTitle">Equipment List</h1>
+        <h1 class="pageTitle">Welcome to the Equipment Model Page!</h1>
         <p class="pageSubtitle">
-            [DESCRIPTION GOES HERE]
+            This model page includes a database of different types of workout equipment, gear, and products. You can also
+            quickly find the price rating and seller/vendor of each product in one place.
         </p>
         <div class="container-fluid bg-secondary" id="equipmentGrid">
             {% set numRows = equipmentArray|length // 3 %}
@@ -27,7 +28,7 @@
                                     <ul class="equipmentData">
                                         <li>Price: {{ equipmentArray[i].price }}</li>
                                         <li>Rating: {{ equipmentArray[3*i+offset].rating }}</li>
-                                        <li>Number of Reviews: {{ equipmentArray[3*i+offset].reviews }}</li>
+                                        <li>Seller: {{ equipmentArray[3*i+offset].seller }}</li>
                                     </ul>
                                 </p>
                                 <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
@@ -52,7 +53,7 @@
                                         <!-- TODO: find out what attributes are most important to put in card data -->
                                         <li>Price: {{ equipmentArray[i].price }}</li>
                                         <li>Rating: {{ equipmentArray[i].rating }}</li>
-                                        <li>Number of Reviews: {{ equipmentArray[i].reviews }}</li>
+                                        <li>Seller: {{ equipmentArray[i].seller }}</li>
                                     </ul>
                                 </p>
                                 <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
