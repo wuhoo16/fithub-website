@@ -14,7 +14,8 @@ EXERCISE_BLACKLIST = {}
 EQUIPMENT_BLACKLIST = {'SML-1 Monster Lite Squat Stand - Made in the USA', 'ETHOS Power Rack 1.0, Red', 'Core Home Fitness Adjustable Dumbbell Set',
                        'Harbinger Pull-Up Bar Black - Hand Exer. Equip. at Academy Sports', 'Fuel Pureformance Xtreme Doorway Gym',
                        'Stamina Doorway Trainer Plus, Black', 'WEIDER Rubber Hex Dumbbell SINGLE 25 lb Pound Weight IN HAND FREE SHIP',
-                       'A Pair of Dumbbells Set, Adjustable Free Weights Barbell Set 5-66lb (Black)'}
+                       'A Pair of Dumbbells Set, Adjustable Free Weights Barbell Set 5-66lb (Black)', 'CAP Rubber Coated Hex Dumbbell 40 lb Weight Lifting Training Home Workout Single',
+                       'Harbinger Multi-Gym Sport Pull-Up Bar - Hand Exercise Equipment at Academy Sports', 'Mind Reader - Pull-up bar - black'}
 exercisesArray = []    # declared globally for now, so instance pages can be populated and API-calls are not needlessly wasted
 equipmentArray = []    # declared globally for now, so instance pages can be populated and API-calls are not needlessly wasted
 channelArray = []      # declared globally for now, so instance pages can be populated and API-calls are not needlessly wasted
@@ -413,13 +414,6 @@ app = Flask("__name__")
 # homepage
 @app.route("/", methods=['GET'])
 def index():
-    # Initialize global arrays from database before loading the homepage
-    if len(exercisesArray) == 0:
-        initialize_exercises_array_from_db()
-    if len(equipmentArray) == 0:
-        initialize_equipment_array_from_db()
-    if len(channelArray) == 0:
-        initialize_channel_array_from_db()
     return render_template('homepage.html')
 
 
@@ -457,8 +451,9 @@ def exercise_instance(exercise_id):
 
 # equipment instance pages
 @app.route("/equipments/<int:equipmentID>", methods=['GET'])
-def equipment_instance(equipmentID, equipmentObject):
-    return render_template('equipmentInstance.html', equipmentID=equipmentID, equipmentObject=equipmentObject)
+def equipment_instance(equipmentID):
+    equipmentObject = equipmentArray[equipmentID - 1]
+    return render_template('equipmentInstance.html', equipmentObject=equipmentObject)
 
 
 # channel instance pages
@@ -480,5 +475,12 @@ def channel_instance(channelID):
 
 # Start the Flask web-application when app.py file is run
 if __name__ == "__main__":
+    # Initialize global arrays from database before starting the web app
+    if len(exercisesArray) == 0:
+        initialize_exercises_array_from_db()
+    if len(equipmentArray) == 0:
+        initialize_equipment_array_from_db()
+    if len(channelArray) == 0:
+        initialize_channel_array_from_db()
     app.run(port=8080, debug=True, use_reloader=True)
 
