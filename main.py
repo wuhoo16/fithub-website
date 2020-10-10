@@ -413,6 +413,13 @@ app = Flask("__name__")
 # homepage
 @app.route("/", methods=['GET'])
 def index():
+    # Initialize global arrays from database before starting the web app
+    if len(exercisesArray) == 0:
+        initialize_exercises_array_from_db()
+    if len(equipmentArray) == 0:
+        initialize_equipment_array_from_db()
+    if len(channelArray) == 0:
+        initialize_channel_array_from_db()
     return render_template('homepage.html')
 
 
@@ -481,12 +488,5 @@ def channel_instance(channelID):
 
 # Start the Flask web-application when app.py file is run
 if __name__ == "__main__":
-    # Initialize global arrays from database before starting the web app
-    if len(exercisesArray) == 0:
-        initialize_exercises_array_from_db()
-    if len(equipmentArray) == 0:
-        initialize_equipment_array_from_db()
-    if len(channelArray) == 0:
-        initialize_channel_array_from_db()
-    app.run()
+    app.run(host="localhost", port=8080, debug=False)
 
