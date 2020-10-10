@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+<!-- Param Name: equipmentObject -->
+
+{% block head %}
+    <title>Equipment Instance Page</title>
+{% endblock %}
+
+
+{% block body %}
+    <div class="container-fluid bg-light mx-auto">
+        <div id="equipmentInstanceHeaderRow" class="container justify-content-center align-items-center">
+            <h1 id="equipmentInstanceName">{{ equipmentObject.name }}</h1>
+            <h3 id="equipmentInstancePrice">Price: ${{ equipmentObject.price }}</h3>
+    <!--                Note that after phase 1 you should use equipmentObject.rating to find the correct rating image to display here with jinja-->
+            <img id="equipmentInstanceRating" class="img-fluid w-50 h-auto" src="{{ url_for('static', filename='4stars.png') }}" alt="4/5 stars rating">
+        </div>
+
+        <div id="equipmentCarousel"class="carousel slide centered" data-ride="carousel">
+              <ol class="carousel-indicators">
+                <li data-target="#equipmentCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#equipmentCarousel" data-slide-to="1"></li>
+              </ol>
+              <div class="carousel-inner">
+                  <div class="carousel-item active">
+                      <img src="{{ equipmentObject.images[0] }}" alt=" {{ equipmentObject.name }}'s carousel image"/>
+                  </div>
+                  <div class="carousel-item">
+                      <img src="{{ equipmentObject.images[1] }}" onerror="this.onerror=null; this.src='{{ equipmentObject.images[2] }}'"; alt=" {{ equipmentObject.name }}'s carousel image"/>
+                  </div>
+              </div>
+              <a class="carousel-control-prev" href="#equipmentCarousel" data-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+              </a>
+              <a class="carousel-control-next" href="#equipmentCarousel" data-slide="next">
+                <span class="carousel-control-next-icon"></span>
+              </a>
+        </div>
+
+        <div id="equipmentInstanceDescriptionRow" class="row justify-content-center align-items-center">
+            <p>Short Product Description: {{ equipmentObject.snippet }}</p>
+        </div>
+
+        <hr/>
+
+        <div id="equipmentInstanceSellerBox" class="container justify-content-center align-items-center">
+            <h3>Seller: {{ equipmentObject.seller }} </h3>
+            <h6>Number of Reviews: {{ equipmentObject.reviews }}</h6>
+            <a href="{{ equipmentObject.url }}">Click to visit seller's website!</a>
+        </div>
+
+        <hr/>
+
+        <div id="equipmentInstanceExtensions" class="container justify-content-center align-items-center">
+            <h3>Product Tags and Related Terms</h3>
+            <ul>
+                {% for tag in equipmentObject.extensions %}
+                <li> {{ tag }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+<!--    Add table here after phase 1 to compare related products in the same category-->
+    </div>
+{% endblock %}
