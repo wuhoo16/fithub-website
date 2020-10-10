@@ -1,6 +1,6 @@
 # TeamA13
 
-This is the master branch for TeamA13's IMBD web application project for EE461L. Note that all code in this repo is production-ready and should match the current deployed, functional state.
+This is the master branch for TeamA13's IMBD web application project for EE461L. Note that all code in this repo is production-ready and should match the current deployed, functional state. The buildfiles for this project to run on Google App Engine include requirements.txt and app.yaml. Requirements.txt lists all of the python libraries and dependencies that our web app needs to deploy.
 
 # Team Members:
   Andy Wu
