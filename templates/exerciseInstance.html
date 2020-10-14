@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+<!-- Exercise Parameter: exerciseObject, exercise_instance, exerciseID -->
+
+{% block head %}
+    <title>{{ exerciseObject.name }}</title>
+{% endblock %}
+
+
+{% block body %}
+    <!-- header image and description -->
+    <div class="container-fluid pt-3 centered">
+        <!-- TODO: fix this for loop condition -->
+        {% for r in range(3) %}
+        <img class="header-pic" src="{{ exerciseObject.images[r] }}" />
+        <h5>
+            {{ exerciseObject.description }}
+        </h5>
+        <p>Category: {{ exerciseObject.category }}</p>
+        <p>Equipment: {{ exerciseObject.equipment }}</p>
+    </div>
+
+    <!-- muscle list -->
+    <div>
+        <h5>Primary Muscles:</h5>
+        <ul>
+            <!-- TODO: fix the {{ pm }} if not working -->
+            {% for pm in exerciseObject.muscles %}
+            <li>
+                {{ pm }}
+            </li>
+        </ul>
+        <h5>Secondary Muscles:</h5>
+        <ul>
+            <!-- TODO: fix the {{ m }} if not working -->
+            {% for sm in exerciseObject.muscles_secondary %}
+            <li>
+                {{ sm }}
+            </li>
+        </ul>
+    </div>
+
+    <!-- comments -->
+    <div class="border border-dark rounded mx-auto my-2">
+        <h4>Comments</h4>
+        <ul>
+            <!-- TODO: fix the {{ c }} if not working -->
+            {% for c in exerciseObject.comments %}
+            <li>
+                {{ c }}
+            </li>
+        </ul>
+    </div>
+
+{% endblock %}
