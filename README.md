@@ -60,6 +60,20 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
    - EID: mw37583
    - GitHub ID: michellewen3
    - Tasks:
+      - wger API integration: Estimated Completion Hours: 2
+      - wger API integration: Actual Completion Hours: 6
+      - wger API model page: Estimated Completion Hours: 1
+      - wger API model page: Actual Completion Hours: 1
+      - wger API instance pages and connection to other models: Estimated Completion Hours: 0.5
+      - wger API instance pages and connection to other models: Actual Completion Hours: 1
+      - wger API testing and filtering data: Estimated Completion Hours: 1
+      - wger API testing and filtering data: Actual Completion Hours: 3.5
+      - Flask framework: Estimated Completion Hours: 0.5
+      - Flask framework: Actual Completion Hours: 1
+      - Google Custom Search API integration: Estimated Completion Hours: 1
+      - Google Custom Search API integration: Actual Completion Hours: 2
+      - About Page Content: Estimated Completion Hours: 0.5
+      - About Page Content: Actual Completion Hours: 1.5
 
   
   
