@@ -10,7 +10,10 @@ from pymongo import MongoClient
 API_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk' # michelle's
 SEARCH_ENGINE_ID = '598e742e6c308d255'
 equipmentIdCounter = 1
-EXERCISE_BLACKLIST = {}
+EXERCISE_BLACKLIST = {'Axe Hold', 'Cycling', 'Upper Body', 'Upper External Oblique', 'Chin-ups', 'Wall Pushup'}
+EXERCISE_RENAME_DICT = {'Pushups': 'Chest Push-ups', 'Push Ups': 'Bicep Push-ups', 'Snach': 'Snatch', "Squat Thrust": "Burpee", 'Thruster': 'Barbell Thruster'}
+EXERCISE_SZ_BAR_TYPOS = {'French Press (skullcrusher) SZ-bar', 'Biceps Curls With SZ-bar', 'Upright Row, SZ-bar', 'Reverse Bar Curl'}
+PLANK_REMOVED_FLAG = False
 EQUIPMENT_BLACKLIST = {'SML-1 Monster Lite Squat Stand - Made in the USA', 'ETHOS Power Rack 1.0, Red', 'Core Home Fitness Adjustable Dumbbell Set',
                        'Harbinger Pull-Up Bar Black - Hand Exer. Equip. at Academy Sports', 'Fuel Pureformance Xtreme Doorway Gym',
                        'Stamina Doorway Trainer Plus, Black', 'WEIDER Rubber Hex Dumbbell SINGLE 25 lb Pound Weight IN HAND FREE SHIP',
@@ -20,7 +23,7 @@ exercisesArray = []    # declared globally for now, so instance pages can be pop
 equipmentArray = []    # declared globally for now, so instance pages can be populated and API-calls are not needlessly wasted
 channelArray = []      # declared globally for now, so instance pages can be populated and API-calls are not needlessly wasted
 client = MongoClient("mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase1Database?retryWrites=true&w=majority")
-db = client.phase1Database
+db = client.phase2Database
 
 
 # All classes defined below to help store data attributes
@@ -118,7 +121,21 @@ class Channel:
 
 # Setup of mongoDB remote database is done below. Note that this should only be run ONCE (unless you want to reinitialize remote database)
 # ===========================================================================================================================================
+def clean_database():
+    """
+    Cleans the current phase's database by dropping all 3 model collections
+    :return: None
+    """
+    db.exercises.drop()
+    db.equipments.drop()
+    db.channels.drop()
+
+
 def setup_database():
+    """
+    Setup the remote mongoDB by initializing all 3 model collections
+    :return: None
+    """
     initialize_mongoDB_exercises_collection()
     initialize_mongoDB_equipment_collection()
     initialize_mongoDB_channel_collection()
@@ -126,10 +143,11 @@ def setup_database():
 
 def initialize_mongoDB_exercises_collection():
     """
-    This method makes all API calls to wger and returns an array of Exercise objects to use for Flask.
-    :return: array of Exercise objects
+    This method drops the existing exercises collection, makes all API calls to wger, and initializes the exercise collection
+    in the remote mongoDB.
+    :return: None
     """
-    # exerciseArray = []
+    db.exercises.drop()  # drop the old collection so we initialize a fresh collection
 
     root_URL = 'https://wger.de/api/v2/'  # add &status=2 to only get approved exercises
     data = '{"key": "value"}'
@@ -147,7 +165,7 @@ def initialize_mongoDB_exercises_collection():
 
     results = exercise_data["results"]
     for x in results:
-        if x["name"] and x["description"] and x["category"] and x["equipment"]: # only exercises with complete info (110 exercises)
+        if x["name"] and x["description"] and x["category"] and x["equipment"]:  # only exercises with complete info (110 exercises)
             exerciseID = x["id"]
 
             # strip description of html elements
@@ -194,10 +212,11 @@ def initialize_mongoDB_exercises_collection():
             # get image URL using exercise
             images = []
             image_results = image_data["results"]
+            query_template = "{} workout exercise"
             for result in image_results:
                 if result["exercise"] == exerciseID:
                     images.append(result["image"])
-            images.extend(get_google_images(x["name"]))
+            images.extend(get_google_images(query_template.format(x["name"])))
 
             # get exercise comment using exercise
             comments = []
@@ -208,24 +227,34 @@ def initialize_mongoDB_exercises_collection():
 
             exercise = Exercise(exerciseID, x["name"], description, categoryName, muscles_string, sec_muscles_string, equipment_string,
                                 images, comments)
-            # exercisesArray.append(exercise)
-            db.exercises.insert_one(exercise.to_dictionary())
+
+            if exercise.name in EXERCISE_BLACKLIST:
+                pass
+            elif should_add_exercise(exercise):
+                # Fix badly-named exercises
+                if exercise.name in EXERCISE_RENAME_DICT.keys():
+                    exercise.name = EXERCISE_RENAME_DICT[exercise.name]
+                # Fix SZ-Bar/SZ-bar typos for 4 exercise name, description, and equipment attributes
+                if exercise.name in EXERCISE_SZ_BAR_TYPOS:
+                    fix_SZ_bar_typo(exercise)
+                db.exercises.insert_one(exercise.to_dictionary())
 
 
 def initialize_mongoDB_equipment_collection():
-    # Obsolete, but keep it in just in case
-    # params_wger = {
-    #     'data': {"key": "value"},
-    #     'headers': {'Accept': 'application/json'}
-    # }
-    # url_wger = "https://wger.de/api/v2/equipment/"
+    """
+    This method drops the existing equipments collection, makes all API calls, and initializes the equipments collection
+    in the remote mongoDB.
+    :return: None
+    """
+    db.equipments.drop()  # drop the old collection so we initialize a fresh collection
 
-    queryArray = ['dumbbells', 'squat rack', 'pull up bar']
-    serpstackRequestArray = create_serpstack_request_array(queryArray, 3)
+    queryArray = ['Kettlebell', 'Dumbbell', 'Barbell', 'Bench', 'EZ-bar', 'Exercise mat']
     URL_FOR_SERPSTACK = "http://api.serpstack.com/search"
+    serpstackRequestArray = create_serpstack_request_params(queryArray, 7)
+    query_template = '{} workout equipment'
 
-    for serpRequest in serpstackRequestArray:
-        api_result = requests.get(URL_FOR_SERPSTACK, serpRequest)
+    for param in serpstackRequestArray:
+        api_result = requests.get(URL_FOR_SERPSTACK, param)
         api_result_json = api_result.json()
         shopping_results_arr = api_result_json["shopping_results"]
 
@@ -234,7 +263,7 @@ def initialize_mongoDB_equipment_collection():
             # We also keep an explicit blacklist of products that do not have relevant images
             if 'rating' in result.keys() and 'reviews' in result.keys() and result['title'] not in EQUIPMENT_BLACKLIST:
                 global equipmentIdCounter
-                images = get_google_images(result["title"])
+                images = get_google_images(query_template.format(result["title"]))
                 if len(images) > 0:  # Only keep data if at least 1 image can be found for it
                     eq = Equipment(equipmentIdCounter, result["title"], result["price"], result["rating"], result["reviews"], result["seller"],
                                    result["snippet"], result["extensions"], images, result["url"])
@@ -245,14 +274,13 @@ def initialize_mongoDB_equipment_collection():
 
 def initialize_mongoDB_channel_collection():
     """
-    This method should make all the API calls, parse the JSON responses, and return an array of Channel objects to use for Flask.
-    :return: array of Channel objects
-    TODO: Eventually we just need to populate a MongoDB database by calling setup() once when we decide on which API responses and channels to keep.
+    This method drops old collection, makes all the API calls, parse the JSON responses, and initializes fresh channels collection
+    in the remote mongoDB
+    :return: None
     """
-    # We will initially store Channel objects in arrays. Can later store in a MongoDB cluster for Phase II.
-    searchTermsArray = ['bicep curl', 'squats', 'deadlift workout']
-    # channelArray = []  # CHANGED TO A GLOBAL SCOPE
+    db.channels.drop()  # drop the old collection so we initialize a fresh collection
 
+    searchTermsArray = ['bicep curl', 'squats', 'deadlift workout']
     # Disable OAuthlib's HTTPS verification when running locally.
     # *DO NOT* leave this option enabled in production.
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "0"  # set to 0 to enable HTTPS verification
@@ -260,8 +288,8 @@ def initialize_mongoDB_channel_collection():
     # Build the API client to access Youtube Data V3 API
     api_service_name = "youtube"
     api_version = "v3"
-    DEVELOPER_KEY = "AIzaSyBE-YXbak2UQlYM3hnKuiGoxxlt9VALgCk"
-    # DEVELOPER_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk'
+    DEVELOPER_KEY = "AIzaSyBE-YXbak2UQlYM3hnKuiGoxxlt9VALgCk"  # Andy's
+    # DEVELOPER_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk' # Michelle's
     youtube = build(
         api_service_name, api_version, developerKey=DEVELOPER_KEY)
 
@@ -289,6 +317,42 @@ def get_json(exercise_URL, category_URL, muscle_URL, equipment_URL, image_URL, c
     image = requests.get(url=image_URL, data=data, headers=headers).json()
     comment = requests.get(url=comment_URL, data=data, headers=headers).json()
     return exercise, category, muscle, equipment, image, comment
+
+
+def should_add_exercise(exercise):
+    """
+    Helper function called in the initialize_mongoDB_exercises_collection() method to mark specific exercise duplicates
+    that should NOT be added to the database. These can't be eliminated with the simple blacklist due to identical exercise names.
+    This method achieves the following rules:
+    1.) Blacklists one of the 'Military Press' exercise with Category == Arms
+    2.) Blacklists the first of 2 'Plank' exercises using the global PLANK_REMOVED_FLAG
+    3.) Blacklist spanish exercise 'Curl su Panca a 45°" using substring.
+    :param exercise: an Exercise object that should have all attributes initialized
+    :return: Boolean, True if exercise should be added, False otherwise
+    """
+
+    if exercise.name == 'Military Press' and exercise.category == 'Arms':
+        return False
+    elif exercise.name == 'Plank' and PLANK_REMOVED_FLAG is False:
+        return False
+    elif 'Curl su Panca a ' in exercise.name:
+        return False
+    else:
+        return True
+
+
+def fix_SZ_bar_typo(exercise):
+    """
+    Helper function to fix the SZ-Bar and SZ-bar typos for 4 equipment names, descriptions, and equipment attributes.
+    :param exercise: Exercise object with name verified to be in the SZ_BAR_TYPO set
+    :return: None
+    """
+    exercise.name = exercise.name.replace('SZ-Bar', 'EZ-Bar')
+    exercise.name = exercise.name.replace('SZ-bar', 'EZ-bar')
+    exercise.description = exercise.description.replace('SZ-Bar', 'EZ-Bar')
+    exercise.description = exercise.description.replace('SZ-bar', 'EZ-bar')
+    exercise.equipment = exercise.equipment.replace('SZ-Bar', 'EZ-Bar')
+    exercise.equipment = exercise.equipment.replace('SZ-bar', 'EZ-bar')
 
 
 def clean_html(raw_html):
@@ -322,7 +386,7 @@ def get_google_images(search_string, file_type=None):
     return images
 
 
-def create_serpstack_request_array(queryArray, numResults):
+def create_serpstack_request_params(queryArray, numResults):
     """
     :param queryArray: array of search terms
     :param numResults: limits the number of shopping results per search term
@@ -334,7 +398,7 @@ def create_serpstack_request_array(queryArray, numResults):
             'access_key': '3f69b854db358b9beae52bf6beb5d79f',  # Christopher's API Key
             'query': query,
             'type': 'shopping',
-            'num': numResults
+            'num': str(numResults)
         })
     return serpstackRequestArray
 
@@ -488,5 +552,13 @@ def channel_instance(channelID):
 
 # Start the Flask web-application when app.py file is run
 if __name__ == "__main__":
-    app.run(host="localhost", port=8080, debug=False)
+    # ONLY UNCOMMENT THE LINE BELOW IF YOU WANT TO COMPLETELY RE-INITIALIZE OUR MONGODB. Requires 1-2 minutes to call APIs and setup all 3 collections.
+    # setup_database()
+
+    # UNCOMMENT ONE OF THE FOLLOWING 3 LINES IF YOU WANT TO RE-INITIALIZE A SPECIFIC MODEL'S COLLECTION
+    # initialize_mongoDB_exercises_collection()
+    # initialize_mongoDB_equipment_collection()
+    # initialize_mongoDB_channel_collection()
+
+    app.run(host="localhost", port=8080, debug=True, use_reloader=True)
 
