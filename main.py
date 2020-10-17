@@ -11,17 +11,19 @@ API_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk' # michelle's
 SEARCH_ENGINE_ID = '598e742e6c308d255'
 equipmentIdCounter = 1
 EXERCISE_BLACKLIST = {'Axe Hold', 'Cycling', 'Upper Body', 'Upper External Oblique', 'Chin-ups', 'Wall Pushup'}
-EXERCISE_RENAME_DICT = {'Pushups': 'Chest Push-ups', 'Push Ups': 'Bicep Push-ups', 'Snach': 'Snatch', "Squat Thrust": "Burpee", 'Thruster': 'Barbell Thruster'}
+EXERCISE_RENAME_DICT = {'Pushups': 'Chest Push-ups', 'Push Ups': 'Push-ups', 'Snach': 'Snatch', "Squat Thrust": "Burpee", 'Thruster': 'Barbell Thruster Squats'}
 EXERCISE_SZ_BAR_TYPOS = {'French Press (skullcrusher) SZ-bar', 'Biceps Curls With SZ-bar', 'Upright Row, SZ-bar', 'Reverse Bar Curl'}
+EXERCISE_GYM_MAT_SET = {'Leg Raises, Lying', 'Side Crunch', 'Superman'}
 PLANK_REMOVED_FLAG = False
 EQUIPMENT_BLACKLIST = {'SML-1 Monster Lite Squat Stand - Made in the USA', 'ETHOS Power Rack 1.0, Red', 'Core Home Fitness Adjustable Dumbbell Set',
                        'Harbinger Pull-Up Bar Black - Hand Exer. Equip. at Academy Sports', 'Fuel Pureformance Xtreme Doorway Gym',
                        'Stamina Doorway Trainer Plus, Black', 'WEIDER Rubber Hex Dumbbell SINGLE 25 lb Pound Weight IN HAND FREE SHIP',
                        'A Pair of Dumbbells Set, Adjustable Free Weights Barbell Set 5-66lb (Black)', 'CAP Rubber Coated Hex Dumbbell 40 lb Weight Lifting Training Home Workout Single',
                        'Harbinger Multi-Gym Sport Pull-Up Bar - Hand Exercise Equipment at Academy Sports', 'Mind Reader - Pull-up bar - black'}
-exercisesArray = []    # declared globally for now, so instance pages can be populated and API-calls are not needlessly wasted
-equipmentArray = []    # declared globally for now, so instance pages can be populated and API-calls are not needlessly wasted
-channelArray = []      # declared globally for now, so instance pages can be populated and API-calls are not needlessly wasted
+CHANNELS_ID_SET = set()
+exercisesArray = []    # declared globally and initialized from our mongoDB the first time the homepage is visited
+equipmentArray = []    # declared globally and initialized from our mongoDB the first time the homepage is visited
+channelArray = []      # declared globally and initialized from our mongoDB the first time the homepage is visited
 client = MongoClient("mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase1Database?retryWrites=true&w=majority")
 db = client.phase2Database
 
@@ -30,11 +32,12 @@ db = client.phase2Database
 # =============================================================================================================================
 # Class for exercise object
 class Exercise:
-    def __init__(self, exercise_id, name, description, category, muscles, muscles_secondary, equipment, images, comments):
+    def __init__(self, exercise_id, name, description, category, subcategory, muscles, muscles_secondary, equipment, images, comments):
         self.id = exercise_id
         self.name = name
         self.description = description
         self.category = category
+        self.subcategory = subcategory
         self.muscles = muscles
         self.muscles_secondary = muscles_secondary
         self.equipment = equipment
@@ -48,6 +51,7 @@ class Exercise:
             'name': self.name,
             'description': self.description,
             'category': self.category,
+            'subcategory': self.subcategory,
             'muscles': self.muscles,
             'muscles_secondary': self.muscles_secondary,
             'equipment': self.equipment,
@@ -61,7 +65,7 @@ class Exercise:
 
 # Class for equipment object
 class Equipment:
-    def __init__(self, id, name, price, rating, reviews, seller, snippet, extensions, images, url):
+    def __init__(self, id, name, price, rating, reviews, seller, snippet, extensions, images, url, equipmentCategory):
         self.id = id  # unique id generated in the backend to help create dynamic URLs
         self.name = name  # called 'title' in JSON
         self.price = price
@@ -72,6 +76,7 @@ class Equipment:
         self.extensions = extensions
         self.images = images
         self.url = url
+        self.equipmentCategory = equipmentCategory
 
     def to_dictionary(self):
         return {
@@ -85,7 +90,8 @@ class Equipment:
             'snippet': self.snippet,
             'extensions': self.extensions,
             'images': self.images,
-            'url': self.url
+            'url': self.url,
+            'equipmentCategory': self.equipmentCategory
         }
 
     def __str__(self):
@@ -94,7 +100,7 @@ class Equipment:
 
 # Class for channel object
 class Channel:
-    def __init__(self, channelId, channelTitle, description,  thumbnailURL, subscriberCount, viewCount, videoCount):
+    def __init__(self, channelId, channelTitle, description,  thumbnailURL, subscriberCount, viewCount, videoCount, exerciseCategory, exerciseSubcategory=None):
         self.id = channelId  # unique channelId string passed in from the JSON response
         self.name = channelTitle
         self.description = description
@@ -102,6 +108,8 @@ class Channel:
         self.subscriberCount = subscriberCount
         self.viewCount = viewCount
         self.videoCount = videoCount
+        self.exerciseCategory = exerciseCategory
+        self.exerciseSubcategory = exerciseSubcategory
 
     def to_dictionary(self):
         return {
@@ -113,6 +121,8 @@ class Channel:
             'subscriberCount': self.subscriberCount,
             'viewCount': self.viewCount,
             'videoCount': self.videoCount,
+            'exerciseCategory': self.exerciseCategory,
+            'exerciseSubcategory': self.exerciseSubcategory
         }
 
     def __str__(self):
@@ -169,15 +179,15 @@ def initialize_mongoDB_exercises_collection():
             exerciseID = x["id"]
 
             # strip description of html elements
-            description  = clean_html(x["description"])
+            description = clean_html(x["description"])
 
             # get category name using ID
             categoryID = x["category"]
             categoryResults = category_data["results"]
-            categoryName = ""
+            category_name = ""
             for result in categoryResults:
                 if result["id"] == categoryID:
-                    categoryName = result["name"]
+                    category_name = result["name"]
                     break
 
             # get muscle name using ID
@@ -225,7 +235,14 @@ def initialize_mongoDB_exercises_collection():
                 if result["exercise"] == exerciseID:
                     comments.append(result["comment"])
 
-            exercise = Exercise(exerciseID, x["name"], description, categoryName, muscles_string, sec_muscles_string, equipment_string,
+            # Initialize subcategory variable. Use the category_name, x["name"], muscles_string, and sec_muscles_string to decide the subcategory. Note only 'Arms' and 'Legs' are broken down into subcategories
+            subcategory = None
+            if category_name == 'Arms':
+                subcategory = return_arms_subcategory(x['name'], muscles_string, sec_muscles_string)
+            elif category_name == 'Legs':
+                subcategory = return_legs_subcategory(x['name'])
+
+            exercise = Exercise(exerciseID, x["name"], description, category_name, subcategory, muscles_string, sec_muscles_string, equipment_string,
                                 images, comments)
 
             if exercise.name in EXERCISE_BLACKLIST:
@@ -237,6 +254,9 @@ def initialize_mongoDB_exercises_collection():
                 # Fix SZ-Bar/SZ-bar typos for 4 exercise name, description, and equipment attributes
                 if exercise.name in EXERCISE_SZ_BAR_TYPOS:
                     fix_SZ_bar_typo(exercise)
+                # Make equipment naming consistent across all models ('Gym mat' -> 'Exercise mat')
+                if exercise.name in EXERCISE_GYM_MAT_SET:
+                    convert_gym_mat_to_exercise_mat(exercise)
                 db.exercises.insert_one(exercise.to_dictionary())
 
 
@@ -248,7 +268,7 @@ def initialize_mongoDB_equipment_collection():
     """
     db.equipments.drop()  # drop the old collection so we initialize a fresh collection
 
-    queryArray = ['Kettlebell', 'Dumbbell', 'Barbell', 'Bench', 'EZ-bar', 'Exercise mat']
+    queryArray = ['Kettlebell', 'Dumbbell', 'Barbell', 'Bench', 'EZ-Bar', 'Exercise mat']
     URL_FOR_SERPSTACK = "http://api.serpstack.com/search"
     serpstackRequestArray = create_serpstack_request_params(queryArray, 7)
     query_template = '{} workout equipment'
@@ -264,10 +284,10 @@ def initialize_mongoDB_equipment_collection():
             if 'rating' in result.keys() and 'reviews' in result.keys() and result['title'] not in EQUIPMENT_BLACKLIST:
                 global equipmentIdCounter
                 images = get_google_images(query_template.format(result["title"]))
+                equipmentCategory = param['query']
                 if len(images) > 0:  # Only keep data if at least 1 image can be found for it
                     eq = Equipment(equipmentIdCounter, result["title"], result["price"], result["rating"], result["reviews"], result["seller"],
-                                   result["snippet"], result["extensions"], images, result["url"])
-                    # equipmentArray.append(eq)
+                                   result["snippet"], result["extensions"], images, result["url"], equipmentCategory)
                     db.equipments.insert_one(eq.to_dictionary())
                     equipmentIdCounter += 1
 
@@ -280,7 +300,14 @@ def initialize_mongoDB_channel_collection():
     """
     db.channels.drop()  # drop the old collection so we initialize a fresh collection
 
-    searchTermsArray = ['bicep curl', 'squats', 'deadlift workout']
+    searchTermsArray = ['Abs', 'Shoulders', 'Bicep', 'Tricep', 'Squats', 'Deadlift', 'Chest', 'Back', 'Calves']
+    exerciseCategoryMapper = {
+        'Bicep': 'Arms',
+        'Tricep': 'Arms',
+        'Squats': 'Legs',
+        'Deadlift': 'Legs'
+    }
+    searchTermTemplate = "{} workout exercise"
     # Disable OAuthlib's HTTPS verification when running locally.
     # *DO NOT* leave this option enabled in production.
     os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "0"  # set to 0 to enable HTTPS verification
@@ -295,12 +322,22 @@ def initialize_mongoDB_channel_collection():
 
     # Call helper methods to initialize Channel arrays
     for searchTerm in searchTermsArray:
-        for item in execute_youtube_search_API(youtube, searchTerm):
-            snippet = item['snippet']
-            statistics = execute_channels_statistics_API(youtube, item['snippet']['channelId'])
-            channel = Channel(snippet['channelId'], snippet['channelTitle'], snippet['description'], snippet['thumbnails']['high']['url'],
-                              statistics['subscriberCount'], statistics['viewCount'], statistics['videoCount'])
-            db.channels.insert_one(channel.to_dictionary())
+        for item in execute_youtube_search_API(youtube, searchTermTemplate.format(searchTerm), maxResults=5):
+                snippet = item['snippet']
+                statistics = execute_channels_statistics_API(youtube, item['snippet']['channelId'])
+                exerciseCategory = searchTerm
+                exerciseSubcategory = None
+                # If searching a subcategory term, map and save the broader exercise category
+                if searchTerm in exerciseCategoryMapper.keys():
+                    exerciseCategory = exerciseCategoryMapper[searchTerm]
+                    exerciseSubcategory = searchTerm
+
+                channel = Channel(snippet['channelId'], snippet['channelTitle'], snippet['description'], snippet['thumbnails']['high']['url'],
+                                  statistics['subscriberCount'], statistics['viewCount'], statistics['videoCount'], exerciseCategory, exerciseSubcategory)
+                # Only add channel if it is not a duplicate
+                if channel.id not in CHANNELS_ID_SET:
+                    db.channels.insert_one(channel.to_dictionary())
+                    CHANNELS_ID_SET.add(channel.id)
 
 
 # All helper API-call methods or JSON-parsing helper methods defined below
@@ -310,7 +347,7 @@ def get_json(exercise_URL, category_URL, muscle_URL, equipment_URL, image_URL, c
     This method gets a response from all URLs needed from the wger REST API, parses it into json, and returns the json
     :return: JSON message
     """
-    exercise =  requests.get(url=exercise_URL, data=data, headers=headers).json()
+    exercise = requests.get(url=exercise_URL, data=data, headers=headers).json()
     category = requests.get(url=category_URL, data=data, headers=headers).json()
     muscle = requests.get(url=muscle_URL, data=data, headers=headers).json()
     equipment = requests.get(url=equipment_URL, data=data, headers=headers).json()
@@ -353,6 +390,44 @@ def fix_SZ_bar_typo(exercise):
     exercise.description = exercise.description.replace('SZ-bar', 'EZ-bar')
     exercise.equipment = exercise.equipment.replace('SZ-Bar', 'EZ-Bar')
     exercise.equipment = exercise.equipment.replace('SZ-bar', 'EZ-bar')
+
+
+def convert_gym_mat_to_exercise_mat(exercise):
+    """
+    Helper function that renames the equipment attribute for 3 exercises from 'equipment = Gym mat' to 'equipment = Exercise mat'.
+    To have consistent tags and link instances across models, we need consistent names.
+    :param exercise: An exercise object from the EXERCISE_GYM_MAT_SET
+    :return: None
+    """
+    exercise.equipment = 'Exercise mat'
+
+
+def return_arms_subcategory(exerciseName, muscles_string, sec_muscles_string):
+    if 'Bicep' in exerciseName:
+        return 'Biceps'
+    elif 'Tricep' in exerciseName:
+        return 'Triceps'
+    else:
+        if 'Biceps' in muscles_string:
+            return 'Biceps'
+        elif 'Triceps' in muscles_string:
+            return 'Triceps'
+        else:
+            if 'Biceps' in sec_muscles_string:
+                return 'Biceps'
+            elif 'Triceps' in sec_muscles_string:
+                return 'Triceps'
+            else:  # If exercise fits neither subcategory, return None
+                return None
+
+
+def return_legs_subcategory(exerciseName):
+    if 'Squat' in exerciseName:
+        return 'Squats'
+    elif 'Deadlift' in exerciseName:
+        return 'Deadlift'
+    else:  # There are 5 specific exercises that don't fall under Squats or Deadlift subcategory... check <https://github.com/UT-SWLab/TeamA13/issues/47> for more details
+        return None
 
 
 def clean_html(raw_html):
@@ -445,7 +520,7 @@ def initialize_exercises_array_from_db():
     exercisesCursor = db.exercises.find()
     for exerciseDocument in exercisesCursor:
         exercisesArray.append(Exercise(exerciseDocument['id'], exerciseDocument['name'], exerciseDocument['description'],
-                                        exerciseDocument['category'], exerciseDocument['muscles'],
+                                        exerciseDocument['category'], exerciseDocument['subcategory'], exerciseDocument['muscles'],
                                         exerciseDocument['muscles_secondary'], exerciseDocument['equipment'],
                                         exerciseDocument['images'], exerciseDocument['comments']))
 
@@ -457,7 +532,7 @@ def initialize_equipment_array_from_db():
                                         equipmentDocument['rating'], equipmentDocument['reviews'],
                                         equipmentDocument['seller'], equipmentDocument['snippet'],
                                         equipmentDocument['extensions'], equipmentDocument['images'],
-                                        equipmentDocument['url']))
+                                        equipmentDocument['url'], equipmentDocument['equipmentCategory']))
 
 
 def initialize_channel_array_from_db():
@@ -465,7 +540,8 @@ def initialize_channel_array_from_db():
     for channelDocument in channelCursor:
         channelArray.append(Channel(channelDocument['id'], channelDocument['name'], channelDocument['description'],
                                     channelDocument['thumbnailURL'], channelDocument['subscriberCount'],
-                                    channelDocument['viewCount'], channelDocument['videoCount']))
+                                    channelDocument['viewCount'], channelDocument['videoCount'], channelDocument['exerciseCategory'],
+                                    channelDocument['exerciseSubcategory']))
 
 
 # At this point all helper methods definitions and API calls should be done. (Later DB should be populated already)
