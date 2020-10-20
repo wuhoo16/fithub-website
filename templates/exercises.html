@@ -13,54 +13,24 @@
         {% set numLeftOverChannels = ((end + 1) - start) % 3 %}
         {% for i in range(numFullRows) %}
             <div class="row" id="row{{ i|string }}">
+            {% for offset in range(3) %}    
                 <div class="col-md-4 p-4">
                     <div class="card bg-light h-100 pt-4">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[start + 3*i].images[0] }}" alt="{{ exercisesArray[start + 3*i].name }}">
+                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[start + 3*i + offset].images[0] }}" alt="{{ exercisesArray[start + 3*i + offset].name }}">
                         <div class="card-body">
-                            <h2 class="card-title text-center text-dark">{{ exercisesArray[start + 3*i].name }}</h2>
+                            <h2 class="card-title text-center text-dark">{{ exercisesArray[start + 3*i + offset].name }}</h2>
                             <p class="card-text">
-                                <ul class="exerciseAttributesList list-unstyled text-center">
-                                    <li><b>Description:</b> {{ exercisesArray[start + 3*i].description }}</li>
-                                    <li><b>Category:</b> {{ exercisesArray[start + 3*i].category }}</li>
-                                    <li><b>Equipment:</b> {{ exercisesArray[start + 3*i].equipment }}</li>
+                                <ul class="exerciseAttributesList list-unstyled">
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Category:</b> {{ exercisesArray[start + 3*i + offset].category }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Equipment:</b> {{ exercisesArray[start + 3*i + offset].equipment }}</li>
+                                    <li style="padding-left: 1em;"><b>Description:</b> {{ exercisesArray[start + 3*i + offset].description }}</li>
                                 </ul>
                             </p>   
-                            <a href="{{ url_for('exercise_instance', exercise_id=exercisesArray[start + 3*i].id) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('exercise_instance', exercise_id=exercisesArray[start + 3*i + offset].id) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="card bg-secondary border-0 h-100">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[start + 3*i+1].images[0] }}" alt="{{ exercisesArray[start + 3*i+1].name }}">
-                        <div class="card-body">
-                            <h2 class="card-title">{{ exercisesArray[start + 3*i+1].name }}</h2>
-                            <p class="card-text">
-                                <ul class="exerciseAttributesList">
-                                    <li><b>Description:</b> {{ exercisesArray[start + 3*i+1].description }}</li>
-                                    <li><b>Category:</b> {{ exercisesArray[start + 3*i+1].category }}</li>
-                                    <li><b>Equipment:</b> {{ exercisesArray[start + 3*i+1].equipment }}</li>
-                                </ul>
-                            </p>
-                            <a href="{{ url_for('exercise_instance', exercise_id=exercisesArray[start + 3*i+1].id) }}" class="btn btn-primary">More Details</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="card bg-secondary border-0 h-100">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[start + 3*i+2].images[0] }}" alt="{{ exercisesArray[start + 3*i+2].name }}">
-                        <div class="card-body">
-                            <h2 class="card-title">{{ exercisesArray[start + 3*i+2].name }}</h2>
-                            <p class="card-text">
-                                <ul class="exerciseAttributesList">
-                                    <li><b>Description:</b> {{ exercisesArray[start + 3*i+2].description }}</li>
-                                    <li><b>Category:</b> {{ exercisesArray[start + 3*i+2].category }}</li>
-                                    <li><b>Equipment:</b> {{ exercisesArray[start + 3*i+2].equipment }}</li>
-                                </ul>
-                            </p>
-                            <a href="{{ url_for('exercise_instance', exercise_id=exercisesArray[start + 3*i+2].id) }}" class="btn btn-primary">More Details</a>
-                        </div>
-                    </div>
-                </div>
+            {% endfor %}      
             </div>
         {% endfor %}    
 
@@ -68,18 +38,18 @@
             <div class="row" id="bottomRow">
             {% for i in range(-numLeftOverChannels, 0) %}
                 <div class="col-md-4">
-                    <div class="card bg-secondary border-0">
-                        <img class="card-img-top img-fluid" src="{{ exercisesArray[end + 1 + i].images[0] }}" alt="{{ exercisesArray[end + 1 + i].name }}">
+                    <div class="card bg-light h-100 pt-4">
+                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[end + 1 + i].images[0] }}" alt="{{ exercisesArray[end + 1 + i].name }}">
                         <div class="card-body">
-                            <h2 class="card-title">{{ exercisesArray[end + 1 + i].name }}</h2>
+                            <h2 class="card-title text-center text-dark">{{ exercisesArray[end + 1 + i].name }}</h2>
                             <p class="card-text">
-                                <ul class="exerciseAttributesList">
-                                    <li><b>Description:</b> {{ exercisesArray[end + 1 + i].description }}</li>
-                                    <li><b>Category:</b> {{ exercisesArray[end + 1 + i].category }}</li>
-                                    <li><b>Equipment:</b> {{ exercisesArray[end + 1 + i].equipment }}</li>
+                                <ul class="exerciseAttributesList list-unstyled">
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Category:</b> {{ exercisesArray[end + 1 + i].category }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Equipment:</b> {{ exercisesArray[end + 1 + i].equipment }}</li>
+                                    <li style="padding-left: 1em;"><b>Description:</b> {{ exercisesArray[end + 1 + i].description }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('exercise_instance', exercise_id=exercisesArray[end + 1 + i].id) }}" class="btn btn-primary">More Details</a>
+                            <a href="{{ url_for('exercise_instance', exercise_id=exercisesArray[end + 1 + i].id) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>

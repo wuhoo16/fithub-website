@@ -16,7 +16,6 @@
   <body>
     <nav
       class="navbar navbar-expand-sm bg-dark navbar-dark"
-      style="margin-bottom: 25px"
     >
       <button
         class="navbar-toggler"
@@ -53,6 +52,8 @@
         </ul>
       </div>
     </nav>
-    {% block body %} {% endblock %}
+    <div class="container-fluid bg-light" style="padding-top: 25px;">
+      {% block body %} {% endblock %}
+    </div>
   </body>
 </html>
