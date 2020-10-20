@@ -1,6 +1,7 @@
 import os
 import requests
 import re
+import math
 
 from googleapiclient.discovery import build
 from flask import Flask, render_template, url_for, request, redirect
@@ -564,9 +565,10 @@ def index():
 
 
 # exercises model page
-@app.route("/exercises", methods=['GET'])
-def exercises():
-    return render_template('exercises.html', exercisesArray=exercisesArray)
+@app.route("/exercises/<int:page_number>", methods=['GET'])
+def exercises(page_number):
+    start, end, num_pages = paginate(page_number, exercisesArray)
+    return render_template('exercises.html', exercisesArray=exercisesArray, start=start, end=end, page_number=page_number, num_pages=num_pages)
 
 
 # equipments model page
@@ -586,6 +588,16 @@ def channels():
 def about():
     return render_template('about.html')
 
+# Helper methods for model pages
+# ==================================================================================================================
+# Pagination on Model Pages - assumes 9 instances per page
+def paginate(page_number, array):
+    startIndex = (page_number - 1) * 9
+    endIndex = (page_number * 9) - 1
+    if endIndex >= len(array):
+        endIndex = len(array) - 1
+    num_pages = math.ceil(len(array) / 9)
+    return startIndex, endIndex, num_pages
 
 # All view methods for INSTANCE pages are defined below:
 # ==================================================================================================================
