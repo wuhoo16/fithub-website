@@ -610,23 +610,15 @@ def equipment_instance(equipmentID):
 
 
 # channel instance pages
-# @app.route("/channels/<string:channelID>", methods=['GET'])
-# def channel_instance(channelID):
-#     return render_template('channelInstance.html', channelID=channelID, channelArray=channelArray)
-
-@app.route("/channels/<string:channelID>", methods=['GET']) 
+@app.route("/channels/<string:channelID>", methods=['GET'])
 def channel_instance(channelID):
-    if channelID == "UCb67rmuez0SKOQbZ4vCRDHQ":
-        return render_template('channelsInstance1.html')
-    elif channelID == "UCZvdYkjBXBSxhosgkWkDyvQ":
-        return render_template('channelsInstance2.html')
-    elif channelID == "UC_gbQ9J76mYJ5S3zVTANM_w":
-        return render_template('channelsInstance3.html')
-    else:
-        return render_template('channels.html')
+    print("here")
+    idx = int(request.args.get('channelIdx'))
+    channelObj = channelArray[idx]
+    return render_template('channelInstance.html', channelObj=channelObj)
 
 
-# Start the Flask web-application when app.py file is run
+# Start the Flask web-application when app.py file is ruun
 if __name__ == "__main__":
     # ONLY UNCOMMENT THE LINE BELOW IF YOU WANT TO COMPLETELY RE-INITIALIZE OUR MONGODB. Requires 1-2 minutes to call APIs and setup all 3 collections.
     # setup_database()

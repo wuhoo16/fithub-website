@@ -2,21 +2,12 @@
 <title>{}</title>
 {% endblock %} {% block body %}
 <div class="container-fluid pt-3 centered">
-  <h1>Welcome to {} Channel's Page!</h1>
+  <h1>Welcome to {{channelObj.name}} Channel's Page!</h1>
   <img
     class="header-pic"
     src="https://yt3.ggpht.com/a/AATXAJwPhnsNaSAN-z6HzIcahenFVdwQGa5l7qV0AZOiLQ=s800-c-k-c0xffffffff-no-rj-mo"
   />
-  <h5>
-    The channel is an educational purpose for bodybuilding and fitness.Our
-    YouTube videos help you to build body and stay fit. with our YouTube workout
-    videos , you can learn how professional exercises are done. our mission is
-    to provide you the most effective and comprehensive Exercise demos and
-    informative workout and fitness videos © Copyright by "workout & Fitness" ☞
-    Do not Reup. If you use our cantent first inform us.Like, Share and
-    Subscribe our Channel to inspire me to make more informational videos
-    #workout #fitness #motivation #bodybulding #muscles #gym 👑 KT 👑
-  </h5>
+  <h5>{{channelObj.description}}</h5>
   <div>
     <img
       class="instance-pic"
@@ -33,9 +24,9 @@
     ></iframe>
   </div>
   <div class="border border-dark rounded mx-auto my-2">
-    <div><label>View Count: 6687183</label></div>
-    <div><label>Subscriber Count: 230000</label></div>
-    <div><label>Number of Videos: 82</label></div>
+    <div><label>View Count: {{channelObj.viewCount}}</label></div>
+    <div><label>Subscriber Count: {{channelObj.subscriberCount}}</label></div>
+    <div><label>Number of Videos: {{channelObj.videoCount}}</label></div>
     <div><label>Are videos public or private? Public</label></div>
   </div>
   <div class="border border-dark rounded mx-auto my-2">
