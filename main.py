@@ -602,7 +602,7 @@ def paginate(page_number, array):
 # All view methods for INSTANCE pages are defined below:
 # ==================================================================================================================
 # exercise instance pages
-@app.route("/exercises/<int:exercise_id>", methods=['GET'])
+@app.route("/exerciseinstance/<int:exercise_id>", methods=['GET'])
 def exercise_instance(exercise_id):
     if exercise_id == 345:
         return render_template('exerciseInstance1.html')
