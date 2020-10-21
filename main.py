@@ -1,6 +1,7 @@
 import os
 import requests
 import re
+import math
 
 from googleapiclient.discovery import build
 from flask import Flask, render_template, url_for, request, redirect
@@ -564,21 +565,24 @@ def index():
 
 
 # exercises model page
-@app.route("/exercises", methods=['GET'])
-def exercises():
-    return render_template('exercises.html', exercisesArray=exercisesArray)
+@app.route("/exercises/<int:page_number>", methods=['GET'])
+def exercises(page_number):
+    start, end, num_pages = paginate(page_number, exercisesArray)
+    return render_template('exercises.html', exercisesArray=exercisesArray, start=start, end=end, page_number=page_number, num_pages=num_pages)
 
 
 # equipments model page
-@app.route("/equipment", methods=['GET'])
-def equipments():
-    return render_template('equipments.html', equipmentArray=equipmentArray)
+@app.route("/equipment/<int:page_number>", methods=['GET'])
+def equipments(page_number):
+    start, end, num_pages = paginate(page_number, equipmentArray)
+    return render_template('equipments.html', equipmentArray=equipmentArray, start=start, end=end, page_number=page_number, num_pages=num_pages)
 
 
 # channels model page
-@app.route("/channels", methods=['GET'])
-def channels():
-    return render_template('channels.html', channelArray=channelArray)
+@app.route("/channels/<int:page_number>", methods=['GET'])
+def channels(page_number):
+    start, end, num_pages = paginate(page_number, channelArray)
+    return render_template('channels.html', channelArray=channelArray, start=start, end=end, page_number=page_number, num_pages=num_pages)
 
 
 # about page
@@ -586,11 +590,21 @@ def channels():
 def about():
     return render_template('about.html')
 
+# Helper methods for model pages
+# ==================================================================================================================
+# Pagination on Model Pages - assumes 9 instances per page
+def paginate(page_number, array):
+    startIndex = (page_number - 1) * 9
+    endIndex = (page_number * 9) - 1
+    if endIndex >= len(array):
+        endIndex = len(array) - 1
+    num_pages = math.ceil(len(array) / 9)
+    return startIndex, endIndex, num_pages
 
 # All view methods for INSTANCE pages are defined below:
 # ==================================================================================================================
 # exercise instance pages
-@app.route("/exercises/<int:exercise_id>", methods=['GET'])
+@app.route("/exerciseinstance/<int:exercise_id>", methods=['GET'])
 def exercise_instance(exercise_id):
     if exercise_id == 345:
         return render_template('exerciseInstance1.html')
@@ -614,7 +628,7 @@ def equipment_instance(equipmentID):
 # def channel_instance(channelID):
 #     return render_template('channelInstance.html', channelID=channelID, channelArray=channelArray)
 
-@app.route("/channels/<string:channelID>", methods=['GET']) 
+@app.route("/channelinstance/<string:channelID>", methods=['GET']) 
 def channel_instance(channelID):
     if channelID == "UCb67rmuez0SKOQbZ4vCRDHQ":
         return render_template('channelsInstance1.html')
@@ -622,8 +636,8 @@ def channel_instance(channelID):
         return render_template('channelsInstance2.html')
     elif channelID == "UC_gbQ9J76mYJ5S3zVTANM_w":
         return render_template('channelsInstance3.html')
-    else:
-        return render_template('channels.html')
+    else: 
+        return render_template('channelInstance.html')
 
 
 # Start the Flask web-application when app.py file is run
