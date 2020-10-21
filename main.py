@@ -572,15 +572,17 @@ def exercises(page_number):
 
 
 # equipments model page
-@app.route("/equipment", methods=['GET'])
-def equipments():
-    return render_template('equipments.html', equipmentArray=equipmentArray)
+@app.route("/equipment/<int:page_number>", methods=['GET'])
+def equipments(page_number):
+    start, end, num_pages = paginate(page_number, equipmentArray)
+    return render_template('equipments.html', equipmentArray=equipmentArray, start=start, end=end, page_number=page_number, num_pages=num_pages)
 
 
 # channels model page
-@app.route("/channels", methods=['GET'])
-def channels():
-    return render_template('channels.html', channelArray=channelArray)
+@app.route("/channels/<int:page_number>", methods=['GET'])
+def channels(page_number):
+    start, end, num_pages = paginate(page_number, channelArray)
+    return render_template('channels.html', channelArray=channelArray, start=start, end=end, page_number=page_number, num_pages=num_pages)
 
 
 # about page
@@ -626,7 +628,7 @@ def equipment_instance(equipmentID):
 # def channel_instance(channelID):
 #     return render_template('channelInstance.html', channelID=channelID, channelArray=channelArray)
 
-@app.route("/channels/<string:channelID>", methods=['GET']) 
+@app.route("/channelinstance/<string:channelID>", methods=['GET']) 
 def channel_instance(channelID):
     if channelID == "UCb67rmuez0SKOQbZ4vCRDHQ":
         return render_template('channelsInstance1.html')
@@ -634,8 +636,8 @@ def channel_instance(channelID):
         return render_template('channelsInstance2.html')
     elif channelID == "UC_gbQ9J76mYJ5S3zVTANM_w":
         return render_template('channelsInstance3.html')
-    else:
-        return render_template('channels.html')
+    else: 
+        return render_template('channelInstance.html')
 
 
 # Start the Flask web-application when app.py file is run

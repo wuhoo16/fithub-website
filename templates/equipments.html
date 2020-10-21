@@ -1,70 +1,91 @@
 {% extends 'base.html' %}
 
-<!-- PASSED PARAM NAME: equipmentArray -->
-
 {% block head %}
     <title>Equipment Model Page</title>
 {% endblock %}
 
 {% block body %}
     <div class="container-fluid bg-light">
-        <h1 class="pageTitle">Welcome to the Equipment Model Page!</h1>
-        <p class="pageSubtitle">
+        <h1 class="modelHeader">Welcome to the Equipment Model Page!</h1>
+        <p class="modelDescription">
             This model page includes a database of different types of workout equipment, gear, and products. You can also
             quickly find the price rating and seller/vendor of each product in one place.
         </p>
-        <div class="container-fluid bg-secondary" id="equipmentGrid">
-            {% set numRows = equipmentArray|length // 3 %}
-            {% set remainder = equipmentArray|length % 3 %}
-            {% for i in range(numRows) %}
-                <div class="row" id="row {{ i|string }}">
-                {% for offset in range(3) %}
-                    <div class="col-md-4">
-                        <div class="card bg-secondary border-0">
-                            <img class="card-img-top img-fluid" src="{{ equipmentArray[3*i+offset].images[0] }}" onerror="this.onerror=null; this.src='{{ equipmentArray[3*i+offset].images[1] }}'"; alt="{{ equipmentArray[3*i+offset].name }}">
-                            <div class="card-body">
-                                <h2 class="card-title">{{ equipmentArray[3*i+offset].name }}</h2>
-                                <p class="card-text">
-                                    <ul class="equipmentData">
-                                        <li>Price: {{ equipmentArray[i].price }}</li>
-                                        <li>Rating: {{ equipmentArray[3*i+offset].rating }}</li>
-                                        <li>Seller: {{ equipmentArray[3*i+offset].seller }}</li>
-                                    </ul>
-                                </p>
-                                <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
-                                <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[3*i+offset].id) }}" class="btn btn-primary">More Details</a>
-                            </div>
+        <div class="container-fluid bg-light" id="modelGrid">
+        {% set numRows = ((end + 1) - start) // 3 %}
+        {% set remainder = ((end + 1) - start) % 3 %}
+        {% for i in range(numRows) %}
+            <div class="row" id="row {{ i|string }}">
+            {% for offset in range(3) %}
+                <div class="col-md-4 p-4">
+                    <div class="card bg-light h-100 pt-4">
+                        <img class="card-img-top img-fluid mx-auto" src="{{ equipmentArray[start + 3*i+offset].images[0] }}" onerror="this.onerror=null; this.src='{{ equipmentArray[start + 3*i+offset].images[1] }}'"; alt="{{ equipmentArray[start + 3*i+offset].name }}">
+                        <div class="card-body">
+                            <h2 class="card-title text-center text-dark">{{ equipmentArray[start + 3*i+offset].name }}</h2>
+                            <p class="card-text">
+                                <ul class="equipmentData list-unstyled">
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Price: </b>{{ equipmentArray[start + 3*i+offset].price }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Rating: </b>{{ equipmentArray[start + 3*i+offset].rating }}</li>
+                                    <li style="padding-left: 1em;"><b>Seller: </b>{{ equipmentArray[start + 3*i+offset].seller }}</li>
+                                </ul>
+                            </p>
+                            <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
+                            <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[start + 3*i+offset].id) }}" class="stretched-link"></a>
                         </div>
                     </div>
-                {% endfor %}
                 </div>
             {% endfor %}
+            </div>
+        {% endfor %}
 
-            {% if remainder > 0 %}
-                <div class="row" id="bottomRow">
-                {% for i in range(-remainder, 0) %}
-                    <div class="col-md-4">
-                        <div class="card bg-secondary border-0">
-                            <img class="card-img-top img-fluid" src="{{ equipmentArray[i].images[0] }}" onerror="this.onerror=null; this.src='{{ equipmentArray[i].images[1] }}'"; alt="{{ equipmentArray[i].name }}">
-                            <div class="card-body">
-                                <h2 class="card-title">{{ equipmentArray[i].name }}</h2>
-                                <p class="card-text">
-                                    <ul class="equipmentData">
-                                        <!-- TODO: find out what attributes are most important to put in card data -->
-                                        <li>Price: {{ equipmentArray[i].price }}</li>
-                                        <li>Rating: {{ equipmentArray[i].rating }}</li>
-                                        <li>Seller: {{ equipmentArray[i].seller }}</li>
-                                    </ul>
-                                </p>
-                                <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
-                                <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[i].id) }}" class="btn btn-primary">More Equipment Details</a>
-                            </div>
+        {% if remainder > 0 %}
+            <div class="row" id="bottomRow">
+            {% for i in range(-remainder, 0) %}
+                <div class="col-md-4 p-4">
+                    <div class="card bg-light h-100 pt-4">
+                        <img class="card-img-top img-fluid mx-auto" src="{{ equipmentArray[end + 1 + i].images[0] }}" onerror="this.onerror=null; this.src='{{ equipmentArray[end + 1 + i].images[1] }}'"; alt="{{ equipmentArray[end + 1 + i].name }}">
+                        <div class="card-body">
+                            <h2 class="card-title text-center text-dark">{{ equipmentArray[end + 1 + i].name }}</h2>
+                            <p class="card-text">
+                                <ul class="equipmentData list-unstyled">
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Price: </b>{{ equipmentArray[end + 1 + i].price }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Rating: </b>{{ equipmentArray[end + 1 + i].rating }}</li>
+                                    <li style="padding-left: 1em;"><b>Seller: </b>{{ equipmentArray[end + 1 + i].seller }}</li>
+                                </ul>
+                            </p>
+                            <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[end + 1 + i].id) }}" class="stretched-link"></a>
                         </div>
                     </div>
-                {% endfor %}
                 </div>
-            {% endif %}
-
+            {% endfor %}
+            </div>
+        {% endif %}
         </div>
+
+        <ul class="pagination justify-content-center">
+            <!--Previous Page Button-->
+            {% if page_number == 1 %}
+                <li class="page-item disabled"><a class="page-link" href="">Previous</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('equipments', page_number=page_number-1) }}">Previous</a></li>
+            {% endif %}  
+
+            <!--All Pages Buttons-->
+            {% for i in range(1, num_pages+1) %}
+                {% if i == page_number %}
+                    <li class="page-item active"><a class="page-link" href="{{ url_for('equipments', page_number=i) }}">{{i}}</a></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('equipments', page_number=i) }}">{{i}}</a></li>
+                {% endif %}    
+            {% endfor %}
+
+            <!--Next Page Button-->
+            {% if page_number == num_pages %}
+                <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link" href="{{ url_for('equipments', page_number=page_number+1) }}">Next</a></li>
+            {% endif %}
+        </ul>
+
     </div>
 {% endblock %}
