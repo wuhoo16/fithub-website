@@ -21,7 +21,7 @@ EQUIPMENT_BLACKLIST = {'SML-1 Monster Lite Squat Stand - Made in the USA', 'ETHO
                        'A Pair of Dumbbells Set, Adjustable Free Weights Barbell Set 5-66lb (Black)', 'CAP Rubber Coated Hex Dumbbell 40 lb Weight Lifting Training Home Workout Single',
                        'Harbinger Multi-Gym Sport Pull-Up Bar - Hand Exercise Equipment at Academy Sports', 'Mind Reader - Pull-up bar - black'}
 CHANNELS_ID_SET = set()
-CHANNELS_TOPICS = {'/m/019_rr': 'Lifestyle', '/m/032tl': 'Fashion', '/m/027x7n': 'Fitness', '/m/02wbm': 'Food', '/m/03glg': 'Hobby', '/m/041xxh': 'Physical attractiveness (Beauty)', '/m/07c1v': 'Technology', 'm/01k8wb': 'Knowledge'}
+CHANNELS_TOPICS = {'/m/019_rr': 'Lifestyle', '/m/032tl': 'Fashion', '/m/027x7n': 'Fitness', '/m/02wbm': 'Food', '/m/03glg': 'Hobby', '/m/041xxh': 'Physical attractiveness (Beauty)', '/m/07c1v': 'Technology', '/m/01k8wb': 'Knowledge', '/m/04rlf': 'Music', '/m/02jjt': 'Entertainment', '/m/05qjc': 'Performing Arts', '/m/0kt51': 'Health', '/m/06ntj': 'Sports', '/m/0glt670': 'Hip-Hop Music'}
 exercisesArray = []    # declared globally and initialized from our mongoDB the first time the homepage is visited
 equipmentArray = []    # declared globally and initialized from our mongoDB the first time the homepage is visited
 channelArray = []      # declared globally and initialized from our mongoDB the first time the homepage is visited
@@ -101,7 +101,7 @@ class Equipment:
 
 # Class for channel object
 class Channel:
-    def __init__(self, channelId, channelTitle, description, thumbnailURL, subscriberCount, viewCount, videoCount, playlist, topicIds, topicCategories, exerciseCategory, unsubscribedTrailer = None, bannerUrl = None, keywords = None, featuredChannelsUrls = None, exerciseSubcategory=None):
+    def __init__(self, channelId, channelTitle, description, thumbnailURL, subscriberCount, viewCount, videoCount, playlist, topicIds, topicCategories, exerciseCategory, unsubscribedTrailer = None, bannerUrl = None, keywords = None, exerciseSubcategory=None):
         self.id = channelId  # unique channelId string passed in from the JSON response
         self.name = channelTitle
         self.description = description
@@ -116,7 +116,6 @@ class Channel:
             self.keywords = keywords.split(" ")
         else:
             self.keywords = keywords
-        self.featuredChannelsUrls = featuredChannelsUrls
         self.unsubscribedTrailer = unsubscribedTrailer
         self.bannerUrl = bannerUrl
         self.exerciseCategory = exerciseCategory
@@ -136,7 +135,6 @@ class Channel:
             'topicIds': self.topicIds,
             'topicCategories': self.topicCategories,
             'keywords': self.keywords,
-            'featuredChannelsUrls': self.featuredChannelsUrls,
             'unsubscribedTrailer': self.unsubscribedTrailer,
             'bannerUrl': self.bannerUrl,
             'exerciseCategory': self.exerciseCategory,
@@ -333,8 +331,8 @@ def initialize_mongoDB_channel_collection():
     # Build the API client to access Youtube Data V3 API
     api_service_name = "youtube"
     api_version = "v3"
-    DEVELOPER_KEY = "AIzaSyBE-YXbak2UQlYM3hnKuiGoxxlt9VALgCk"  # Andy's
-    # DEVELOPER_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk' # Michelle's
+    # DEVELOPER_KEY = "AIzaSyBE-YXbak2UQlYM3hnKuiGoxxlt9VALgCk"  # Andy's
+    DEVELOPER_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk' # Michelle's
     youtube = build(
         api_service_name, api_version, developerKey=DEVELOPER_KEY)
 
@@ -344,19 +342,15 @@ def initialize_mongoDB_channel_collection():
                 snippet = item['snippet']
                 statistics = execute_channels_statistics_API(youtube, item['snippet']['channelId'])
                 contentDetails = execute_channels_contentDetails_API(youtube, item['snippet']['channelId'])
-                elements = contentDetails['player']['embedHtml'].split(" ")
-                url = ""
-                for el in elements:
-                    if el.startswith("src="):
-                        el = el.replace("src=", "")
-                        url = el.replace('"', "")
-                        break
-                playlist = {"title": contentDetails['snippet']['title'], "description": contentDetails['snippet']['description'], "image": contentDetails['snippet']['thumbnails']['high']['url'], "url": url}
+                playlistTags = contentDetails['player']['embedHtml']
+                playlistUrl = convert_channels_embeddedUrl(playlistTags)
+                playlist = {"title": contentDetails['snippet']['title'], "description": contentDetails['snippet']['description'], "image": contentDetails['snippet']['thumbnails']['high']['url'], "url": playlistUrl}
+                
                 topicDetails = execute_channels_topicDetails_API(youtube, item['snippet']['channelId'])
                 brandingSettings = execute_channels_brandingSettings_API(youtube, item['snippet']['channelId'])
                 
                 brandingSettingsKeywords = None
-                brandingSettingsFeaturedUrls = None
+                # brandingSettingsFeaturedUrls = None
                 brandingSettingsImage = None
                 brandingSettingsTrailer = None
                 try: 
@@ -364,10 +358,10 @@ def initialize_mongoDB_channel_collection():
                 except:
                     pass
 
-                try: 
-                    brandingSettingsFeaturedUrls = brandingSettings['channel']['featuredChannelsUrls']
-                except:
-                    pass
+                # try: 
+                #     brandingSettingsFeaturedUrls = brandingSettings['channel']['featuredChannelsUrls']
+                # except:
+                #     pass
 
                 try: 
                     brandingSettingsImage = brandingSettings['image']['bannerTvHighImageUrl']
@@ -378,7 +372,12 @@ def initialize_mongoDB_channel_collection():
                         pass
                 try: 
                     trailerTemp = brandingSettings['channel']['unsubscribedTrailer']
-                    brandingSettingsTrailer = {'title': trailerTemp['snippet']['title'], 'description': trailerTemp['snippet']['description'], 'image': trailerTemp['snippet']['thumbnails']['high']['url'], 'tags': trailerTemp['snippet']['tags'], 'viewCount': trailerTemp['statistics']['viewCount'], 'likeCount': trailerTemp['statistics']['likeCount'], 'dislikeCount': trailerTemp['statistics']['dislikeCount'], 'url': trailerTemp['player']['embedHtml']}
+                    trailerUrl = ""
+                    try: 
+                        trailerUrl = convert_channels_embeddedUrl(trailerTemp['player']['embedHtml'])
+                    except:
+                        pass
+                    brandingSettingsTrailer = {'title': trailerTemp['snippet']['title'], 'description': trailerTemp['snippet']['description'], 'image': trailerTemp['snippet']['thumbnails']['high']['url'], 'tags': trailerTemp['snippet']['tags'], 'viewCount': trailerTemp['statistics']['viewCount'], 'likeCount': trailerTemp['statistics']['likeCount'], 'dislikeCount': trailerTemp['statistics']['dislikeCount'], 'url': trailerUrl}
                 except:
                     pass
 
@@ -392,7 +391,7 @@ def initialize_mongoDB_channel_collection():
                 channel = Channel(snippet['channelId'], snippet['channelTitle'], snippet['description'], snippet['thumbnails']['high']['url'],
                                   statistics['subscriberCount'], statistics['viewCount'], statistics['videoCount'], playlist,
                                   topicDetails['topicIds'], topicDetails['topicCategories'], exerciseCategory, brandingSettingsTrailer, brandingSettingsImage,
-                                  brandingSettingsKeywords, brandingSettingsFeaturedUrls, exerciseSubcategory)
+                                  brandingSettingsKeywords, exerciseSubcategory)
                 # Only add channel if it is not a duplicate
                 if channel.id not in CHANNELS_ID_SET:
                     db.channels.insert_one(channel.to_dictionary())
@@ -617,13 +616,15 @@ def execute_channels_brandingSettings_API(youtubeClient, channelID):
     )
     brandingSettings = getChannelbrandingSettingsRequest.execute()['items'][0]['brandingSettings']
 
+    #didn't set up featured channels: ftChannels = brandingSettings['channel']['featuredChannelsUrls'] (MAY DO LATER IF MORE INFO NEEDED) -- channels.list()
+    #setting up embedded html
     try: 
         videoID = brandingSettings['channel']['unsubscribedTrailer']
         getUnsubscribedTrailerRequest = youtubeClient.videos().list(
             part=["snippet", "player", "statistics"],
             id=videoID
         )
-
+        
         brandingSettings['channel']['unsubscribedTrailer'] = getUnsubscribedTrailerRequest.execute()['items'][0]
     except: 
         pass
@@ -650,9 +651,21 @@ def convert_channels_topicIds(ids):
         if id in CHANNELS_TOPICS:
             topicArr.append(CHANNELS_TOPICS[id])
         else: 
+            print("error in topic dictionary (MISSING TOPIC): ")
+            print(id)
             topicArr.append(id)
 
     return topicArr
+
+def convert_channels_embeddedUrl(embeddedTag):
+    elements = embeddedTag.split(" ")
+    url = ""
+    for el in elements:
+        if el.startswith("src="):
+            el = el.replace("src=", "")
+            url = el.replace('"', "")
+            break
+    return url
             
 
 
@@ -685,7 +698,7 @@ def initialize_channel_array_from_db():
                                     channelDocument['thumbnailURL'], channelDocument['subscriberCount'], channelDocument['viewCount'], 
                                     channelDocument['videoCount'], channelDocument['relatedPlaylists'], channelDocument['relatedPlaylistsLikes'],
                                     channelDocument['playlist'], channelDocument['topicIds'], channelDocument['topicCategories'],
-                                    channelDocument['keywords'], channelDocument['featuredChannelsUrls'], channelDocument['unsubscribedTrailer'], channelDocument['bannerUrl'], channelDocument['exerciseCategory'], channelDocument['exerciseSubcategory']))
+                                    channelDocument['keywords'], channelDocument['unsubscribedTrailer'], channelDocument['bannerUrl'], channelDocument['exerciseCategory'], channelDocument['exerciseSubcategory']))
 
 
 # At this point all helper methods definitions and API calls should be done. (Later DB should be populated already)
