@@ -696,9 +696,9 @@ def initialize_channel_array_from_db():
     for channelDocument in channelCursor:
         channelArray.append(Channel(channelDocument['id'], channelDocument['name'], channelDocument['description'],
                                     channelDocument['thumbnailURL'], channelDocument['subscriberCount'], channelDocument['viewCount'], 
-                                    channelDocument['videoCount'], channelDocument['relatedPlaylists'], channelDocument['relatedPlaylistsLikes'],
-                                    channelDocument['playlist'], channelDocument['topicIds'], channelDocument['topicCategories'],
-                                    channelDocument['keywords'], channelDocument['unsubscribedTrailer'], channelDocument['bannerUrl'], channelDocument['exerciseCategory'], channelDocument['exerciseSubcategory']))
+                                    channelDocument['videoCount'], channelDocument['playlist'], channelDocument['topicIds'], 
+                                    channelDocument['topicCategories'], channelDocument['keywords'], channelDocument['unsubscribedTrailer'], 
+                                    channelDocument['bannerUrl'], channelDocument['exerciseCategory'], channelDocument['exerciseSubcategory']))
 
 
 # At this point all helper methods definitions and API calls should be done. (Later DB should be populated already)
@@ -787,3 +787,8 @@ if __name__ == "__main__":
 
     app.run(host="localhost", port=8080, debug=True, use_reloader=True)
 
+# NEED TO CHANGE TOPIC IDS & CATEGORIES / COMBINE THEM
+# NEED TO FIX SOME KEWYORDS LIKE "HOW TO LOSE WEIGHT" BECAUSE CURRENTLY KEYWORDS ARE "HOW", "TO", "LOSE", "WEIGHT", ETC
+# NEED TO ADD DESCRIPTION NEW LINE FOR NEW SENTENCES FOR UNSUBSCRIBED TRAILER
+# DONT NEED PLAYLIST IMAGE OR UNSUBSCRIBED TRAILER IMAGE
+# ADD RELATED CHANNELS
