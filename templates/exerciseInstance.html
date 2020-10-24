@@ -1,55 +1,41 @@
 {% extends 'base.html' %}
 
-<!-- Exercise Parameter: exerciseObject, exercise_instance, exerciseID -->
-
 {% block head %}
-    <title>{{ exerciseObject.name }}</title>
+    <title>Exercise Instance Page</title>
 {% endblock %}
 
 
 {% block body %}
-    <!-- header image and description -->
-    <div class="container-fluid pt-3 centered">
-        <!-- TODO: fix this for loop condition -->
-        {% for r in range(3) %}
-        <img class="header-pic" src="{{ exerciseObject.images[r] }}" />
-        <h5>
-            {{ exerciseObject.description }}
-        </h5>
-        <p>Category: {{ exerciseObject.category }}</p>
-        <p>Equipment: {{ exerciseObject.equipment }}</p>
-    </div>
+    {% for e in exercisesArray %}
+        {% if e.id == exercise_id %}
+            <h1>{{ e.name }}</h1>
+            {% for image in e.images %}
+                <img src="{{ image }}" alt="{{ e.name }}">
+            {% endfor %}
+            <br>
+            <p>Description: {{ e.description }}</p>
+            <p>Category: {{ e.category }}</p>
+            <p>Equipment: {{ e.equipment }}</p>
+            {% if e.muscles %}
+                <p>Muscles: {{ e.muscles }}</p>
+            {% else %}
+                <p>Muscles: None listed</p>
+            {% endif %}
+            {% if e.muscles_secondary %}
+                <p>Secondary Muscles: {{ e.muscles_secondary }}</p>
+            {% else %}
+                <p>Seconday Muscles: None listed</p>
+            {% endif %}
+            {% if e.comments %}
+                <p>Comments: </p>
+                {% for c in e.comments %}
+                    <p>{{ c }}</p>
+                {% endfor %}
+            {% else %}
+                <p>Comments: None</p>
+            {% endif %}
 
-    <!-- muscle list -->
-    <div>
-        <h5>Primary Muscles:</h5>
-        <ul>
-            <!-- TODO: fix the {{ pm }} if not working -->
-            {% for pm in exerciseObject.muscles %}
-            <li>
-                {{ pm }}
-            </li>
-        </ul>
-        <h5>Secondary Muscles:</h5>
-        <ul>
-            <!-- TODO: fix the {{ m }} if not working -->
-            {% for sm in exerciseObject.muscles_secondary %}
-            <li>
-                {{ sm }}
-            </li>
-        </ul>
-    </div>
-
-    <!-- comments -->
-    <div class="border border-dark rounded mx-auto my-2">
-        <h4>Comments</h4>
-        <ul>
-            <!-- TODO: fix the {{ c }} if not working -->
-            {% for c in exerciseObject.comments %}
-            <li>
-                {{ c }}
-            </li>
-        </ul>
-    </div>
+        {% endif %}
+    {% endfor %}
 
 {% endblock %}
