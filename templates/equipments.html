@@ -3,36 +3,36 @@
 <!-- PASSED PARAM NAME: equipmentArray -->
 
 {% block head %}
-    <title>Equipment List</title>
+    <title>Equipment Model Page</title>
 {% endblock %}
 
 {% block body %}
     <div class="container-fluid bg-light">
-        <h1 class="pageTitle">Equipment List</h1>
+        <h1 class="pageTitle">Welcome to the Equipment Model Page!</h1>
         <p class="pageSubtitle">
-            [DESCRIPTION GOES HERE]
+            This model page includes a database of different types of workout equipment, gear, and products. You can also
+            quickly find the price rating and seller/vendor of each product in one place.
         </p>
-        <div class="container-fluid bg-secondary" id="grid">
+        <div class="container-fluid bg-secondary" id="equipmentGrid">
             {% set numRows = equipmentArray|length // 3 %}
             {% set remainder = equipmentArray|length % 3 %}
-            {% for row in range(numRows) %}
-                <div class="row" id="row {{ row|string }}">
-                {% for col in range(3) %}
+            {% for i in range(numRows) %}
+                <div class="row" id="row {{ i|string }}">
+                {% for offset in range(3) %}
                     <div class="col-md-4">
-                        <div class="card bg-secondary border-8">
-                            <img class="card-img-top img-fluid" src="{{ equipmentArray[3*row+col].images[0] }}" alt="{{ equipmentArray[3*row+col].name }}">
+                        <div class="card bg-secondary border-0">
+                            <img class="card-img-top img-fluid" src="{{ equipmentArray[3*i+offset].images[0] }}" onerror="this.onerror=null; this.src='{{ equipmentArray[3*i+offset].images[1] }}'"; alt="{{ equipmentArray[3*i+offset].name }}">
                             <div class="card-body">
-                                <h2 class="card-title">{{ equipmentArray[3*row+col].name }}</h2>
+                                <h2 class="card-title">{{ equipmentArray[3*i+offset].name }}</h2>
                                 <p class="card-text">
                                     <ul class="equipmentData">
-                                        <!-- TODO: find out what attributes are most important to put in card data -->
-                                        <li><b>Extensions:</b> {{ equipmentArray[3*row+col].extensions }}</li>
-                                        <li><b>Rating:</b> {{ equipmentArray[3*row+col].rating }}</li>
-                                        <li><b>Number of Reviews:</b> {{ equipmentArray[3*row+col].reviews }}</li>
+                                        <li>Price: {{ equipmentArray[i].price }}</li>
+                                        <li>Rating: {{ equipmentArray[3*i+offset].rating }}</li>
+                                        <li>Seller: {{ equipmentArray[3*i+offset].seller }}</li>
                                     </ul>
                                 </p>
                                 <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
-                                <a href="{{ url_for('equipment_instance', equipment_id=equipmentArray[3*row+col].id, thisEquipment=equipmentArray[3*row+col]) }}" class="btn btn-primary">More Details</a>
+                                <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[3*i+offset].id) }}" class="btn btn-primary">More Details</a>
                             </div>
                         </div>
                     </div>
@@ -40,31 +40,31 @@
                 </div>
             {% endfor %}
 
-            (% if remainder > 0 %)
+            {% if remainder > 0 %}
                 <div class="row" id="bottomRow">
-                {% for col in range(-remainder, 0) %}
+                {% for i in range(-remainder, 0) %}
                     <div class="col-md-4">
                         <div class="card bg-secondary border-0">
-                            <img class="card-img-top img-fluid" src="{{ equipmentArray[col].images[0] }}" alt="{{ equipmentArray[col].name }}">
+                            <img class="card-img-top img-fluid" src="{{ equipmentArray[i].images[0] }}" onerror="this.onerror=null; this.src='{{ equipmentArray[i].images[1] }}'"; alt="{{ equipmentArray[i].name }}">
                             <div class="card-body">
-                                <h2 class="card-title">{{ equipmentArray[col].name }}</h2>
+                                <h2 class="card-title">{{ equipmentArray[i].name }}</h2>
                                 <p class="card-text">
                                     <ul class="equipmentData">
                                         <!-- TODO: find out what attributes are most important to put in card data -->
-                                        <li><b>Extensions:</b> {{ equipmentArray[col].extensions }}</li>
-                                        <li><b>Rating:</b> {{ equipmentArray[col].rating }}</li>
-                                        <li><b>Number of Reviews:</b> {{ equipmentArray[col].reviews }}</li>
+                                        <li>Price: {{ equipmentArray[i].price }}</li>
+                                        <li>Rating: {{ equipmentArray[i].rating }}</li>
+                                        <li>Seller: {{ equipmentArray[i].seller }}</li>
                                     </ul>
                                 </p>
                                 <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
-                                <a href="{{ url_for('equipment_instance', equipment_id=equipmentArray[col].id, thisEquipment=equipmentArray[col]) }}" class="btn btn-primary">More Details</a>
+                                <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[i].id) }}" class="btn btn-primary">More Equipment Details</a>
                             </div>
                         </div>
                     </div>
                 {% endfor %}
                 </div>
             {% endif %}
+
         </div>
     </div>
-
 {% endblock %}

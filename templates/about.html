@@ -59,7 +59,7 @@
                     <p class="card-text">Major: Electrical and Computer Engineering with a focus in Software Engineering and Systems</p>
                 </div>
                 <div class="card-footer">
-                    <small class="text-muted">Primary responsibilities: Youtube Data API framework, SERPSTACK API debugging, developing backend infrastructure, Youtube channels page, About page</small>
+                    <small class="text-muted">Primary responsibilities: Youtube Data API framework, SERPSTACK API debugging, Youtube channels page, Equipment page & instances, About page, Backend infrastructure, MongoDB infrastructure, code/branch integration </small>
                 </div>
             </div>
 
@@ -75,7 +75,7 @@
                     <p class="card-text">Major: Electrical and Computer Engineering with a focus in Software Engineering & Systems and Data Science & Information Processing</p>
                 </div>
                 <div class="card-footer">
-                    <small class="text-muted">Primary responsibilities: Youtube channels pages, Homepage</small>
+                    <small class="text-muted">Primary responsibilities: Youtube channels pages, Youtube APIs, Homepage</small>
                 </div>
             </div>
 
@@ -92,7 +92,7 @@
                     <p class="card-text">Major: Electrical and Computer Engineering with a focus in Software Engineering and Systems</p>
                 </div>
                 <div class="card-footer">
-                    <small class="text-muted">Primary responsibilities: WGER API framework, Google Image Search API, Exercise page</small>
+                    <small class="text-muted">Primary responsibilities: WGER API framework, Google Custom Search API, Exercise page, About page</small>
                 </div>
             </div>
 
@@ -108,7 +108,7 @@
                     <p class="card-text">Major: Electrical and Computer Engineering with a focus in Software Engineering and Systems</p>
                 </div>
                 <div class="card-footer">
-                    <small class="text-muted">Primary responsibilities: Equipment page</small>
+                    <small class="text-muted">Primary responsibilities: Equipment page, About page Tools, README</small>
                 </div>
             </div>
         </div>
@@ -118,27 +118,92 @@
         <h1>Additional Information</h1>
         <h4>Data and Links:</h4>
         <p>
-            {@Michelle insert links to WGER page, wtv google image API you use, SERPSTACK API, and youtube DATA V3 API pages + how we used descriptions here}
-            <a href="https://serpstack.com/documentation">SERPSTACK API Documentation</a>
-            SERPSTACK was the API we used for finding results for fitness equipment. First, we did a pull to get an
-            example JSON file of the search results, then used the information in the JSON file to construct a
-            method for making a list of Equipment objects. We then used this list in the Equipment page to list
-            search results in a grid.
+            <ul>
+                <li>
+                    <a href="https://developers.google.com/youtube/v3/getting-started">Youtube Data V3 API Guide</a>
+                    <p>This API was used to setup and activate the Youtube API. It includes supported API operations and syntax examples to get different details about channels related to fitness.
+                    Channels, search, playlists, and video API operations were used.
+                    </p>
+                </li>
+                <li>
+                    <a href="https://wger.de/en/software/api">wger REST API</a>
+                    <p>This API was used to grab data on 700+ exercises with information like exercise category, muscle groups, equipment, images, comments, etc.
+                    Out of the 700+ exercises, only 110 exercises were used since they were approved, in english, and had information for name, description, category, and equipment.
+                    The request made to the API was parsed into a JSON format. Then, the 110 exercises were filtered out along with specific information for each exercise.
+                    Since over half of the exercises didn't come with images, the Google Custom Search JSON API was used to search for images related to each exercise.
+                    </p>
+                </li>
+                <li>
+                    <a href="https://developers.google.com/custom-search/v1/overview">Google Custom Search JSON API</a>
+                    <p>
+                        This API was used to do a Google image search. We sent an HTTP GET request to the URI and passed in specific parameters like image file type, API key, search engine key, and search string.
+                        The call returns a response which contains a Search instance. The Search instance contains information from the search result which we used to grab the image URLs.
+                        The image URLs were saved corresponding to the exercise.
+                    </p>
+                </li>
+                <li>
+                    <a href="https://serpstack.com/documentation">SERPSTACK API Documentation</a>
+                    <p>
+                        SERPSTACK was the API we used for finding results for fitness equipment. First, we did a pull to get an
+                        example JSON file of the search results, then used the information in the JSON file to construct a
+                        method for making a list of Equipment objects. We then used this list in the Equipment page to list
+                        search results in a grid.
+                    </p>
+                </li>
+            </ul>
         </p>
+
         <br>
         <h4>Tools:</h4>
         <p>
-            <h5>GitHub</h5>
-            GitHub was our source for collaboration and code merging. Most individual work was done in individual
-            branches and was then merged to the 'dev' branch.
-            <br/>
-            <h5>Slack</h5>
-            Our group used Slack for communication and for assigning tasks. We integrated our Slack with our Github
-            repository so we would be messaged about updates, issues, and tasks.
+            <ul>
+                <li>
+                    <b>Bootstrap4</b>
+                    <p>
+                        Bootstrap4 was used for formatting the webpage: placing text in containers, making grids for API results, etc.
+                        Our webpages' html extended the same base template to aid in universal formatting.
+                    </p>
+                </li>
+                <li>
+                    <b>Flask</b>
+                    <p>
+                        Our group used Flask as a web deployment framework.
+                    </p>
+                </li>
+                <li>
+                    <b>Google Cloud Platform</b>
+                    <p>
+
+                    </p>
+                </li>
+                <li>
+                    <b>MongoDB</b>
+                    <p>
+
+                    </p>
+                </li>
+                <li>
+                    <b>GitHub</b>
+                    <p>
+                        GitHub was our source for collaboration and code merging. Most individual work was done in individual
+                        branches and was then merged to the 'dev' branch.
+                        We also used issue tracking to fix problems with our project and GitHub project boards to keep track of user stories.
+                    </p>
+                </li>
+                <li>
+                    <b>Slack</b>
+                    <p>
+                        Our group used Slack for communication and for assigning tasks. We integrated our Slack with our Github
+                        repository so we would be notified about updates, issues, and tasks.
+                        In Slack, we have several channels like general, imdb-web-app, sources-and-links, and aboutme to organize our communication better.
+                    </p>
+                </li>
+            </ul>
         </p>
         <br>
         <h4>Github Link:</h4>
         <a href="https://github.com/UT-SWLab/TeamA13">Github Repository for UT-SWLab/TeamA13</a>
+        <br>
     </div>
 
 {% endblock %}
