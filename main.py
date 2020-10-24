@@ -70,8 +70,8 @@ class Exercise:
 
 # Class for equipment object
 class Equipment:
-    def __init__(self, itemID, title, value, categoryName, country, galleryURL, viewItemURL):
-        self.id = itemID
+    def __init__(self, itemId, title, value, categoryName, country, galleryURL, viewItemURL):
+        self.id = itemId
         self.name = title
         self.price = value
         self.category = categoryName
@@ -278,13 +278,18 @@ def initialize_mongoDB_equipment_collection():
                              {'keywords': ['kettlebell', 'dumbbell', 'barbell', 'bench', 'EZ-Bar', 'exercise mat',
                                            'fitness']})
     api_result_dict = api_result.dict()
-    # TODO: This line may have a bug where ["searchResult"]["item"] is not actually a valid call to the "item" array of the dict
     shopping_results_arr = api_result_dict["searchResult"]["item"]
 
     for result in shopping_results_arr:
-        # TODO: This line may have the same bug as 282
-        eq = Equipment(result['itemID'], result['title'], result['shippingServiceCost']['value'],
-                       result['primaryCategory']['categoryName'], result['country'], result['galleryURL'],
+        # May need to add more vars and checks later
+        galleryURL = ""
+        if 'galleryPlusPictureURL' in result:
+            galleryURL = result['galleryPlusPictureURL']
+        else:
+            if 'galleryURL' in result:
+                galleryURL = result['galleryURL']
+        eq = Equipment(result['itemId'], result['title'], result['shippingInfo']['shippingServiceCost']['value'],
+                       result['primaryCategory']['categoryName'], result['country'], galleryURL,
                        result['viewItemURL'])
         db.equipments.insert_one(eq.to_dictionary())
 
@@ -559,11 +564,11 @@ def initialize_equipment_array_from_db():
     equipmentsCursor = db.equipments.find()
     for equipmentDocument in equipmentsCursor:
         # TODO: This line may have the same bug as 282
-        equipmentArray.append(Equipment(equipmentDocument['itemID'], equipmentDocument['title'],
-                                        equipmentDocument['shippingServiceCost']['value'],
-                                        equipmentDocument['primaryCategory']['categoryName'],
-                                        equipmentDocument['country'], equipmentDocument['galleryURL'],
-                                        equipmentDocument['viewItemURL']))
+        equipmentArray.append(Equipment(equipmentDocument['id'], equipmentDocument['name'],
+                                        equipmentDocument['price'],
+                                        equipmentDocument['category'],
+                                        equipmentDocument['country'], equipmentDocument['picture'],
+                                        equipmentDocument['linkToItem']))
 
 
 def initialize_channel_array_from_db():
@@ -665,7 +670,7 @@ if __name__ == "__main__":
 
     # UNCOMMENT ONE OF THE FOLLOWING 3 LINES IF YOU WANT TO RE-INITIALIZE A SPECIFIC MODEL'S COLLECTION
     # initialize_mongoDB_exercises_collection()
-    initialize_mongoDB_equipment_collection()
+    # initialize_mongoDB_equipment_collection()
     # initialize_mongoDB_channel_collection()
 
     app.run(host="localhost", port=8080, debug=True, use_reloader=True)
