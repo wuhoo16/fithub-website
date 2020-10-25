@@ -1,3 +1,4 @@
+import math
 import os
 import re
 
@@ -70,12 +71,12 @@ class Exercise:
 
 # Class for equipment object
 class Equipment:
-    def __init__(self, itemId, title, value, categoryName, country, galleryURL, viewItemURL):
+    def __init__(self, itemId, title, value, categoryName, location, galleryURL, viewItemURL):
         self.id = itemId
         self.name = title
         self.price = value
         self.category = categoryName
-        self.country = country
+        self.location = location
         self.picture = galleryURL
         self.linkToItem = viewItemURL
 
@@ -85,7 +86,7 @@ class Equipment:
             'name': self.name,
             'price': self.price,
             'category': self.category,
-            'country': self.country,
+            'location': self.location,
             'picture': self.picture,
             'linkToItem': self.linkToItem
         }
@@ -178,7 +179,8 @@ def initialize_mongoDB_exercises_collection():
 
     results = exercise_data["results"]
     for x in results:
-        if x["name"] and x["description"] and x["category"] and x["equipment"]:  # only exercises with complete info (110 exercises)
+        if x["name"] and x["description"] and x["category"] and x[
+            "equipment"]:  # only exercises with complete info (110 exercises)
             exerciseID = x["id"]
 
             # strip description of html elements
@@ -288,8 +290,8 @@ def initialize_mongoDB_equipment_collection():
         else:
             if 'galleryURL' in result:
                 galleryURL = result['galleryURL']
-        eq = Equipment(result['itemId'], result['title'], result['shippingInfo']['shippingServiceCost']['value'],
-                       result['primaryCategory']['categoryName'], result['country'], galleryURL,
+        eq = Equipment(result['itemId'], result['title'], result['sellingStatus']['convertedCurrentPrice']['value'],
+                       result['primaryCategory']['categoryName'], result['location'], galleryURL,
                        result['viewItemURL'])
         db.equipments.insert_one(eq.to_dictionary())
 
@@ -563,11 +565,10 @@ def initialize_exercises_array_from_db():
 def initialize_equipment_array_from_db():
     equipmentsCursor = db.equipments.find()
     for equipmentDocument in equipmentsCursor:
-        # TODO: This line may have the same bug as 282
         equipmentArray.append(Equipment(equipmentDocument['id'], equipmentDocument['name'],
                                         equipmentDocument['price'],
                                         equipmentDocument['category'],
-                                        equipmentDocument['country'], equipmentDocument['picture'],
+                                        equipmentDocument['location'], equipmentDocument['picture'],
                                         equipmentDocument['linkToItem']))
 
 
@@ -607,21 +608,37 @@ def exercises():
 
 
 # equipments model page
-@app.route("/equipment", methods=['GET'])
-def equipments():
-    return render_template('equipments.html', equipmentArray=equipmentArray)
+@app.route("/equipment/<int:page_number>", methods=['GET'])
+def equipments(page_number):
+    start, end, num_pages = paginate(page_number, equipmentArray)
+    return render_template('equipments.html', equipmentArray=equipmentArray, start=start, end=end,
+                           page_number=page_number, num_pages=num_pages)
 
 
 # channels model page
-@app.route("/channels", methods=['GET'])
-def channels():
-    return render_template('channels.html', channelArray=channelArray)
+@app.route("/channels/<int:page_number>", methods=['GET'])
+def channels(page_number):
+    start, end, num_pages = paginate(page_number, channelArray)
+    return render_template('channels.html', channelArray=channelArray, start=start, end=end, page_number=page_number,
+                           num_pages=num_pages)
 
 
 # about page
 @app.route("/about", methods=['GET'])
 def about():
     return render_template('about.html')
+
+
+# Helper methods for model pages
+# ==================================================================================================================
+# Pagination on Model Pages - assumes 9 instances per page
+def paginate(page_number, array):
+    startIndex = (page_number - 1) * 9
+    endIndex = (page_number * 9) - 1
+    if endIndex >= len(array):
+        endIndex = len(array) - 1
+    num_pages = math.ceil(len(array) / 9)
+    return startIndex, endIndex, num_pages
 
 
 # All view methods for INSTANCE pages are defined below:
@@ -640,18 +657,20 @@ def exercise_instance(exercise_id):
 
 
 # equipment instance pages
-@app.route("/equipments/<int:equipmentID>", methods=['GET'])
+# TODO: There's something wrong with this call, but I have no idea what.
+@app.route("/equipments/<string:equipmentID>", methods=['GET'])
 def equipment_instance(equipmentID):
-    equipmentObject = equipmentArray[equipmentID - 1]
-    return render_template('equipmentInstance.html', equipmentObject=equipmentObject, equipmentList=equipmentArray)
-
+    for eq in equipmentArray:
+        if eq.id == equipmentID:
+            return render_template('equipmentInstance.html', equipmentObject=eq, equipmentList=equipmentArray)
+    return render_template('equipmentInstance.html', equipmentObject=equipmentArray[0], equipmentList=equipmentArray)
 
 # channel instance pages
 # @app.route("/channels/<string:channelID>", methods=['GET'])
 # def channel_instance(channelID):
 #     return render_template('channelInstance.html', channelID=channelID, channelArray=channelArray)
 
-@app.route("/channels/<string:channelID>", methods=['GET'])
+@app.route("/channelinstance/<string:channelID>", methods=['GET'])
 def channel_instance(channelID):
     if channelID == "UCb67rmuez0SKOQbZ4vCRDHQ":
         return render_template('channelsInstance1.html')
@@ -660,7 +679,7 @@ def channel_instance(channelID):
     elif channelID == "UC_gbQ9J76mYJ5S3zVTANM_w":
         return render_template('channelsInstance3.html')
     else:
-        return render_template('channels.html')
+        return render_template('channelInstance.html')
 
 
 # Start the Flask web-application when app.py file is run
