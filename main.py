@@ -179,8 +179,7 @@ def initialize_mongoDB_exercises_collection():
 
     results = exercise_data["results"]
     for x in results:
-        if x["name"] and x["description"] and x["category"] and x[
-            "equipment"]:  # only exercises with complete info (110 exercises)
+        if x["name"] and x["description"] and x["category"] and x["equipment"]:  # only exercises with complete info (110 exercises)
             exerciseID = x["id"]
 
             # strip description of html elements
@@ -657,13 +656,14 @@ def exercise_instance(exercise_id):
 
 
 # equipment instance pages
-# TODO: There's something wrong with this call, but I have no idea what.
 @app.route("/equipments/<string:equipmentID>", methods=['GET'])
 def equipment_instance(equipmentID):
     for eq in equipmentArray:
         if eq.id == equipmentID:
             return render_template('equipmentInstance.html', equipmentObject=eq, equipmentList=equipmentArray)
+    # TODO: replace this line with error handling page (see Google API Client tutorial, the one where you rickrolled the TAs)
     return render_template('equipmentInstance.html', equipmentObject=equipmentArray[0], equipmentList=equipmentArray)
+
 
 # channel instance pages
 # @app.route("/channels/<string:channelID>", methods=['GET'])
