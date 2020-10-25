@@ -67,7 +67,7 @@
             <ul>
             <!-- TODO: debug this line -->
             {% for e in equipmentList %}
-                {% if e.category == equipmentObject.category %}
+                {% if e.category == equipmentObject.category and e != equipmentObject %}
                 <li><a href="{{ url_for('equipment_instance', equipmentID=e.id) }}">{{ e.name }}</a></li>
                 {% endif %}
             {% endfor %}

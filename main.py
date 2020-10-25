@@ -80,6 +80,9 @@ class Equipment:
         self.picture = galleryURL
         self.linkToItem = viewItemURL
 
+    def __eq__(self, other):
+        return self.id == other.id and self.name == other.name and self.price == other.price and self.category == other.category and self.location == other.location and self.picture == other.picture and self.linkToItem == other.linkToItem
+
     def to_dictionary(self):
         return {
             'id': self.id,
