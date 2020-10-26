@@ -11,7 +11,6 @@ from pymongo import MongoClient
 # Global variables definitions
 API_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk'  # michelle's
 SEARCH_ENGINE_ID = '598e742e6c308d255'
-# equipmentIdCounter = 1
 EXERCISE_BLACKLIST = {'Axe Hold', 'Cycling', 'Upper Body', 'Upper External Oblique', 'Chin-ups', 'Wall Pushup'}
 EXERCISE_RENAME_DICT = {'Pushups': 'Chest Push-ups', 'Push Ups': 'Push-ups', 'Snach': 'Snatch',
                         "Squat Thrust": "Burpee", 'Thruster': 'Barbell Thruster Squats'}
@@ -19,12 +18,22 @@ EXERCISE_SZ_BAR_TYPOS = {'French Press (skullcrusher) SZ-bar', 'Biceps Curls Wit
                          'Reverse Bar Curl'}
 EXERCISE_GYM_MAT_SET = {'Leg Raises, Lying', 'Side Crunch', 'Superman'}
 PLANK_REMOVED_FLAG = False
-# EQUIPMENT_BLACKLIST = {'SML-1 Monster Lite Squat Stand - Made in the USA', 'ETHOS Power Rack 1.0, Red', 'Core Home Fitness Adjustable Dumbbell Set',
-#                        'Harbinger Pull-Up Bar Black - Hand Exer. Equip. at Academy Sports', 'Fuel Pureformance Xtreme Doorway Gym',
-#                        'Stamina Doorway Trainer Plus, Black', 'WEIDER Rubber Hex Dumbbell SINGLE 25 lb Pound Weight IN HAND FREE SHIP',
-#                        'A Pair of Dumbbells Set, Adjustable Free Weights Barbell Set 5-66lb (Black)', 'CAP Rubber Coated Hex Dumbbell 40 lb Weight Lifting Training Home Workout Single',
-#                        'Harbinger Multi-Gym Sport Pull-Up Bar - Hand Exercise Equipment at Academy Sports', 'Mind Reader - Pull-up bar - black'}
+EQUIPMENT_BLACKLIST = {'BUKA GEARS ARNOLD WEIGHT LIFTING BODYBUILDING BICEP ARM BLASTER EZ BAR CURL ARMS',
+                       '9HORN Exercise Mat/Protective Flooring Mats with EVA Foam Interlocking Tiles and'
+                       }
+EQUIPMENT_IMAGE_MAPPER = {
+    'Cast Iron Kettlebell 5, 10, 15, 20, 25, 30 35,40, 45 +some PAIRS(Choose Weight)': "kettlebell_picture_1.jpg",
+    'NEW Weider Cast Iron Kettlebell 10, 15, 20, 25, 30 & 35lb Single (Choose Weight)': "kettlebell_picture_2.jpg",
+    'POWERT Vinyl Coated Kettlebell for Weight Lifting Workout 5-50LB--Single': "kettlebell_picture_3.jpg",
+    'POWERT Competition Kettlebell Coated Cast Steel Weight Lifting Training 10-50LB': "kettlebell_picture_4.jpg",
+    'NEW FRAY FITNESS RUBBER HEX DUMBBELLS select-weight 10,15, 20, 25, 30, 35, 40LB': "dumbbell_picture_1.jpg",
+    'POWERT HEX Neoprene Coated Colorful Dumbbell Weight Lifting Training--One Pair': "dumbbell_picture_2.jpg",
+    'Yoga Mats 0.375 inch (10mm) Thick Exercise Gym Mat Non Slip With Carry Straps': "mat_picture_1.png",
+    'Extra Thick Non-slip Yoga Mat Pad Exercise Fitness Pilates w/ Strap 72" x 24"': "mat_picture_2.jpg",
+    'Thick Yoga Mat Gym Camping Non-Slip Fitness Exercise Pilates Meditation Pad US': "mat_picture_3.jpg"
+    }
 CHANNELS_ID_SET = set()
+EQUIPMENT_ID_SET = set()
 exercisesArray = []  # declared globally and initialized from our mongoDB the first time the homepage is visited
 equipmentArray = []  # declared globally and initialized from our mongoDB the first time the homepage is visited
 channelArray = []  # declared globally and initialized from our mongoDB the first time the homepage is visited
@@ -37,7 +46,8 @@ db = client.phase2Database
 # =============================================================================================================================
 # Class for exercise object
 class Exercise:
-    def __init__(self, exercise_id, name, description, category, subcategory, muscles, muscles_secondary, equipment, images, comments):
+    def __init__(self, exercise_id, name, description, category, subcategory, muscles, muscles_secondary, equipment,
+                 images, comments):
         self.id = exercise_id
         self.name = name
         self.description = description
@@ -70,17 +80,15 @@ class Exercise:
 
 # Class for equipment object
 class Equipment:
-    def __init__(self, id, name, price, rating, reviews, seller, snippet, extensions, images, url, equipmentCategory):
-        self.id = id  # unique id generated in the backend to help create dynamic URLs
-        self.name = name  # called 'title' in JSON
-        self.price = price
-        self.rating = rating
-        self.reviews = reviews
-        self.seller = seller
-        self.snippet = snippet
-        self.extensions = extensions
-        self.images = images
-        self.url = url
+    def __init__(self, itemId, title, value, categoryName, location, replacePictureFlag, galleryURL, viewItemURL, equipmentCategory):
+        self.id = itemId
+        self.name = title
+        self.price = value
+        self.category = categoryName
+        self.location = location
+        self.replacePictureFlag = replacePictureFlag
+        self.picture = galleryURL
+        self.linkToItem = viewItemURL
         self.equipmentCategory = equipmentCategory
 
     def to_dictionary(self):
@@ -89,13 +97,11 @@ class Equipment:
             'id': self.id,
             'name': self.name,
             'price': self.price,
-            'rating': self.rating,
-            'reviews': self.reviews,
-            'seller': self.seller,
-            'snippet': self.snippet,
-            'extensions': self.extensions,
-            'images': self.images,
-            'url': self.url,
+            'category': self.category,
+            'location': self.location,
+            'replacePictureFlag': self.replacePictureFlag,
+            'picture': self.picture,
+            'linkToItem': self.linkToItem,
             'equipmentCategory': self.equipmentCategory
         }
 
@@ -105,7 +111,8 @@ class Equipment:
 
 # Class for channel object
 class Channel:
-    def __init__(self, channelId, channelTitle, description,  thumbnailURL, subscriberCount, viewCount, videoCount, exerciseCategory, exerciseSubcategory=None):
+    def __init__(self, channelId, channelTitle, description, thumbnailURL, subscriberCount, viewCount, videoCount,
+                 exerciseCategory, exerciseSubcategory=None):
         self.id = channelId  # unique channelId string passed in from the JSON response
         self.name = channelTitle
         self.description = description
@@ -185,7 +192,8 @@ def initialize_mongoDB_exercises_collection():
                                                                                                    headers)
     results = exercise_data["results"]
     for x in results:
-        if x["name"] and x["description"] and x["category"] and x["equipment"]:  # only exercises with complete info (110 exercises)
+        if x["name"] and x["description"] and x["category"] and x[
+            "equipment"]:  # only exercises with complete info (110 exercises)
             exerciseID = x["id"]
 
             # strip description of html elements
@@ -252,7 +260,8 @@ def initialize_mongoDB_exercises_collection():
             elif category_name == 'Legs':
                 subcategory = return_legs_subcategory(x['name'])
 
-            exercise = Exercise(exerciseID, x["name"], description, category_name, subcategory, muscles_string, sec_muscles_string, equipment_string,
+            exercise = Exercise(exerciseID, x["name"], description, category_name, subcategory, muscles_string,
+                                sec_muscles_string, equipment_string,
                                 images, comments)
 
             if exercise.name in EXERCISE_BLACKLIST:
@@ -279,24 +288,51 @@ def initialize_mongoDB_equipment_collection():
     db.equipments.drop()  # drop the old collection so we initialize a fresh collection
     EBAY_APP_ID = "AndrewWu-IMBDProj-PRD-be64e9f22-1cd7edca"  # Andrew's App ID
     api = Connection(appid=EBAY_APP_ID, config_file=None)
-    api_result = api.execute('findItemsAdvanced',
-                             {'keywords': ['kettlebell', 'dumbbell', 'barbell', 'bench', 'EZ-Bar', 'exercise mat',
-                                           'fitness']})
-    api_result_dict = api_result.dict()
-    shopping_results_arr = api_result_dict["searchResult"]["item"]
+    queryArray = ['Kettlebell', 'Dumbbell', 'Barbell', 'Bench', 'EZ-Bar', 'Exercise mat']
+    queryMapper = {'Kettlebell': 'Kettlebells'}
 
-    for result in shopping_results_arr:
-        # May need to add more vars and checks later
-        galleryURL = ""
-        if 'galleryPlusPictureURL' in result:
-            galleryURL = result['galleryPlusPictureURL']
-        else:
+    for query in queryArray:
+        queryTerm = query
+        if query in queryMapper.keys():
+            query = queryMapper[query]
+        api_result = api.execute('findItemsAdvanced', {
+            'keywords': [query],
+            'paginationInput': {
+                'entriesPerPage': '12',
+                'pageNumber': '1'
+            }})
+        api_result_dict = api_result.dict()
+        shopping_results_arr = api_result_dict["searchResult"]["item"]
+
+        for result in shopping_results_arr:
+            # May need to add more vars and checks later
+            galleryURL = None
+            # if 'galleryPlusPictureURL' in result:
+            #     galleryURL = result['galleryPlusPictureURL']
+            # else:
             if 'galleryURL' in result:
                 galleryURL = result['galleryURL']
-        eq = Equipment(result['itemId'], result['title'], result['sellingStatus']['convertedCurrentPrice']['value'],
-                       result['primaryCategory']['categoryName'], result['location'], galleryURL,
-                       result['viewItemURL'])
-        db.equipments.insert_one(eq.to_dictionary())
+
+            if galleryURL is not None:
+                # Mark broken images that need to be loaded statically
+                replacePictureFlag = False
+                if result['title'] in EQUIPMENT_IMAGE_MAPPER:
+                    replacePictureFlag = True
+                eq = Equipment(result['itemId'], result['title'],
+                               result['sellingStatus']['convertedCurrentPrice']['value'],
+                               result['primaryCategory']['categoryName'], result['location'], replacePictureFlag,
+                               galleryURL, result['viewItemURL'], queryTerm)
+                # Rewrite bad picture URL with picture's filename
+                if eq.replacePictureFlag is True:
+                    eq.picture = EQUIPMENT_IMAGE_MAPPER[eq.name]
+
+                # Skip equipment entries that are known to have bad titles/images
+                if eq.name in EQUIPMENT_BLACKLIST:
+                    pass
+                # avoid adding duplicate items to our database
+                elif eq.id not in EQUIPMENT_ID_SET:
+                    db.equipments.insert_one(eq.to_dictionary())
+                    EQUIPMENT_ID_SET.add(eq.id)
 
 
 #   previous code ------------------------------------------------------------------------------------------------------
@@ -361,21 +397,23 @@ def initialize_mongoDB_channel_collection():
     # Call helper methods to initialize Channel arrays
     for searchTerm in searchTermsArray:
         for item in execute_youtube_search_API(youtube, searchTermTemplate.format(searchTerm), maxResults=5):
-                snippet = item['snippet']
-                statistics = execute_channels_statistics_API(youtube, item['snippet']['channelId'])
-                exerciseCategory = searchTerm
-                exerciseSubcategory = None
-                # If searching a subcategory term, map and save the broader exercise category
-                if searchTerm in exerciseCategoryMapper.keys():
-                    exerciseCategory = exerciseCategoryMapper[searchTerm]
-                    exerciseSubcategory = searchTerm
+            snippet = item['snippet']
+            statistics = execute_channels_statistics_API(youtube, item['snippet']['channelId'])
+            exerciseCategory = searchTerm
+            exerciseSubcategory = None
+            # If searching a subcategory term, map and save the broader exercise category
+            if searchTerm in exerciseCategoryMapper.keys():
+                exerciseCategory = exerciseCategoryMapper[searchTerm]
+                exerciseSubcategory = searchTerm
 
-                channel = Channel(snippet['channelId'], snippet['channelTitle'], snippet['description'], snippet['thumbnails']['high']['url'],
-                                  statistics['subscriberCount'], statistics['viewCount'], statistics['videoCount'], exerciseCategory, exerciseSubcategory)
-                # Only add channel if it is not a duplicate
-                if channel.id not in CHANNELS_ID_SET:
-                    db.channels.insert_one(channel.to_dictionary())
-                    CHANNELS_ID_SET.add(channel.id)
+            channel = Channel(snippet['channelId'], snippet['channelTitle'], snippet['description'],
+                              snippet['thumbnails']['high']['url'],
+                              statistics['subscriberCount'], statistics['viewCount'], statistics['videoCount'],
+                              exerciseCategory, exerciseSubcategory)
+            # Only add channel if it is not a duplicate
+            if channel.id not in CHANNELS_ID_SET:
+                db.channels.insert_one(channel.to_dictionary())
+                CHANNELS_ID_SET.add(channel.id)
 
 
 # All helper API-call methods or JSON-parsing helper methods defined below
@@ -556,20 +594,20 @@ def execute_channels_statistics_API(youtubeClient, channelID):
 def initialize_exercises_array_from_db():
     exercisesCursor = db.exercises.find()
     for exerciseDocument in exercisesCursor:
-        exercisesArray.append(Exercise(exerciseDocument['id'], exerciseDocument['name'], exerciseDocument['description'],
-                                        exerciseDocument['category'], exerciseDocument['subcategory'], exerciseDocument['muscles'],
-                                        exerciseDocument['muscles_secondary'], exerciseDocument['equipment'],
-                                        exerciseDocument['images'], exerciseDocument['comments']))
+        exercisesArray.append(
+            Exercise(exerciseDocument['id'], exerciseDocument['name'], exerciseDocument['description'],
+                     exerciseDocument['category'], exerciseDocument['subcategory'], exerciseDocument['muscles'],
+                     exerciseDocument['muscles_secondary'], exerciseDocument['equipment'],
+                     exerciseDocument['images'], exerciseDocument['comments']))
 
 
 def initialize_equipment_array_from_db():
     equipmentsCursor = db.equipments.find()
     for equipmentDocument in equipmentsCursor:
         equipmentArray.append(Equipment(equipmentDocument['id'], equipmentDocument['name'], equipmentDocument['price'],
-                                        equipmentDocument['rating'], equipmentDocument['reviews'],
-                                        equipmentDocument['seller'], equipmentDocument['snippet'],
-                                        equipmentDocument['extensions'], equipmentDocument['images'],
-                                        equipmentDocument['url'], equipmentDocument['equipmentCategory']))
+                                        equipmentDocument['category'], equipmentDocument['location'], equipmentDocument['replacePictureFlag'],
+                                        equipmentDocument['picture'], equipmentDocument['linkToItem'],
+                                        equipmentDocument['equipmentCategory']))
 
 
 def initialize_channel_array_from_db():
@@ -577,7 +615,8 @@ def initialize_channel_array_from_db():
     for channelDocument in channelCursor:
         channelArray.append(Channel(channelDocument['id'], channelDocument['name'], channelDocument['description'],
                                     channelDocument['thumbnailURL'], channelDocument['subscriberCount'],
-                                    channelDocument['viewCount'], channelDocument['videoCount'], channelDocument['exerciseCategory'],
+                                    channelDocument['viewCount'], channelDocument['videoCount'],
+                                    channelDocument['exerciseCategory'],
                                     channelDocument['exerciseSubcategory']))
 
 
@@ -604,21 +643,24 @@ def index():
 @app.route("/exercises/<int:page_number>", methods=['GET'])
 def exercises(page_number):
     start, end, num_pages = paginate(page_number, exercisesArray)
-    return render_template('exercises.html', exercisesArray=exercisesArray, start=start, end=end, page_number=page_number, num_pages=num_pages)
+    return render_template('exercises.html', exercisesArray=exercisesArray, start=start, end=end,
+                           page_number=page_number, num_pages=num_pages)
 
 
 # equipments model page
 @app.route("/equipment/<int:page_number>", methods=['GET'])
 def equipments(page_number):
     start, end, num_pages = paginate(page_number, equipmentArray)
-    return render_template('equipments.html', equipmentArray=equipmentArray, start=start, end=end, page_number=page_number, num_pages=num_pages)
+    return render_template('equipments.html', equipmentArray=equipmentArray, start=start, end=end,
+                           page_number=page_number, num_pages=num_pages)
 
 
 # channels model page
 @app.route("/channels/<int:page_number>", methods=['GET'])
 def channels(page_number):
-    start, end, num_pages = paginate(page_number, channelArray) 
-    return render_template('channels.html', channelArray=channelArray, start=start, end=end, page_number=page_number, num_pages=num_pages)
+    start, end, num_pages = paginate(page_number, channelArray)
+    return render_template('channels.html', channelArray=channelArray, start=start, end=end, page_number=page_number,
+                           num_pages=num_pages)
 
 
 # about page
@@ -626,7 +668,7 @@ def channels(page_number):
 def about():
     return render_template('about.html')
 
-          
+
 # Helper methods for model pages
 # ==================================================================================================================
 # Pagination on Model Pages - assumes 9 instances per page
@@ -659,9 +701,9 @@ def exercise_instance(exercise_id):
 def equipment_instance(equipmentID):
     for eq in equipmentArray:
         if eq.id == equipmentID:
-            return render_template('equipmentInstance.html', equipmentObject=eq, equipmentList=equipmentArray)
+            return render_template('equipmentInstance.html', equipmentObject=eq, equipmentArray=equipmentArray)
     # TODO: replace this line with error handling page (see Google API Client tutorial, the one where you rickrolled the TAs)
-    return render_template('equipmentInstance.html', equipmentObject=equipmentArray[0], equipmentList=equipmentArray)
+    # return render_template('equipmentInstance.html', equipmentObject=equipmentArray[0], equipmentArray=equipmentArray)
 
 
 # channel instance pages
@@ -669,7 +711,7 @@ def equipment_instance(equipmentID):
 # def channel_instance(channelID):
 #     return render_template('channelInstance.html', channelID=channelID, channelArray=channelArray)
 
-@app.route("/channelinstance/<string:channelID>", methods=['GET']) 
+@app.route("/channelinstance/<string:channelID>", methods=['GET'])
 def channel_instance(channelID):
     if channelID == "UCb67rmuez0SKOQbZ4vCRDHQ":
         return render_template('channelsInstance1.html')
@@ -677,7 +719,7 @@ def channel_instance(channelID):
         return render_template('channelsInstance2.html')
     elif channelID == "UC_gbQ9J76mYJ5S3zVTANM_w":
         return render_template('channelsInstance3.html')
-    else: 
+    else:
         return render_template('channelInstance.html')
 
 

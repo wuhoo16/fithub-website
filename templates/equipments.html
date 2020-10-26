@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    <!-- Vars: equipmentArray, start, end, page_number, num_pages -->
+    <!-- Vars: equipmentArray, start, end, page_number, num_pages-->
 
     <title>Equipment Model Page</title>
 {% endblock %}
@@ -21,7 +21,11 @@
             {% for offset in range(3) %}
                 <div class="col-md-4 p-4">
                     <div class="card bg-light h-100 pt-4">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ equipmentArray[start + 3*i+offset].picture }}" onerror="this.onerror=null; this.src='{{ equipmentArray[start + 3*i+offset].picture }}'"; alt="{{ equipmentArray[start + 3*i+offset].name }}">
+                    {% if equipmentArray[start + 3*i+offset].replacePictureFlag %}
+                        <img class="card-img-top img-fluid mx-auto" src="/../static/{{ equipmentArray[start+3*i+offset].picture }}" alt="{{ equipmentArray[start + 3*i+offset].name }}">
+                    {% else %}
+                        <img class="card-img-top img-fluid mx-auto" src="{{ equipmentArray[start+3*i+offset].picture }}" onerror="this.onerror=null; this.src='{{ equipmentArray[start + 3*i+offset].picture }}'"; alt="{{ equipmentArray[start + 3*i+offset].name }}">
+                    {% endif %}
                         <div class="card-body">
                             <h2 class="card-title text-center text-dark">{{ equipmentArray[start + 3*i+offset].name }}</h2>
                             <p class="card-text">
@@ -45,7 +49,11 @@
             {% for i in range(-remainder, 0) %}
                 <div class="col-md-4 p-4">
                     <div class="card bg-light h-100 pt-4">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ equipmentArray[end + 1 + i].picture }}" onerror="this.onerror=null; this.src='{{ equipmentArray[end + 1 + i].picture }}'"; alt="{{ equipmentArray[end + 1 + i].name }}">
+                        {% if equipmentArray[end + 1 + i].replacePictureFlag %}
+                            <img class="card-img-top img-fluid mx-auto" src="/../static/{{ equipmentArray[end + 1 + i].picture }}" alt="{{ equipmentArray[end + 1 + i].name }}">
+                        {% else %}
+                            <img class="card-img-top img-fluid mx-auto" src="{{ equipmentArray[end + 1 + i].picture }}" onerror="this.onerror=null; this.src='{{ equipmentArray[end + 1 + i].picture }}'"; alt="{{ equipmentArray[end + 1 + i].name }}">
+                        {% endif %}
                         <div class="card-body">
                             <h2 class="card-title text-center text-dark">{{ equipmentArray[end + 1 + i].name }}</h2>
                             <p class="card-text">
