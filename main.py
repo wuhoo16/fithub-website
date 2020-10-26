@@ -33,7 +33,13 @@ EQUIPMENT_IMAGE_MAPPER = {
     'Thick Yoga Mat Gym Camping Non-Slip Fitness Exercise Pilates Meditation Pad US': "mat_picture_3.jpg"
     }
 CHANNELS_ID_SET = set()
-CHANNELS_TOPICS = {'/m/019_rr': 'Lifestyle', '/m/032tl': 'Fashion', '/m/027x7n': 'Fitness', '/m/02wbm': 'Food', '/m/03glg': 'Hobby', '/m/041xxh': 'Physical attractiveness (Beauty)', '/m/07c1v': 'Technology', '/m/01k8wb': 'Knowledge', '/m/04rlf': 'Music', '/m/02jjt': 'Entertainment', '/m/05qjc': 'Performing Arts', '/m/0kt51': 'Health', '/m/06ntj': 'Sports', '/m/0glt670': 'Hip-Hop Music'}
+CHANNELS_TOPICS = {'/m/019_rr': 'Lifestyle', '/m/032tl': 'Fashion', '/m/027x7n': 'Fitness', '/m/02wbm': 'Food', 
+                    '/m/03glg': 'Hobby', '/m/041xxh': 'Physical attractiveness (Beauty)', '/m/07c1v': 'Technology', 
+                    '/m/01k8wb': 'Knowledge', '/m/04rlf': 'Music', '/m/02jjt': 'Entertainment', '/m/05qjc': 'Performing Arts', 
+                    '/m/0kt51': 'Health', '/m/06ntj': 'Sports', '/m/0glt670': 'Hip-Hop Music'}
+CHANNELS_BANNER_BLACKLIST = {'Jeremy Ethier', 'Squat University', 'Squat Bench Deadlift', 'Diesel Strength Video Library', 
+                    'The Deadlift Dad', 'Women Chest Workout', "Renshaw's Personal Training", 'James Grage', 'Fit Now Official', 
+                    'Stephi Nguyen', 'Juicy Calves Fitness'}
 exercisesArray = []    # declared globally and initialized from our mongoDB the first time the homepage is visited
 equipmentArray = []    # declared globally and initialized from our mongoDB the first time the homepage is visited
 channelArray = []      # declared globally and initialized from our mongoDB the first time the homepage is visited
@@ -113,7 +119,7 @@ class Equipment:
 
 # Class for channel object
 class Channel:
-    def __init__(self, channelId, channelTitle, description, thumbnailURL, subscriberCount, viewCount, videoCount, playlist, topicIds, topicCategories, exerciseCategory, unsubscribedTrailer = None, bannerUrl = None, keywords = None, exerciseSubcategory=None):
+    def __init__(self, channelId, channelTitle, description, thumbnailURL, subscriberCount, viewCount, videoCount, playlist, topicIdCategories, exerciseCategory, unsubscribedTrailer = None, bannerUrl = None, keywords = None, exerciseSubcategory=None):
         self.id = channelId  # unique channelId string passed in from the JSON response
         self.name = channelTitle
         self.description = description
@@ -122,8 +128,7 @@ class Channel:
         self.viewCount = viewCount
         self.videoCount = videoCount
         self.playlist = playlist
-        self.topicIds = convert_channels_topicIds(topicIds)
-        self.topicCategories = topicCategories
+        self.topicIdCategories = topicIdCategories
         if (keywords):
             self.keywords = keywords.split(" ")
         else:
@@ -144,8 +149,7 @@ class Channel:
             'viewCount': self.viewCount,
             'videoCount': self.videoCount,
             'playlist': self.playlist,
-            'topicIds': self.topicIds,
-            'topicCategories': self.topicCategories,
+            'topicIdCategories': self.topicIdCategories,
             'keywords': self.keywords,
             'unsubscribedTrailer': self.unsubscribedTrailer,
             'bannerUrl': self.bannerUrl,
@@ -421,6 +425,7 @@ def initialize_mongoDB_channel_collection():
                 playlist = {"title": contentDetails['snippet']['title'], "description": contentDetails['snippet']['description'], "image": contentDetails['snippet']['thumbnails']['high']['url'], "url": playlistUrl}
                 
                 topicDetails = execute_channels_topicDetails_API(youtube, item['snippet']['channelId'])
+                topicIdCat = convert_channels_ids_categories(convert_channels_topicIds(topicDetails['topicIds']), topicDetails['topicCategories'])
                 brandingSettings = execute_channels_brandingSettings_API(youtube, item['snippet']['channelId'])
                 
                 brandingSettingsKeywords = None
@@ -437,13 +442,15 @@ def initialize_mongoDB_channel_collection():
                 # except:
                 #     pass
 
-                try: 
-                    brandingSettingsImage = brandingSettings['image']['bannerTvHighImageUrl']
-                except: 
+                if snippet['channelTitle'] not in CHANNELS_BANNER_BLACKLIST:
                     try: 
-                        brandingSettingsImage = brandingSettings['image']['bannerImageUrl']
+                        brandingSettingsImage = brandingSettings['image']['bannerTvHighImageUrl']
                     except: 
-                        pass
+                        try: 
+                            brandingSettingsImage = brandingSettings['image']['bannerImageUrl']
+                        except: 
+                            pass
+
                 try: 
                     trailerTemp = brandingSettings['channel']['unsubscribedTrailer']
                     trailerUrl = ""
@@ -464,7 +471,7 @@ def initialize_mongoDB_channel_collection():
 
                 channel = Channel(snippet['channelId'], snippet['channelTitle'], snippet['description'], snippet['thumbnails']['high']['url'],
                                   statistics['subscriberCount'], statistics['viewCount'], statistics['videoCount'], playlist,
-                                  topicDetails['topicIds'], topicDetails['topicCategories'], exerciseCategory, brandingSettingsTrailer, brandingSettingsImage,
+                                  topicIdCat, exerciseCategory, brandingSettingsTrailer, brandingSettingsImage,
                                   brandingSettingsKeywords, exerciseSubcategory)
                 # Only add channel if it is not a duplicate
                 if channel.id not in CHANNELS_ID_SET:
@@ -704,8 +711,7 @@ def execute_channels_brandingSettings_API(youtubeClient, channelID):
     return brandingSettings
 
 def convert_channels_topicIds(ids):
-    uniqueIds = []
-    topicArr = []
+    topic_arr = []
     i = 0
     #ensuring ids topic ids are unique
     while i < len(ids): 
@@ -721,13 +727,45 @@ def convert_channels_topicIds(ids):
     
     for id in ids: 
         if id in CHANNELS_TOPICS:
-            topicArr.append(CHANNELS_TOPICS[id])
+            topic_arr.append(CHANNELS_TOPICS[id])
         else: 
             print("error in topic dictionary (MISSING TOPIC): ")
             print(id)
-            topicArr.append(id)
+            topic_arr.append(id)
 
-    return topicArr
+    return topic_arr
+
+def convert_channels_ids_categories(ids, categories):
+    id_cat_arr = []
+    found_match_flag = False
+
+    id_dict = {}
+    for id in ids:
+        id_dict[id.lower()] = id
+    
+    for cat in categories:
+        temp_cat = cat.replace("https://en.wikipedia.org/wiki/", "")
+        temp_cat = temp_cat.replace("(", "")
+        temp_cat = temp_cat.replace(")", "")
+        temp_cat_arr = temp_cat.split("_")
+        temp_cat_arr.append(temp_cat.replace("_", " "))
+
+        for word in temp_cat_arr:
+            if word.lower() == "sport":
+                word = "sports"
+
+            if word.lower() in id_dict:
+                id_cat_arr.append({'topicId': id_dict[word.lower()], 'topicCategory': cat})
+                found_match_flag = True
+                break
+        
+        if not found_match_flag:
+            print("DIDNT FIND MATCH W/ ID & CATEGORY")
+            print(cat)
+    
+    return id_cat_arr
+
+
 
 def convert_channels_embeddedUrl(embeddedTag):
     elements = embeddedTag.split(" ")
@@ -768,9 +806,9 @@ def initialize_channel_array_from_db():
     for channelDocument in channelCursor:
         channelArray.append(Channel(channelDocument['id'], channelDocument['name'], channelDocument['description'],
                                     channelDocument['thumbnailURL'], channelDocument['subscriberCount'], channelDocument['viewCount'], 
-                                    channelDocument['videoCount'], channelDocument['playlist'], channelDocument['topicIds'], 
-                                    channelDocument['topicCategories'], channelDocument['keywords'], channelDocument['unsubscribedTrailer'], 
-                                    channelDocument['bannerUrl'], channelDocument['exerciseCategory'], channelDocument['exerciseSubcategory']))
+                                    channelDocument['videoCount'], channelDocument['playlist'], channelDocument['topicIdCategories'], 
+                                    channelDocument['keywords'], channelDocument['unsubscribedTrailer'], channelDocument['bannerUrl'], 
+                                    channelDocument['exerciseCategory'], channelDocument['exerciseSubcategory']))
 
 
 # At this point all helper methods definitions and API calls should be done. (Later DB should be populated already)
@@ -880,9 +918,5 @@ if __name__ == "__main__":
 
     app.run(host="localhost", port=8080, debug=True, use_reloader=True)
 
-# NEED TO CHANGE TOPIC IDS & CATEGORIES / COMBINE THEM
-# NEED TO FIX SOME KEWYORDS LIKE "HOW TO LOSE WEIGHT" BECAUSE CURRENTLY KEYWORDS ARE "HOW", "TO", "LOSE", "WEIGHT", ETC
-# NEED TO ADD DESCRIPTION NEW LINE FOR NEW SENTENCES FOR UNSUBSCRIBED TRAILER
-# DONT NEED PLAYLIST IMAGE OR UNSUBSCRIBED TRAILER IMAGE
 # ADD RELATED CHANNELS
 
