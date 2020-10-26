@@ -7,10 +7,13 @@
 # Ignore all project files
 **/.idea
 
+# Ignore all pycache files
+**/__pycache__
+
 # Ignore virtual environment folders
 **/venv
+**/env
 
 # Other local-testing or project-specific files
 /apiTesting.py
 /testMongoDB.py
-

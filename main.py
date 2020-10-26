@@ -1,31 +1,35 @@
-import os
-import requests
-import re
 import math
+import os
+import re
+import requests
 
+from ebaysdk.finding import Connection
+from flask import Flask, render_template
 from googleapiclient.discovery import build
-from flask import Flask, render_template, url_for, request, redirect
 from pymongo import MongoClient
 
 # Global variables definitions
-API_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk' # michelle's
+API_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk'  # michelle's
 SEARCH_ENGINE_ID = '598e742e6c308d255'
-equipmentIdCounter = 1
+# equipmentIdCounter = 1
 EXERCISE_BLACKLIST = {'Axe Hold', 'Cycling', 'Upper Body', 'Upper External Oblique', 'Chin-ups', 'Wall Pushup'}
-EXERCISE_RENAME_DICT = {'Pushups': 'Chest Push-ups', 'Push Ups': 'Push-ups', 'Snach': 'Snatch', "Squat Thrust": "Burpee", 'Thruster': 'Barbell Thruster Squats'}
-EXERCISE_SZ_BAR_TYPOS = {'French Press (skullcrusher) SZ-bar', 'Biceps Curls With SZ-bar', 'Upright Row, SZ-bar', 'Reverse Bar Curl'}
+EXERCISE_RENAME_DICT = {'Pushups': 'Chest Push-ups', 'Push Ups': 'Push-ups', 'Snach': 'Snatch',
+                        "Squat Thrust": "Burpee", 'Thruster': 'Barbell Thruster Squats'}
+EXERCISE_SZ_BAR_TYPOS = {'French Press (skullcrusher) SZ-bar', 'Biceps Curls With SZ-bar', 'Upright Row, SZ-bar',
+                         'Reverse Bar Curl'}
 EXERCISE_GYM_MAT_SET = {'Leg Raises, Lying', 'Side Crunch', 'Superman'}
 PLANK_REMOVED_FLAG = False
-EQUIPMENT_BLACKLIST = {'SML-1 Monster Lite Squat Stand - Made in the USA', 'ETHOS Power Rack 1.0, Red', 'Core Home Fitness Adjustable Dumbbell Set',
-                       'Harbinger Pull-Up Bar Black - Hand Exer. Equip. at Academy Sports', 'Fuel Pureformance Xtreme Doorway Gym',
-                       'Stamina Doorway Trainer Plus, Black', 'WEIDER Rubber Hex Dumbbell SINGLE 25 lb Pound Weight IN HAND FREE SHIP',
-                       'A Pair of Dumbbells Set, Adjustable Free Weights Barbell Set 5-66lb (Black)', 'CAP Rubber Coated Hex Dumbbell 40 lb Weight Lifting Training Home Workout Single',
-                       'Harbinger Multi-Gym Sport Pull-Up Bar - Hand Exercise Equipment at Academy Sports', 'Mind Reader - Pull-up bar - black'}
+# EQUIPMENT_BLACKLIST = {'SML-1 Monster Lite Squat Stand - Made in the USA', 'ETHOS Power Rack 1.0, Red', 'Core Home Fitness Adjustable Dumbbell Set',
+#                        'Harbinger Pull-Up Bar Black - Hand Exer. Equip. at Academy Sports', 'Fuel Pureformance Xtreme Doorway Gym',
+#                        'Stamina Doorway Trainer Plus, Black', 'WEIDER Rubber Hex Dumbbell SINGLE 25 lb Pound Weight IN HAND FREE SHIP',
+#                        'A Pair of Dumbbells Set, Adjustable Free Weights Barbell Set 5-66lb (Black)', 'CAP Rubber Coated Hex Dumbbell 40 lb Weight Lifting Training Home Workout Single',
+#                        'Harbinger Multi-Gym Sport Pull-Up Bar - Hand Exercise Equipment at Academy Sports', 'Mind Reader - Pull-up bar - black'}
 CHANNELS_ID_SET = set()
-exercisesArray = []    # declared globally and initialized from our mongoDB the first time the homepage is visited
-equipmentArray = []    # declared globally and initialized from our mongoDB the first time the homepage is visited
-channelArray = []      # declared globally and initialized from our mongoDB the first time the homepage is visited
-client = MongoClient("mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase1Database?retryWrites=true&w=majority")
+exercisesArray = []  # declared globally and initialized from our mongoDB the first time the homepage is visited
+equipmentArray = []  # declared globally and initialized from our mongoDB the first time the homepage is visited
+channelArray = []  # declared globally and initialized from our mongoDB the first time the homepage is visited
+client = MongoClient(
+    "mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase1Database?retryWrites=true&w=majority")
 db = client.phase2Database
 
 
@@ -172,8 +176,13 @@ def initialize_mongoDB_exercises_collection():
     image_URL = 'https://wger.de/api/v2/exerciseimage/?limit=204'
     comment_URL = 'https://wger.de/api/v2/exercisecomment/?limit=113'
 
-    exercise_data, category_data, muscle_data, equipment_data, image_data, comment_data = get_json(exercise_URL, category_URL, muscle_URL, equipment_URL, image_URL, comment_URL, data, headers)
-
+    exercise_data, category_data, muscle_data, equipment_data, image_data, comment_data = get_json(exercise_URL,
+                                                                                                   category_URL,
+                                                                                                   muscle_URL,
+                                                                                                   equipment_URL,
+                                                                                                   image_URL,
+                                                                                                   comment_URL, data,
+                                                                                                   headers)
     results = exercise_data["results"]
     for x in results:
         if x["name"] and x["description"] and x["category"] and x["equipment"]:  # only exercises with complete info (110 exercises)
@@ -268,29 +277,57 @@ def initialize_mongoDB_equipment_collection():
     :return: None
     """
     db.equipments.drop()  # drop the old collection so we initialize a fresh collection
+    EBAY_APP_ID = "AndrewWu-IMBDProj-PRD-be64e9f22-1cd7edca"  # Andrew's App ID
+    api = Connection(appid=EBAY_APP_ID, config_file=None)
+    api_result = api.execute('findItemsAdvanced',
+                             {'keywords': ['kettlebell', 'dumbbell', 'barbell', 'bench', 'EZ-Bar', 'exercise mat',
+                                           'fitness']})
+    api_result_dict = api_result.dict()
+    shopping_results_arr = api_result_dict["searchResult"]["item"]
 
-    queryArray = ['Kettlebell', 'Dumbbell', 'Barbell', 'Bench', 'EZ-Bar', 'Exercise mat']
-    URL_FOR_SERPSTACK = "http://api.serpstack.com/search"
-    serpstackRequestArray = create_serpstack_request_params(queryArray, 7)
-    query_template = '{} workout equipment'
+    for result in shopping_results_arr:
+        # May need to add more vars and checks later
+        galleryURL = ""
+        if 'galleryPlusPictureURL' in result:
+            galleryURL = result['galleryPlusPictureURL']
+        else:
+            if 'galleryURL' in result:
+                galleryURL = result['galleryURL']
+        eq = Equipment(result['itemId'], result['title'], result['sellingStatus']['convertedCurrentPrice']['value'],
+                       result['primaryCategory']['categoryName'], result['location'], galleryURL,
+                       result['viewItemURL'])
+        db.equipments.insert_one(eq.to_dictionary())
 
-    for param in serpstackRequestArray:
-        api_result = requests.get(URL_FOR_SERPSTACK, param)
-        api_result_json = api_result.json()
-        shopping_results_arr = api_result_json["shopping_results"]
 
-        for result in shopping_results_arr:
-            # Parse the JSON response and only keep products that have 'rating' and 'reviews' to prevent KeyError exception
-            # We also keep an explicit blacklist of products that do not have relevant images
-            if 'rating' in result.keys() and 'reviews' in result.keys() and result['title'] not in EQUIPMENT_BLACKLIST:
-                global equipmentIdCounter
-                images = get_google_images(query_template.format(result["title"]))
-                equipmentCategory = param['query']
-                if len(images) > 0:  # Only keep data if at least 1 image can be found for it
-                    eq = Equipment(equipmentIdCounter, result["title"], result["price"], result["rating"], result["reviews"], result["seller"],
-                                   result["snippet"], result["extensions"], images, result["url"], equipmentCategory)
-                    db.equipments.insert_one(eq.to_dictionary())
-                    equipmentIdCounter += 1
+#   previous code ------------------------------------------------------------------------------------------------------
+
+# queryArray = ['Kettlebell', 'Dumbbell', 'Barbell', 'Bench', 'EZ-Bar', 'Exercise mat']
+# URL_FOR_SERPSTACK = "http://api.serpstack.com/search"
+# serpstackRequestArray = create_serpstack_request_params(queryArray, 7)
+# query_template = '{} workout equipment'
+#
+#
+#
+# for param in serpstackRequestArray:
+#     api_result = requests.get(URL_FOR_EBAY, param)
+#     api_result_json = api_result.json()
+#     shopping_results_arr = api_result_json["shopping_results"]
+#
+#     for result in shopping_results_arr:
+#         # Parse JSON response, only keep products that have 'rating' and 'reviews' to prevent KeyError exception
+#         # We also keep an explicit blacklist of products that do not have relevant images
+#         if 'rating' in result.keys() and 'reviews' in result.keys()
+#               and result['title'] not in EQUIPMENT_BLACKLIST:
+#             global equipmentIdCounter
+#             images = get_google_images(query_template.format(result["title"]))
+#             equipmentCategory = param['query']
+#             if len(images) > 0:  # Only keep data if at least 1 image can be found for it
+#                 eq = Equipment(equipmentIdCounter, result["title"], result["price"], result["rating"],
+#                                   result["reviews"], result["seller"],
+#                                   result["snippet"], result["extensions"], images, result["url"],
+#                                   equipmentCategory)
+#                 db.equipments.insert_one(eq.to_dictionary())
+#                 equipmentIdCounter += 1
 
 
 def initialize_mongoDB_channel_collection():
@@ -484,7 +521,6 @@ def execute_youtube_search_API(youtubeClient, searchTerm, part="snippet", maxRes
     Helper function that calls the Youtube Data API with youtube client and search term to return an array of Channel resources.
     Each channel resource is modeled in the JSON response as a dictionary with 'etag', 'id', 'kind', and 'snippet' keys. The 'snippet' key --> dictionary with 'channelID',
     'channelTitle', 'description', and 'thumbnails' keys.
-
     :param youtubeClient: Google api client for Youtube that is expected to already be built/authenticated.
     :param searchTerm: The query search term to pass to the youtube search().list API
     :param part: The type of attribute to return. Set to "snippet" by default
@@ -581,7 +617,7 @@ def equipments(page_number):
 # channels model page
 @app.route("/channels/<int:page_number>", methods=['GET'])
 def channels(page_number):
-    start, end, num_pages = paginate(page_number, channelArray)
+    start, end, num_pages = paginate(page_number, channelArray) 
     return render_template('channels.html', channelArray=channelArray, start=start, end=end, page_number=page_number, num_pages=num_pages)
 
 
@@ -590,6 +626,7 @@ def channels(page_number):
 def about():
     return render_template('about.html')
 
+          
 # Helper methods for model pages
 # ==================================================================================================================
 # Pagination on Model Pages - assumes 9 instances per page
@@ -600,6 +637,7 @@ def paginate(page_number, array):
         endIndex = len(array) - 1
     num_pages = math.ceil(len(array) / 9)
     return startIndex, endIndex, num_pages
+
 
 # All view methods for INSTANCE pages are defined below:
 # ==================================================================================================================
@@ -617,10 +655,13 @@ def exercise_instance(exercise_id):
 
 
 # equipment instance pages
-@app.route("/equipments/<int:equipmentID>", methods=['GET'])
+@app.route("/equipments/<string:equipmentID>", methods=['GET'])
 def equipment_instance(equipmentID):
-    equipmentObject = equipmentArray[equipmentID - 1]
-    return render_template('equipmentInstance.html', equipmentObject=equipmentObject)
+    for eq in equipmentArray:
+        if eq.id == equipmentID:
+            return render_template('equipmentInstance.html', equipmentObject=eq, equipmentList=equipmentArray)
+    # TODO: replace this line with error handling page (see Google API Client tutorial, the one where you rickrolled the TAs)
+    return render_template('equipmentInstance.html', equipmentObject=equipmentArray[0], equipmentList=equipmentArray)
 
 
 # channel instance pages
@@ -651,4 +692,3 @@ if __name__ == "__main__":
     # initialize_mongoDB_channel_collection()
 
     app.run(host="localhost", port=8080, debug=True, use_reloader=True)
-
