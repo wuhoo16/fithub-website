@@ -1,64 +1,73 @@
-{% extends 'base.html' %}
-
-<!-- Channel Parameter: channelObject -->
-
-{% block head %}
-    <title>{{ channelObject.name }}</title>
-{% endblock %}
-
-
-{% block body %}
-    <h1> Welcome to {{ channelObject.name }}'s Channel!</h1>
-    <!-- header image and description -->
-    <div class="container-fluid pt-3 centered">
-        <!-- TODO: is this the right picture? -->
-        <img class="header-pic" src="{{ channelObject.thumbnailURL }}" />
-        <h5>
-            {{ channelObject.description }}
-        </h5>
-    </div>
-
-    <!-- information and link -->
-    <div class="border border-dark rounded mx-auto my-2">
-        <div><label>Subscriber Count: {{ channelObject.subscriberCount }}</label></div>
-        <div><label>View Count: {{ channelObject.viewCount }}</label></div>
-        <div><label>Number of Videos: {{ channelObject.videoCount }}</label></div>
-        <!-- TODO: get channel link -->
-        <br/>
-        <div><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Channel Link [NEED LINK]</a></div>
-    </div>
-
-    <!-- popular videos -->
-    <div class="border border-dark rounded mx-auto my-2">
-        <h4>Popular Videos</h4>
-        <!--
-        {% for v in channelObject.popularVideos %}
-            <div>
-                <label>videoTitle</label>
-                <img class="instance-pic" src="" />
-                <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">Watch Video [NEED LINK]</a>
-            </div>
-        {% endfor %}
-        -->
-    </div>
-
-    <!-- related topics (TODO: can we even GET this?)-->
+{% extends 'base.html' %} {% block head %}
+<title>{{ channelObj.name }}</title>
+{% endblock %} {% block body %}
+<div class="container-fluid pt-3 centered">
+  <h1>Welcome to {{channelObj.name}} Channel's Page!</h1>
+  <img class="header-pic" src="{{ channelObj.thumbnailURL }}" />
+  <h5>{{channelObj.description}}</h5>
+  <div>
+    <img class="instance-pic" src="{{ channelObj.bannerUrl }}" />
+  </div>
+  <div>
+    <h4>{{ channelObj.playlist.title }}</h4>
+    <iframe src="{{ channelObj.playlist.url }}"></iframe>
+  </div>
+  <div class="border border-dark rounded mx-auto my-2">
+    <div><label>View Count: {{channelObj.viewCount}}</label></div>
+    <div><label>Subscriber Count: {{channelObj.subscriberCount}}</label></div>
+    <div><label>Number of Videos: {{channelObj.videoCount}}</label></div>
+  </div>
+  <div class="border border-dark rounded mx-auto my-2">
+    <h4>Topic categories are related to the following sites!</h4>
+    <ul>
+      {% set idx = 0 %} {% for category in channelObj.topicCategories %}
+      <li>
+        <a href="{{ category }}">{{ channelObj.topicIds[idx] }}</a>
+      </li>
+      {% set idx = idx + 1 %} {% endfor %}
+    </ul>
+  </div>
+  <div class="border border-dark rounded mx-auto my-2">
+    <h5>Keywords</h5>
+    {% for word in channelObj.keywords %}
+    <label class="border border-dark rounded mx-1 my-2">{{ word }}</label>
+    {% endfor %}
+  </div>
+  <div class="border border-dark rounded mx-auto my-2">
+    <h5>{{ channelObj.unsubscribedTrailer.title }}</h5>
     <div>
-        <h4>This channel covers topics such as:</h4>
-        <ul>
-            <li></li>
-            <li></li>
-        </ul>
+      <div>
+        <label
+          >Description: {{ channelObj.unsubscribedTrailer.description }}</label
+        >
+      </div>
+      <div>
+        <label>YouTube channel link</label>
+        <iframe src="{{ channelObj.unsubscribedTrailer.url }}"></iframe>
+        <div>
+          <label
+            >View Count: {{ channelObj.unsubscribedTrailer.viewCount }}</label
+          >
+        </div>
+        <div>
+          <label
+            >Like Count: {{ channelObj.unsubscribedTrailer.likeCount }}</label
+          >
+        </div>
+        <div>
+          <label
+            >Dislike Count: {{ channelObj.unsubscribedTrailer.dislikeCount
+            }}</label
+          >
+        </div>
+      </div>
     </div>
-
-    <!-- keywords -->
-    <div class="border border-dark rounded mx-auto my-2">
-        <h5>Keywords</h5>
-        <!--
-        {% for k in channelObject.keywords %}
-            <label class="border border-dark rounded mx-1 my-2>k</label>
-        {% endfor %}
-        -->
+    <div>
+      <h5>Keywords</h5>
+      {% for tag in channelObj.unsubscribedTrailer.tags %}
+      <label class="border border-dark rounded mx-1 my-2">{{ tag }}</label>
+      {% endfor %}
     </div>
-
+  </div>
+</div>
 {% endblock %}
