@@ -1,8 +1,8 @@
 import math
 import os
 import re
-
 import requests
+
 from ebaysdk.finding import Connection
 from flask import Flask, render_template
 from googleapiclient.discovery import build
@@ -37,8 +37,7 @@ db = client.phase2Database
 # =============================================================================================================================
 # Class for exercise object
 class Exercise:
-    def __init__(self, exercise_id, name, description, category, subcategory, muscles, muscles_secondary, equipment,
-                 images, comments):
+    def __init__(self, exercise_id, name, description, category, subcategory, muscles, muscles_secondary, equipment, images, comments):
         self.id = exercise_id
         self.name = name
         self.description = description
@@ -71,27 +70,33 @@ class Exercise:
 
 # Class for equipment object
 class Equipment:
-    def __init__(self, itemId, title, value, categoryName, location, galleryURL, viewItemURL):
-        self.id = itemId
-        self.name = title
-        self.price = value
-        self.category = categoryName
-        self.location = location
-        self.picture = galleryURL
-        self.linkToItem = viewItemURL
-
-    def __eq__(self, other):
-        return self.id == other.id and self.name == other.name and self.price == other.price and self.category == other.category and self.location == other.location and self.picture == other.picture and self.linkToItem == other.linkToItem
+    def __init__(self, id, name, price, rating, reviews, seller, snippet, extensions, images, url, equipmentCategory):
+        self.id = id  # unique id generated in the backend to help create dynamic URLs
+        self.name = name  # called 'title' in JSON
+        self.price = price
+        self.rating = rating
+        self.reviews = reviews
+        self.seller = seller
+        self.snippet = snippet
+        self.extensions = extensions
+        self.images = images
+        self.url = url
+        self.equipmentCategory = equipmentCategory
 
     def to_dictionary(self):
         return {
+            '_id': self.id,
             'id': self.id,
             'name': self.name,
             'price': self.price,
-            'category': self.category,
-            'location': self.location,
-            'picture': self.picture,
-            'linkToItem': self.linkToItem
+            'rating': self.rating,
+            'reviews': self.reviews,
+            'seller': self.seller,
+            'snippet': self.snippet,
+            'extensions': self.extensions,
+            'images': self.images,
+            'url': self.url,
+            'equipmentCategory': self.equipmentCategory
         }
 
     def __str__(self):
@@ -100,8 +105,7 @@ class Equipment:
 
 # Class for channel object
 class Channel:
-    def __init__(self, channelId, channelTitle, description, thumbnailURL, subscriberCount, viewCount, videoCount,
-                 exerciseCategory, exerciseSubcategory=None):
+    def __init__(self, channelId, channelTitle, description,  thumbnailURL, subscriberCount, viewCount, videoCount, exerciseCategory, exerciseSubcategory=None):
         self.id = channelId  # unique channelId string passed in from the JSON response
         self.name = channelTitle
         self.description = description
@@ -179,7 +183,6 @@ def initialize_mongoDB_exercises_collection():
                                                                                                    image_URL,
                                                                                                    comment_URL, data,
                                                                                                    headers)
-
     results = exercise_data["results"]
     for x in results:
         if x["name"] and x["description"] and x["category"] and x["equipment"]:  # only exercises with complete info (110 exercises)
@@ -249,8 +252,7 @@ def initialize_mongoDB_exercises_collection():
             elif category_name == 'Legs':
                 subcategory = return_legs_subcategory(x['name'])
 
-            exercise = Exercise(exerciseID, x["name"], description, category_name, subcategory, muscles_string,
-                                sec_muscles_string, equipment_string,
+            exercise = Exercise(exerciseID, x["name"], description, category_name, subcategory, muscles_string, sec_muscles_string, equipment_string,
                                 images, comments)
 
             if exercise.name in EXERCISE_BLACKLIST:
@@ -275,7 +277,6 @@ def initialize_mongoDB_equipment_collection():
     :return: None
     """
     db.equipments.drop()  # drop the old collection so we initialize a fresh collection
-
     EBAY_APP_ID = "AndrewWu-IMBDProj-PRD-be64e9f22-1cd7edca"  # Andrew's App ID
     api = Connection(appid=EBAY_APP_ID, config_file=None)
     api_result = api.execute('findItemsAdvanced',
@@ -360,23 +361,21 @@ def initialize_mongoDB_channel_collection():
     # Call helper methods to initialize Channel arrays
     for searchTerm in searchTermsArray:
         for item in execute_youtube_search_API(youtube, searchTermTemplate.format(searchTerm), maxResults=5):
-            snippet = item['snippet']
-            statistics = execute_channels_statistics_API(youtube, item['snippet']['channelId'])
-            exerciseCategory = searchTerm
-            exerciseSubcategory = None
-            # If searching a subcategory term, map and save the broader exercise category
-            if searchTerm in exerciseCategoryMapper.keys():
-                exerciseCategory = exerciseCategoryMapper[searchTerm]
-                exerciseSubcategory = searchTerm
+                snippet = item['snippet']
+                statistics = execute_channels_statistics_API(youtube, item['snippet']['channelId'])
+                exerciseCategory = searchTerm
+                exerciseSubcategory = None
+                # If searching a subcategory term, map and save the broader exercise category
+                if searchTerm in exerciseCategoryMapper.keys():
+                    exerciseCategory = exerciseCategoryMapper[searchTerm]
+                    exerciseSubcategory = searchTerm
 
-            channel = Channel(snippet['channelId'], snippet['channelTitle'], snippet['description'],
-                              snippet['thumbnails']['high']['url'],
-                              statistics['subscriberCount'], statistics['viewCount'], statistics['videoCount'],
-                              exerciseCategory, exerciseSubcategory)
-            # Only add channel if it is not a duplicate
-            if channel.id not in CHANNELS_ID_SET:
-                db.channels.insert_one(channel.to_dictionary())
-                CHANNELS_ID_SET.add(channel.id)
+                channel = Channel(snippet['channelId'], snippet['channelTitle'], snippet['description'], snippet['thumbnails']['high']['url'],
+                                  statistics['subscriberCount'], statistics['viewCount'], statistics['videoCount'], exerciseCategory, exerciseSubcategory)
+                # Only add channel if it is not a duplicate
+                if channel.id not in CHANNELS_ID_SET:
+                    db.channels.insert_one(channel.to_dictionary())
+                    CHANNELS_ID_SET.add(channel.id)
 
 
 # All helper API-call methods or JSON-parsing helper methods defined below
@@ -557,21 +556,20 @@ def execute_channels_statistics_API(youtubeClient, channelID):
 def initialize_exercises_array_from_db():
     exercisesCursor = db.exercises.find()
     for exerciseDocument in exercisesCursor:
-        exercisesArray.append(
-            Exercise(exerciseDocument['id'], exerciseDocument['name'], exerciseDocument['description'],
-                     exerciseDocument['category'], exerciseDocument['subcategory'], exerciseDocument['muscles'],
-                     exerciseDocument['muscles_secondary'], exerciseDocument['equipment'],
-                     exerciseDocument['images'], exerciseDocument['comments']))
+        exercisesArray.append(Exercise(exerciseDocument['id'], exerciseDocument['name'], exerciseDocument['description'],
+                                        exerciseDocument['category'], exerciseDocument['subcategory'], exerciseDocument['muscles'],
+                                        exerciseDocument['muscles_secondary'], exerciseDocument['equipment'],
+                                        exerciseDocument['images'], exerciseDocument['comments']))
 
 
 def initialize_equipment_array_from_db():
     equipmentsCursor = db.equipments.find()
     for equipmentDocument in equipmentsCursor:
-        equipmentArray.append(Equipment(equipmentDocument['id'], equipmentDocument['name'],
-                                        equipmentDocument['price'],
-                                        equipmentDocument['category'],
-                                        equipmentDocument['location'], equipmentDocument['picture'],
-                                        equipmentDocument['linkToItem']))
+        equipmentArray.append(Equipment(equipmentDocument['id'], equipmentDocument['name'], equipmentDocument['price'],
+                                        equipmentDocument['rating'], equipmentDocument['reviews'],
+                                        equipmentDocument['seller'], equipmentDocument['snippet'],
+                                        equipmentDocument['extensions'], equipmentDocument['images'],
+                                        equipmentDocument['url'], equipmentDocument['equipmentCategory']))
 
 
 def initialize_channel_array_from_db():
@@ -579,8 +577,7 @@ def initialize_channel_array_from_db():
     for channelDocument in channelCursor:
         channelArray.append(Channel(channelDocument['id'], channelDocument['name'], channelDocument['description'],
                                     channelDocument['thumbnailURL'], channelDocument['subscriberCount'],
-                                    channelDocument['viewCount'], channelDocument['videoCount'],
-                                    channelDocument['exerciseCategory'],
+                                    channelDocument['viewCount'], channelDocument['videoCount'], channelDocument['exerciseCategory'],
                                     channelDocument['exerciseSubcategory']))
 
 
@@ -604,25 +601,24 @@ def index():
 
 
 # exercises model page
-@app.route("/exercises", methods=['GET'])
-def exercises():
-    return render_template('exercises.html', exercisesArray=exercisesArray)
+@app.route("/exercises/<int:page_number>", methods=['GET'])
+def exercises(page_number):
+    start, end, num_pages = paginate(page_number, exercisesArray)
+    return render_template('exercises.html', exercisesArray=exercisesArray, start=start, end=end, page_number=page_number, num_pages=num_pages)
 
 
 # equipments model page
 @app.route("/equipment/<int:page_number>", methods=['GET'])
 def equipments(page_number):
     start, end, num_pages = paginate(page_number, equipmentArray)
-    return render_template('equipments.html', equipmentArray=equipmentArray, start=start, end=end,
-                           page_number=page_number, num_pages=num_pages)
+    return render_template('equipments.html', equipmentArray=equipmentArray, start=start, end=end, page_number=page_number, num_pages=num_pages)
 
 
 # channels model page
 @app.route("/channels/<int:page_number>", methods=['GET'])
 def channels(page_number):
-    start, end, num_pages = paginate(page_number, channelArray)
-    return render_template('channels.html', channelArray=channelArray, start=start, end=end, page_number=page_number,
-                           num_pages=num_pages)
+    start, end, num_pages = paginate(page_number, channelArray) 
+    return render_template('channels.html', channelArray=channelArray, start=start, end=end, page_number=page_number, num_pages=num_pages)
 
 
 # about page
@@ -630,7 +626,7 @@ def channels(page_number):
 def about():
     return render_template('about.html')
 
-
+          
 # Helper methods for model pages
 # ==================================================================================================================
 # Pagination on Model Pages - assumes 9 instances per page
@@ -646,7 +642,7 @@ def paginate(page_number, array):
 # All view methods for INSTANCE pages are defined below:
 # ==================================================================================================================
 # exercise instance pages
-@app.route("/exercises/<int:exercise_id>", methods=['GET'])
+@app.route("/exerciseinstance/<int:exercise_id>", methods=['GET'])
 def exercise_instance(exercise_id):
     if exercise_id == 345:
         return render_template('exerciseInstance1.html')
@@ -673,7 +669,7 @@ def equipment_instance(equipmentID):
 # def channel_instance(channelID):
 #     return render_template('channelInstance.html', channelID=channelID, channelArray=channelArray)
 
-@app.route("/channelinstance/<string:channelID>", methods=['GET'])
+@app.route("/channelinstance/<string:channelID>", methods=['GET']) 
 def channel_instance(channelID):
     if channelID == "UCb67rmuez0SKOQbZ4vCRDHQ":
         return render_template('channelsInstance1.html')
@@ -681,7 +677,7 @@ def channel_instance(channelID):
         return render_template('channelsInstance2.html')
     elif channelID == "UC_gbQ9J76mYJ5S3zVTANM_w":
         return render_template('channelsInstance3.html')
-    else:
+    else: 
         return render_template('channelInstance.html')
 
 

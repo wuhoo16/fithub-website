@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>2 Handed Kettlebell Swing</title>
+{% endblock %}
+
+{% block body %}
+
+    <h1>2 Handed Kettlebell Swing</h1>
+    <div>
+        <img src="https://www.strongfirst.com/wordpress/wp-content/uploads/2019/02/StrongFirst-Two-Hand-Swing-2-500x750-300x450.jpg" alt="">
+        <img src="https://www.strongfirst.com/wordpress/wp-content/uploads/2018/08/Tracy-big-KB_WebOpt_750px-450x398.jpg" alt="">
+        <img src="https://www.strongfirst.com/wordpress/wp-content/uploads/2015/06/swing-versus-snatch.jpg" alt="">
+        <br>
+        <p>Description: Two Handed Russian Style Kettlebell swing</p>
+        <p>Category: Abs</p>
+        <p>Equipment: Kettlebell</p>
+    </div>
+    <br>
+    <div class="border border-dark rounded mx-auto my-2">
+        <h4>Top related channels</h4>
+        <ul>
+          <li>
+            <a href="{{ url_for('channel_instance', channelID='UC_gbQ9J76mYJ5S3zVTANM_w') }}"
+              >workout & Fitness</a
+            >
+          </li>
+          <li>
+            <a href="{{ url_for('channel_instance', channelID='UCb67rmuez0SKOQbZ4vCRDHQ') }}"
+              >jensenol11</a
+            >
+          </li>
+        </ul>
+    </div>
+    
+            
+{% endblock %}
