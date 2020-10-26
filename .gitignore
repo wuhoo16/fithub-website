@@ -7,24 +7,16 @@
 # Ignore all project files
 **/.idea
 
-<<<<<<< HEAD
 # Ignore all pycache files
 **/__pycache__
 
 # Ignore virtual environment folders
 **/venv
 **/env
-=======
-# Ignore virtual environment folders
-**/venv
->>>>>>> 4a688f4585d5f4e3e78b6e506f0529a7b8334a21
 
 # Ignore README file so dev branch does not update to match other branch's README
 **/README.md
 
 # Other local-testing or project-specific files
 /apiTesting.py
-<<<<<<< HEAD
 /testMongoDB.py
-=======
->>>>>>> 4a688f4585d5f4e3e78b6e506f0529a7b8334a21
