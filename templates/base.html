@@ -16,7 +16,6 @@
   <body>
     <nav
       class="navbar navbar-expand-sm bg-dark navbar-dark"
-      style="margin-bottom: 25px"
     >
       <button
         class="navbar-toggler"
@@ -36,13 +35,13 @@
       <div class="collapse navbar-collapse" id="collapsibleNavbar">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('exercises') }}">Exercises</a>
+            <a class="nav-link" href="{{ url_for('exercises', page_number=1) }}">Exercises</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('equipments') }}">Equipment</a>
+            <a class="nav-link" href="{{ url_for('equipments', page_number=1) }}">Equipment</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('channels') }}"
+            <a class="nav-link" href="{{ url_for('channels', page_number=1) }}"
               >Youtube Channels</a
             >
           </li>
@@ -52,6 +51,8 @@
         </ul>
       </div>
     </nav>
-    {% block body %} {% endblock %}
+    <div class="container-fluid bg-light" style="padding-top: 25px;">
+      {% block body %} {% endblock %}
+    </div>
   </body>
 </html>
