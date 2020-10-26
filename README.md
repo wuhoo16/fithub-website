@@ -54,6 +54,12 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
       - Equipment Model Page Functionality and Design: Actual Completion Hours: 7
       - About Page Content: Estimated Completion Hours: 1
       - About Page Content: Estimated Completion Hours: 0.5
+      - eBay API Setup and Integration: Estimated Completion Hours: 6
+      - eBay API Setup and Integration: Actual Completion Hours: 5
+      - Update Equipment Instance Model Page to Fit eBay API: Estimated Completion Hours: 2
+      - Update Equipment Instance Model Page to Fit eBay API: Estimated Completion Hours: [HERE]
+      - Equipment Instance Page Functionality and Design: Estimated Completion Hours: 3
+      - Equipment Instance Page Functionality and Design: Actual Completion Hours: [HERE]
 
 
   Michelle Wen
