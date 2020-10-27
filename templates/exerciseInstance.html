@@ -6,6 +6,7 @@
 
 
 {% block body %}
+<div class="container-fluid bg-light">
     {% for e in exercisesArray %}
         {% if e.id == exercise_id %}
             <h1>{{ e.name }}</h1>
@@ -37,5 +38,5 @@
             
         {% endif %}
     {% endfor %}
-    
+</div>
 {% endblock %}
