@@ -16,7 +16,7 @@
             {% for offset in range(3) %}    
                 <div class="col-md-4 p-4">
                     <div class="card bg-light h-100 pt-4">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[start + 3*i + offset].images[0] }}" alt="{{ exercisesArray[start + 3*i + offset].name }}">
+                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[start + 3*i + offset].images[0] }}" onerror="this.onerror=null; this.src='{{ exercisesArray[start + 3*i+offset].images[1] }}'"; alt="{{ exercisesArray[start + 3*i + offset].name }}">
                         <div class="card-body">
                             <h2 class="card-title text-center text-dark">{{ exercisesArray[start + 3*i + offset].name }}</h2>
                             <p class="card-text">
@@ -39,7 +39,7 @@
             {% for i in range(-numLeftOverChannels, 0) %}
                 <div class="col-md-4 p-4">
                     <div class="card bg-light h-100 pt-4">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[end + 1 + i].images[0] }}" alt="{{ exercisesArray[end + 1 + i].name }}">
+                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[end + 1 + i].images[0] }}" onerror="this.onerror=null; this.src='{{ exercisesArray[end + 1 + i].images[1] }}'"; alt="{{ exercisesArray[end + 1 + i].name }}">
                         <div class="card-body">
                             <h2 class="card-title text-center text-dark">{{ exercisesArray[end + 1 + i].name }}</h2>
                             <p class="card-text">
