@@ -31,7 +31,7 @@
                                     <li style="padding-left: 1em;"><b>Videos: </b>{{ channelArray[start + 3*i + offset].videoCount }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('channel_instance', channelID=channelArray[start + 3*i + offset].id, channelIdx = start + 3*i + offset) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('channel_instance', arrayIndex=channelArray[start + 3*i + offset].arrayIndex) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                                     <li style="padding-left: 1em;"><b>Videos: </b>{{ channelArray[end + 1 + i].videoCount }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('channel_instance', channelID=channelArray[end + 1 + i].id, channelIdx=end + 1 + i) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('channel_instance', arrayIndex=channelArray[end + 1 + i].arrayIndex) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>

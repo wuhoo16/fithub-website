@@ -23,6 +23,18 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
       - About Page Design and Content: Actual Completion Hours: 2
       - Backend refactoring and MongoDB setup: Estimated Completion Hours: 4
       - Backend refactoring and MongoDB setup: Actual Completion Hours: 4
+      - Blacklisting Bad Exercises and Fixing Bad Information: Estimated Completion Hours: 2
+      - Blacklisting Bad Exercises and Fixing Bad Information: Actual Completion Hours: 3
+      - Design and API Result Modification for Cross-Model Linking Support: Estimated Completion Hours: 7
+      - Design and API Result Modification for Cross-Model Linking Support: Actual Completion Hours: 5
+      - Integrating Christopher's Branch with Updated Ebay API + Equipment Model/Instance Pages: Estimated Completion Hours: 0.5
+      - Integrating Christopher's Branch with Updated Ebay API + Equipment Model/Instance Pages: Actual Completion Hours: 6
+      - Integrating Kaylee's Branch with Updated YouTube APIs + Channel Model/Instance Pages: Estimated Completion Hours: 0.5
+      - Integrating Kaylee's Branch with Updated Youtube APIs + Channel Model/Instance Pages: Actual Completion Hours: 0.5
+      - Backend Helper Method Implementation for Cross-Model Instance Linking: Estimated Completion Hours: 4
+      - Backend Helper Method Implementation for Cross-Model Instance Linking: Actual Completion Hours: 5
+      - Refactoring codebase to improve runtime and object reference in routing methods and HTML Templates: Estimated Completion Hours: 3
+      - Refactoring codebase to improve runtime and object reference in routing methods and HTML Templates: Actual Completion Hours: 3
   
   Kaylee N Trevino
    - EID: knt658
@@ -81,6 +93,5 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
       - About Page Content: Estimated Completion Hours: 0.5
       - About Page Content: Actual Completion Hours: 1.5
 
-  
   
 Website Link: https://imbdproject.wn.r.appspot.com/

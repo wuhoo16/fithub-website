@@ -8,11 +8,12 @@
   display: block;
 }
 
-.carousel,
-.carousel-item,
-.carousel-pic {
-  width: 100%;
-  margin: auto;
+.carousel-inner>.item {
+    width: 100%;
+}
+
+#homepageWelcomeMessage {
+    text-align: center;
 }
 
 .carousel-control-next,
