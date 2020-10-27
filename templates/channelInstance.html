@@ -72,5 +72,87 @@
     </div>
   </div>
   {% endif %}
+
+        <!-- Related exercises, equipment, and channel instances -->
+        <!-- Related exercises table -->
+        <table class="table table-striped table-hover table-sm">
+          {% if channelObj.exerciseSubcategory is none %}
+          <caption>List of exercise pages related to this channel's specialty of {{ channelObj.exerciseCategory }}</caption>
+          {% else %}
+          <caption>List of exercise pages related to this channel's specialty of {{ channelObj.exerciseCategory }}: {{ channelObj.exerciseSubcategory }}</caption>
+          {% endif %}
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Exercise Name</th>
+              <th scope="col">Page URL</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for obj in relatedObjects[0] %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <th scope="row">{{ obj.name }}</th>
+                <td><a href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}">Link</a></td>
+            </tr>
+          {% endfor %}
+        </table>
+
+        <hr>
+
+        <!-- Related equipment table -->
+        <table class="table table-striped table-hover table-sm">
+          <caption>List of related equipment pages</caption>
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Equipment Name</th>
+              <th scope="col">Page URL</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for obj in relatedObjects[1] %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <th scope="row">{{ obj.name }}</th>
+                <td><a href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}">Link</a></td>
+            </tr>
+          {% endfor %}
+          {% if relatedObjects[1]|length == 0 %}
+            <tr>
+                <th scope="row">0</th>
+                <th scope="row">Sorry! Looks like this exercise has no related equipment. This could be a bodyweight or calisthenics exercise!</th>
+                <td>NA</td>
+            </tr>
+          {% endif %}
+
+        </table>
+
+        <hr>
+
+        <!-- Related channels table -->
+        <table class="table table-striped table-hover table-sm">
+          {% if channelObj.exerciseSubcategory is none %}
+          <caption>List of other channel pages related to this channel's specialty of {{ channelObj.exerciseCategory }}</caption>
+          {% else %}
+          <caption>List of other channel pages related to this channel's specialty of {{ channelObj.exerciseCategory }}: {{ channelObj.exerciseSubcategory }}</caption>
+          {% endif %}
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Channel Name</th>
+              <th scope="col">Page URL</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for obj in relatedObjects[2] %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <th scope="row">{{ obj.name }}</th>
+                <td><a href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}">Link</a></td>
+            </tr>
+          {% endfor %}
+        </table>
+
 </div>
 {% endblock %}

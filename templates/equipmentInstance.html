@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
-<!-- Equipment Param Name: equipmentObject -->
-<!-- Equipment List Param Name: equipmentList -->
+<!-- Equipment Object Param Name: equipmentObject -->
+<!-- 2D List of Related Indices Param Name: relatedIndices -->
 
 {% block head %}
     <title>{{ equipmentObject.name }}</title>
@@ -55,27 +55,78 @@
         </div>
         <hr/>
 
-        <!-- Tags [obsolete, keep anyway] -->
-<!--        <div id="equipmentInstanceExtensions" class="container justify-content-center align-items-center">-->
-<!--            <h3>Product Tags</h3>-->
-<!--            <ul>-->
-<!--                {% for tag in equipmentObject.extensions %}-->
-<!--                <li> {{ tag }}</li>-->
-<!--                {% endfor %}-->
-<!--            </ul>-->
-<!--        </div>-->
+        <!-- Related exercises, equipment, and channel instances -->
+        <!-- Related exercises table -->
+        <table class="table table-striped table-hover table-sm">
+          <caption>List of exercises that use {{ equipmentObject.equipmentCategory }}</caption>
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Exercise Name</th>
+              <th scope="col">Page URL</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for obj in relatedObjects[0] %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <th scope="row">{{ obj.name }}</th>
+                <td><a href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}">Link</a></td>
+            </tr>
+          {% endfor %}
+        </table>
 
-        <!-- Related products -->
-        <div id="relatedEquipment" class="container justify-content-center align-items-center">
-            <h3>Related Equipment</h3>
-            <ul>
-            <!-- TODO: debug this line -->
-            {% for e in equipmentList %}
-                {% if e.category == equipmentObject.category and e != equipmentObject %}
-                <li><a href="{{ url_for('equipment_instance', equipmentID=e.id) }}">{{ e.name }}</a></li>
-                {% endif %}
-            {% endfor %}
-            </ul>
-        </div>
+        <hr>
+
+        <!-- Related equipment table -->
+        <table class="table table-striped table-hover table-sm">
+          <caption>List of other equipment pages under the category {{ equipmentObject.equipmentCategory }}</caption>
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Equipment Name</th>
+              <th scope="col">Page URL</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for obj in relatedObjects[1] %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <th scope="row">{{ obj.name }}</th>
+                <td><a href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}">Link</a></td>
+            </tr>
+          {% endfor %}
+          {% if relatedObjects[1]|length == 0 %}
+            <tr>
+                <th scope="row">0</th>
+                <th scope="row">Sorry! Looks like this exercise has no related equipment. This could be a bodyweight or calisthenics exercise!</th>
+                <td>NA</td>
+            </tr>
+          {% endif %}
+
+        </table>
+
+        <hr>
+
+        <!-- Related channels table -->
+        <table class="table table-striped table-hover table-sm">
+          <caption>List of related channel pages</caption>
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Channel Name</th>
+              <th scope="col">Page URL</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for obj in relatedObjects[2] %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <th scope="row">{{ obj.name }}</th>
+                <td><a href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}">Link</a></td>
+            </tr>
+          {% endfor %}
+        </table>
+
     </div>
 {% endblock %}
