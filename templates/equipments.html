@@ -36,7 +36,7 @@
                                 </ul>
                             </p>
                             <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
-                            <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[start + 3*i+offset].id) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('equipment_instance', arrayIndex=equipmentArray[start + 3*i+offset].arrayIndex) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
@@ -63,7 +63,7 @@
                                     <li style="padding-left: 1em;"><b>Seller Location: </b>{{ equipmentArray[end + 1 + i].location }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[end + 1 + i].id) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('equipment_instance', arrayIndex=equipmentArray[end + 1 + i].arrayIndex) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
