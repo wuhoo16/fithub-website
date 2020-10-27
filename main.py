@@ -776,7 +776,22 @@ def convert_channels_embeddedUrl(embeddedTag):
             url = el.replace('"', "")
             break
     return url
-            
+
+# def convert_channels_keywords(keywords):
+#     keyword_arr = []
+#     words = keywords.split(" ")
+#     for i in range(len(words)):
+#         if words[i].startswith('/"'):
+#             phrase = ""
+#             while not words[i].endswith('/"'):
+#                 phrase = phrase + words[i]
+#                 i += 1
+#             phrase = phrase + words[i]
+#             keyword_arr.append(phrase)
+#         else:
+#             keyword_arr.append(words[i])
+
+#     return keyword_arr
 
 
 # All global array initializations done below
@@ -807,8 +822,8 @@ def initialize_channel_array_from_db():
         channelArray.append(Channel(channelDocument['id'], channelDocument['name'], channelDocument['description'],
                                     channelDocument['thumbnailURL'], channelDocument['subscriberCount'], channelDocument['viewCount'], 
                                     channelDocument['videoCount'], channelDocument['playlist'], channelDocument['topicIdCategories'], 
-                                    channelDocument['keywords'], channelDocument['unsubscribedTrailer'], channelDocument['bannerUrl'], 
-                                    channelDocument['exerciseCategory'], channelDocument['exerciseSubcategory']))
+                                    channelDocument['exerciseCategory'], channelDocument['unsubscribedTrailer'], channelDocument['bannerUrl'], 
+                                     channelDocument['keywords'], channelDocument['exerciseSubcategory']))
 
 
 # At this point all helper methods definitions and API calls should be done. (Later DB should be populated already)
