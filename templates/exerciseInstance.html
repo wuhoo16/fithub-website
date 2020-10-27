@@ -1,18 +1,20 @@
 {% extends 'base.html' %}
 
+<!-- NOTE THAT LOGIC HAS BEEN IMPROVED SO NOW ONLY THE EXERCISE OBJECT IS PASSED IN (not the whole array) -->
+<!-- REDUCES STORAGE AND RUNTIME FOR RENDERING THIS HTML PAGE -->
+<!-- Exercise Object parameter is named e -->
+<!-- 2D related indices list parameter is named relatedObjects -->
+
 {% block head %}
     <title>Exercise Instance Page</title>
 {% endblock %}
 
 
 {% block body %}
-<div class="container-fluid bg-light">
-    {% for e in exercisesArray %}
-        {% if e.id == exercise_id %}
             <h1>{{ e.name }}</h1>
             {% for image in e.images %}
                 <img src="{{ image }}" alt="{{ e.name }}">
-            {% endfor %}    
+            {% endfor %}
             <br>
             <p>Description: {{ e.description }}</p>
             <p>Category: {{ e.category }}</p>
@@ -20,23 +22,101 @@
             {% if e.muscles %}
                 <p>Muscles: {{ e.muscles }}</p>
             {% else %}
-                <p>Muscles: None listed</p>    
-            {% endif %}   
+                <p>Muscles: None listed</p>
+            {% endif %}
             {% if e.muscles_secondary %}
                 <p>Secondary Muscles: {{ e.muscles_secondary }}</p>
             {% else %}
-                <p>Seconday Muscles: None listed</p>    
-            {% endif %}   
+                <p>Secondary Muscles: None listed</p>
+            {% endif %}
             {% if e.comments %}
                 <p>Comments: </p>
                 {% for c in e.comments %}
                     <p>{{ c }}</p>
-                {% endfor %} 
+                {% endfor %}
             {% else %}
-                <p>Comments: None</p>    
-            {% endif %}   
-            
-        {% endif %}
-    {% endfor %}
-</div>
+                <p>Comments: None</p>
+            {% endif %}
+
+        <!-- Related exercises, equipment, and channel instances -->
+        <!-- Related exercises table -->
+        <table class="table table-striped table-hover table-sm">
+          {% if e.subcategory is none %}
+          <caption>List of other exercise pages related to {{ e.category }}</caption>
+          {% else %}
+          <caption>List of other exercise pages related to {{ e.category }}: {{ e.subcategory }}</caption>
+          {% endif %}
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Exercise Name</th>
+              <th scope="col">Page URL</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for obj in relatedObjects[0] %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <th scope="row">{{ obj.name }}</th>
+                <td><a href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}">Link</a></td>
+            </tr>
+          {% endfor %}
+        </table>
+
+        <hr>
+
+        <!-- Related equipment table -->
+        <table class="table table-striped table-hover table-sm">
+          <caption>List of equipment pages under the category {{ e.equipment }}</caption>
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Equipment Name</th>
+              <th scope="col">Page URL</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for obj in relatedObjects[1] %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <th scope="row">{{ obj.name }}</th>
+                <td><a href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}">Link</a></td>
+            </tr>
+          {% endfor %}
+          {% if relatedObjects[1]|length == 0 %}
+            <tr>
+                <th scope="row">0</th>
+                <th scope="row">Sorry! Looks like this exercise has no related equipment. This could be a bodyweight or calisthenics exercise!</th>
+                <td>NA</td>
+            </tr>
+          {% endif %}
+
+        </table>
+
+        <hr>
+
+        <!-- Related channels table -->
+        <table class="table table-striped table-hover table-sm">
+          {% if e.subcategory is none %}
+          <caption>List of channel pages related to {{ e.category }}</caption>
+          {% else %}
+          <caption>List of channel pages related to {{ e.category }}: {{ e.subcategory }}</caption>
+          {% endif %}
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Channel Name</th>
+              <th scope="col">Page URL</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for obj in relatedObjects[2] %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <th scope="row">{{ obj.name }}</th>
+                <td><a href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}">Link</a></td>
+            </tr>
+          {% endfor %}
+        </table>
+
 {% endblock %}

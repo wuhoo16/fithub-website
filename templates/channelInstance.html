@@ -1,10 +1,158 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block head %}
+<title>{{ channelObj.name }}</title>
+{% endblock %} {% block body %}
+<div class="container-fluid pt-3 centered">
+  <h1>Welcome to {{channelObj.name}} Channel's Page!</h1>
+  <img class="header-pic" src="{{ channelObj.thumbnailURL }}" />
+  <label>{{channelObj.description}}</label>
+  {% if channelObj.bannerUrl is not none%}
+  <div>
+    <img class="instance-pic" src="{{ channelObj.bannerUrl }}" />
+  </div>
+  <div>
+    {% endif %}
+    <h4>{{ channelObj.playlist.title }}</h4>
+    <iframe src="{{ channelObj.playlist.url }}"></iframe>
+  </div>
+  <div class="border border-dark rounded mx-auto my-2">
+    <div><label>View Count: {{channelObj.viewCount}}</label></div>
+    <div><label>Subscriber Count: {{channelObj.subscriberCount}}</label></div>
+    <div><label>Number of Videos: {{channelObj.videoCount}}</label></div>
+  </div>
+  <div class="border border-dark rounded mx-auto my-2">
+    <h4>Topic categories are related to the following sites!</h4>
+    {% for idCategoryDict in channelObj.topicIdCategories %}
+    <div>
+      <a href="{{ idCategoryDict.topicCategory }}"
+        >{{ idCategoryDict.topicId }}</a
+      >
+    </div>
+    {% endfor %}
+  </div>
+  <div class="border border-dark rounded mx-auto my-2">
+    <h5>Keywords</h5>
+    {% for word in channelObj.keywords %}
+    <label class="border border-dark rounded mx-1 my-2">{{ word }}</label>
+    {% endfor %}
+  </div>
+  {% if channelObj.unsubscribedTrailer is not none %}
+  <div class="border border-dark rounded mx-auto my-2">
+    <h5>{{ channelObj.unsubscribedTrailer.title }}</h5>
+    <div>
+      <div>
+        <label
+          >Description: {{ channelObj.unsubscribedTrailer.description }}</label
+        >
+      </div>
+      <div>
+        <iframe src="{{ channelObj.unsubscribedTrailer.url }}"></iframe>
+        <div>
+          <label
+            >View Count: {{ channelObj.unsubscribedTrailer.viewCount }}</label
+          >
+        </div>
+        <div>
+          <label
+            >Like Count: {{ channelObj.unsubscribedTrailer.likeCount }}</label
+          >
+        </div>
+        <div>
+          <label
+            >Dislike Count: {{ channelObj.unsubscribedTrailer.dislikeCount
+            }}</label
+          >
+        </div>
+      </div>
+    </div>
+    <div>
+      <h5>Keywords</h5>
+      {% for tag in channelObj.unsubscribedTrailer.tags %}
+      <label class="border border-dark rounded mx-1 my-2">{{ tag }}</label>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 
-{% block head %}
-    <title>Channel Instance Page</title>
-{% endblock %}
+        <!-- Related exercises, equipment, and channel instances -->
+        <!-- Related exercises table -->
+        <table class="table table-striped table-hover table-sm">
+          {% if channelObj.exerciseSubcategory is none %}
+          <caption>List of exercise pages related to this channel's specialty of {{ channelObj.exerciseCategory }}</caption>
+          {% else %}
+          <caption>List of exercise pages related to this channel's specialty of {{ channelObj.exerciseCategory }}: {{ channelObj.exerciseSubcategory }}</caption>
+          {% endif %}
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Exercise Name</th>
+              <th scope="col">Page URL</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for obj in relatedObjects[0] %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <th scope="row">{{ obj.name }}</th>
+                <td><a href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}">Link</a></td>
+            </tr>
+          {% endfor %}
+        </table>
 
+        <hr>
 
-{% block body %}
-    <h1> Welcome to Youtube Channel Instance Page!</h1>
+        <!-- Related equipment table -->
+        <table class="table table-striped table-hover table-sm">
+          <caption>List of related equipment pages</caption>
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Equipment Name</th>
+              <th scope="col">Page URL</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for obj in relatedObjects[1] %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <th scope="row">{{ obj.name }}</th>
+                <td><a href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}">Link</a></td>
+            </tr>
+          {% endfor %}
+          {% if relatedObjects[1]|length == 0 %}
+            <tr>
+                <th scope="row">0</th>
+                <th scope="row">Sorry! Looks like this exercise has no related equipment. This could be a bodyweight or calisthenics exercise!</th>
+                <td>NA</td>
+            </tr>
+          {% endif %}
+
+        </table>
+
+        <hr>
+
+        <!-- Related channels table -->
+        <table class="table table-striped table-hover table-sm">
+          {% if channelObj.exerciseSubcategory is none %}
+          <caption>List of other channel pages related to this channel's specialty of {{ channelObj.exerciseCategory }}</caption>
+          {% else %}
+          <caption>List of other channel pages related to this channel's specialty of {{ channelObj.exerciseCategory }}: {{ channelObj.exerciseSubcategory }}</caption>
+          {% endif %}
+          <thead class="thead-dark">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Channel Name</th>
+              <th scope="col">Page URL</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for obj in relatedObjects[2] %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <th scope="row">{{ obj.name }}</th>
+                <td><a href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}">Link</a></td>
+            </tr>
+          {% endfor %}
+        </table>
+
+</div>
 {% endblock %}

@@ -13,7 +13,7 @@
         {% set numLeftOverChannels = ((end + 1) - start) % 3 %}
         {% for i in range(numFullRows) %}
             <div class="row" id="row{{ i|string }}">
-            {% for offset in range(3) %}    
+            {% for offset in range(3) %}
                 <div class="col-md-4 p-4">
                     <div class="card bg-light h-100 pt-4">
                         <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[start + 3*i + offset].images[0] }}" onerror="this.onerror=null; this.src='{{ exercisesArray[start + 3*i+offset].images[1] }}'"; alt="{{ exercisesArray[start + 3*i + offset].name }}">
@@ -25,14 +25,14 @@
                                     <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Equipment: </b>{{ exercisesArray[start + 3*i + offset].equipment }}</li>
                                     <li style="padding-left: 1em;"><b>Description: </b>{{ exercisesArray[start + 3*i + offset].description }}</li>
                                 </ul>
-                            </p>   
-                            <a href="{{ url_for('exercise_instance', exercise_id=exercisesArray[start + 3*i + offset].id) }}" class="stretched-link"></a>
+                            </p>
+                            <a href="{{ url_for('exercise_instance', arrayIndex=exercisesArray[start + 3*i + offset].arrayIndex) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
             {% endfor %}      
             </div>
-        {% endfor %}    
+        {% endfor %}
 
         {% if numLeftOverChannels > 0 %}
             <div class="row" id="bottomRow">
@@ -49,13 +49,13 @@
                                     <li style="padding-left: 1em;"><b>Description: </b>{{ exercisesArray[end + 1 + i].description }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('exercise_instance', exercise_id=exercisesArray[end + 1 + i].id) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('exercise_instance', arrayIndex=exercisesArray[end + 1 + i].arrayIndex) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
-            {% endfor %}    
+            {% endfor %}
             </div>
-        {% endif %}    
+        {% endif %}
         </div>
 
         <ul class="pagination justify-content-center" style="margin: 20px;">
@@ -83,6 +83,5 @@
             {% endif %}
         </ul>
 
-    </div>    
-
+    </div>
 {% endblock %}

@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
 {% block head %}
+    <!-- Vars: equipmentArray, start, end, page_number, num_pages-->
+
     <title>Equipment Model Page</title>
 {% endblock %}
 
@@ -19,18 +21,22 @@
             {% for offset in range(3) %}
                 <div class="col-md-4 p-4">
                     <div class="card bg-light h-100 pt-4">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ equipmentArray[start + 3*i+offset].images[0] }}" onerror="this.onerror=null; this.src='{{ equipmentArray[start + 3*i+offset].images[1] }}'"; alt="{{ equipmentArray[start + 3*i+offset].name }}">
+                    {% if equipmentArray[start + 3*i+offset].replacePictureFlag %}
+                        <img class="card-img-top img-fluid mx-auto" src="/../static/{{ equipmentArray[start+3*i+offset].picture }}" alt="{{ equipmentArray[start + 3*i+offset].name }}">
+                    {% else %}
+                        <img class="card-img-top img-fluid mx-auto" src="{{ equipmentArray[start+3*i+offset].picture }}" onerror="this.onerror=null; this.src='{{ equipmentArray[start + 3*i+offset].picture }}'"; alt="{{ equipmentArray[start + 3*i+offset].name }}">
+                    {% endif %}
                         <div class="card-body">
                             <h2 class="card-title text-center text-dark">{{ equipmentArray[start + 3*i+offset].name }}</h2>
                             <p class="card-text">
                                 <ul class="equipmentData list-unstyled">
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Price: </b>{{ equipmentArray[start + 3*i+offset].price }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Rating: </b>{{ equipmentArray[start + 3*i+offset].rating }}</li>
-                                    <li style="padding-left: 1em;"><b>Seller: </b>{{ equipmentArray[start + 3*i+offset].seller }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Price: </b>{{ equipmentArray[start + 3*i+offset].price }} USD</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Category: </b>{{ equipmentArray[start + 3*i+offset].category }}</li>
+                                    <li style="padding-left: 1em;"><b>Seller Location: </b>{{ equipmentArray[start + 3*i+offset].location }}</li>
                                 </ul>
                             </p>
                             <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
-                            <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[start + 3*i+offset].id) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('equipment_instance', arrayIndex=equipmentArray[start + 3*i+offset].arrayIndex) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
@@ -43,17 +49,21 @@
             {% for i in range(-remainder, 0) %}
                 <div class="col-md-4 p-4">
                     <div class="card bg-light h-100 pt-4">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ equipmentArray[end + 1 + i].images[0] }}" onerror="this.onerror=null; this.src='{{ equipmentArray[end + 1 + i].images[1] }}'"; alt="{{ equipmentArray[end + 1 + i].name }}">
+                        {% if equipmentArray[end + 1 + i].replacePictureFlag %}
+                            <img class="card-img-top img-fluid mx-auto" src="/../static/{{ equipmentArray[end + 1 + i].picture }}" alt="{{ equipmentArray[end + 1 + i].name }}">
+                        {% else %}
+                            <img class="card-img-top img-fluid mx-auto" src="{{ equipmentArray[end + 1 + i].picture }}" onerror="this.onerror=null; this.src='{{ equipmentArray[end + 1 + i].picture }}'"; alt="{{ equipmentArray[end + 1 + i].name }}">
+                        {% endif %}
                         <div class="card-body">
                             <h2 class="card-title text-center text-dark">{{ equipmentArray[end + 1 + i].name }}</h2>
                             <p class="card-text">
                                 <ul class="equipmentData list-unstyled">
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Price: </b>{{ equipmentArray[end + 1 + i].price }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Rating: </b>{{ equipmentArray[end + 1 + i].rating }}</li>
-                                    <li style="padding-left: 1em;"><b>Seller: </b>{{ equipmentArray[end + 1 + i].seller }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Price: </b>{{ equipmentArray[end + 1 + i].price }} USD</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Category: </b>{{ equipmentArray[end + 1 + i].category }}</li>
+                                    <li style="padding-left: 1em;"><b>Seller Location: </b>{{ equipmentArray[end + 1 + i].location }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('equipment_instance', equipmentID=equipmentArray[end + 1 + i].id) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('equipment_instance', arrayIndex=equipmentArray[end + 1 + i].arrayIndex) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
@@ -68,7 +78,8 @@
                 <li class="page-item disabled"><a class="page-link" href="">Previous</a></li>
             {% else %}
                 <li class="page-item"><a class="page-link" href="{{ url_for('equipments', page_number=page_number-1) }}">Previous</a></li>
-            {% endif %}  
+            {% endif %}
+
 
             <!--All Pages Buttons-->
             {% for i in range(1, num_pages+1) %}
