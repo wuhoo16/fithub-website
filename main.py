@@ -18,6 +18,11 @@ EXERCISE_RENAME_DICT = {'Pushups': 'Chest Push-ups', 'Push Ups': 'Push-ups', 'Sn
 EXERCISE_SZ_BAR_TYPOS = {'French Press (skullcrusher) SZ-bar', 'Biceps Curls With SZ-bar', 'Upright Row, SZ-bar',
                          'Reverse Bar Curl'}
 EXERCISE_GYM_MAT_SET = {'Leg Raises, Lying', 'Side Crunch', 'Superman'}
+EXERCISE_DESCRIPTION = {
+    'Dumbbell Lunges Standing' : "Stand up straight with a dumbbell in each hand. Hand your arms at your sides. Palms should face the thighs (hammer grip). Feet should be a little less than shoulder-width apart. Take a big step forward with either leg, bending at the knee until the front thigh approaches parallel to the ground, landing on the heel. Inhale as you go down. The rear leg is bent at the knee and balanced on the toes. For the leg you step forward with, don't let the knee go past the tip of the toes. Step back to your standing starting position while exhaling. Repeat the motion with the other leg.",
+    'Lateral Raises' : "Stand or sit with a dumbbell in each hand at your sides. Keep your back straight, brace your core, and then slowly lift the weights out to the side until your arms are parallel with the floor, with the elbow slightly bent. Then lower them back down, again in measured fashion.",
+    'Front Squats' : "Begin with the barbell across the front side of your shoulders. Place your fingertips under the barbell just outside of your shoulders and drive your elbows up. Keeping your chest up and core tight, bend at your hips and knees to lower into a squat until your thighs are parallel to the ground. Straighten your hips and knees to drive up to the starting position."
+}
 PLANK_REMOVED_FLAG = False
 
 EQUIPMENT_BLACKLIST = {'BUKA GEARS ARNOLD WEIGHT LIFTING BODYBUILDING BICEP ARM BLASTER EZ BAR CURL ARMS',
@@ -278,6 +283,8 @@ def initialize_mongoDB_exercises_collection():
 
             # strip description of html elements
             description = clean_html(x["description"])
+            if x["name"] in EXERCISE_DESCRIPTION:           # replace bad descriptions
+                description = EXERCISE_DESCRIPTION[x["name"]]
 
             # get category name using ID
             categoryID = x["category"]
@@ -315,7 +322,8 @@ def initialize_mongoDB_exercises_collection():
                 for result in equip_results:
                     if result["id"] == e:
                         equipment_list.append(result["name"])
-            equipment_string = ", ".join(equipment_list)
+            if equipment_list == []:            # default equipment is gym mat if there are no other equipments
+                equipment_list.append("Exercise mat")
 
             # get image URL using exercise
             images = []
@@ -342,7 +350,7 @@ def initialize_mongoDB_exercises_collection():
 
             global EXERCISE_COUNTER
             exercise = Exercise(exerciseID, EXERCISE_COUNTER, x["name"], description, category_name, subcategory, muscles_string,
-                                sec_muscles_string, equipment_string,
+                                sec_muscles_string, equipment_list,
                                 images, comments)
 
             if exercise.name in EXERCISE_BLACKLIST:
@@ -840,8 +848,13 @@ def fix_SZ_bar_typo(exercise):
     exercise.name = exercise.name.replace('SZ-bar', 'EZ-bar')
     exercise.description = exercise.description.replace('SZ-Bar', 'EZ-Bar')
     exercise.description = exercise.description.replace('SZ-bar', 'EZ-bar')
-    exercise.equipment = exercise.equipment.replace('SZ-Bar', 'EZ-Bar')
-    exercise.equipment = exercise.equipment.replace('SZ-bar', 'EZ-bar')
+    new_equipment_list = []
+    for e in exercise.equipment:
+        if e == 'SZ-Bar':
+            new_equipment_list.append('EZ-Bar')
+        else:
+            new_equipment_list.append(e)    
+    exercise.equipment = new_equipment_list
 
 
 def convert_gym_mat_to_exercise_mat(exercise):
@@ -850,8 +863,8 @@ def convert_gym_mat_to_exercise_mat(exercise):
     To have consistent tags and link instances across models, we need consistent names.
     :param exercise: An exercise object from the EXERCISE_GYM_MAT_SET
     :return: None
-    """
-    exercise.equipment = 'Exercise mat'
+    """ 
+    exercise.equipment = ['Exercise mat']         
 
 
 def return_arms_subcategory(exerciseName, muscles_string, sec_muscles_string):
@@ -909,9 +922,16 @@ def get_google_images(search_string, file_type=None):
     if search_items:
         for item in search_items:
             image_link = item["link"]
-            images.append(image_link)
+            if imageURL_exists(image_link):
+                images.append(image_link)
     return images
 
+def imageURL_exists(path):
+    try:
+        r = requests.head(path)
+        return r.status_code == requests.codes.ok
+    except:
+        return False            
 
 def create_serpstack_request_params(queryArray, numResults):
     """
