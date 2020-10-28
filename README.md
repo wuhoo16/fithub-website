@@ -61,9 +61,9 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
         - Starting .py file to populate database in MongoDB: Actual Completion Hours: 3
       - Phase 2: 
         - Adding API calls to backend for channel model: 6 
-        - Adding API calls to backend for channel model: 7
+        - Adding API calls to backend for channel model: 6
         - Working on backend for channel model: 5
-        - Working on backend for channel model: 8
+        - Working on backend for channel model: 6
         - Cleaning up and creating objects sent to MongoDB for channels: 3
         - Cleaning up and creating objects sent to MongoDB for channels: 3
         - Channel instance pages changing static data to dynamic data: 4
@@ -142,6 +142,7 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
         - Selenium Testing for Homepage Carousel and NavBar: Actual Completion Hours: 1
         - Updating AboutMe page, Github code integration, Technical Report: Estimated Completion Hours: 0.5
         - Updating AboutMe page, Github code integration, Technical Report: Actual Completion Hours: 1
+
   
   
 Website Link: https://imbdproject.wn.r.appspot.com/
