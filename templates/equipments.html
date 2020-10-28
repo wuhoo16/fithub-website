@@ -30,13 +30,13 @@
                             <h2 class="card-title text-center text-dark">{{ equipmentArray[start + 3*i+offset].name }}</h2>
                             <p class="card-text">
                                 <ul class="equipmentData list-unstyled">
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Price: </b>{{ equipmentArray[start + 3*i+offset].price }} USD</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Category: </b>{{ equipmentArray[start + 3*i+offset].category }}</li>
-                                    <li style="padding-left: 1em;"><b>Seller Location: </b>{{ equipmentArray[start + 3*i+offset].location }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ start + 3*i+offset }}"><b>Price: </b>{{ equipmentArray[start + 3*i+offset].price }} USD</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="categoryText_{{ start + 3*i+offset }}"><b>Category: </b>{{ equipmentArray[start + 3*i+offset].category }}</li>
+                                    <li style="padding-left: 1em;" id="sellerLocationText_{{ start + 3*i+offset }}"><b>Seller Location: </b>{{ equipmentArray[start + 3*i+offset].location }}</li>
                                 </ul>
                             </p>
                             <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
-                            <a href="{{ url_for('equipment_instance', arrayIndex=equipmentArray[start + 3*i+offset].arrayIndex) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('equipment_instance', arrayIndex=equipmentArray[start + 3*i+offset].arrayIndex) }}" class="stretched-link" id="instancePageLink_{{ start + 3*i+offset }}"></a>
                         </div>
                     </div>
                 </div>
@@ -58,9 +58,9 @@
                             <h2 class="card-title text-center text-dark">{{ equipmentArray[end + 1 + i].name }}</h2>
                             <p class="card-text">
                                 <ul class="equipmentData list-unstyled">
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Price: </b>{{ equipmentArray[end + 1 + i].price }} USD</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Category: </b>{{ equipmentArray[end + 1 + i].category }}</li>
-                                    <li style="padding-left: 1em;"><b>Seller Location: </b>{{ equipmentArray[end + 1 + i].location }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ start + 3*i+offset }}"><b>Price: </b>{{ equipmentArray[start + 3*i+offset].price }} USD</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="categoryText_{{ start + 3*i+offset }}"><b>Category: </b>{{ equipmentArray[start + 3*i+offset].category }}</li>
+                                    <li style="padding-left: 1em;" id="sellerLocationText_{{ start + 3*i+offset }}"><b>Seller Location: </b>{{ equipmentArray[start + 3*i+offset].location }}</li>
                                 </ul>
                             </p>
                             <a href="{{ url_for('equipment_instance', arrayIndex=equipmentArray[end + 1 + i].arrayIndex) }}" class="stretched-link"></a>

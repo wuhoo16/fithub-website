@@ -24,10 +24,11 @@
               </ol>
               <div class="carousel-inner">
                   <div class="carousel-item active">
+                      <!-- TODO: test these image resizing lines -->
                         {% if equipmentObject.replacePictureFlag %}
-                            <img class="card-img-top img-fluid mx-auto" src="/../static/{{ equipmentObject.picture }}" alt="{{ equipmentObject.name }}'s image">
+                            <img class="card-img-top img-fluid mx-auto" style="width: auto; max-height: 500px;" src="/../static/{{ equipmentObject.picture }}" alt="{{ equipmentObject.name }}'s image">
                         {% else %}
-                            <img class="card-img-top img-fluid mx-auto" src="{{ equipmentObject.picture }}" onerror="this.onerror=null; this.src='{{ equipmentObject.picture }}'"; alt="{{ equipmentObject.name }}'s image">
+                            <img class="card-img-top img-fluid mx-auto" style="width: auto; max-height: 500px;" src="{{ equipmentObject.picture }}" onerror="this.onerror=null; this.src='{{ equipmentObject.picture }}'"; alt="{{ equipmentObject.name }}'s image">
                         {% endif %}
                   </div>
 <!--                  <div class="carousel-item">-->
@@ -48,9 +49,9 @@
 <!--        </div>-->
         <hr/>
         <div id="equipmentInstanceSellerBox" class="container justify-content-center align-items-center">
-            <h3><b>Price:</b> {{ equipmentObject.price }} USD</h3>
-            <h5>Seller Location: {{ equipmentObject.location }} </h5>
-            <h5>Category: {{ equipmentObject.category }}</h5>
+            <h3 id="priceText"><b>Price:</b> {{ equipmentObject.price }} USD</h3>
+            <h5 id="sellerLocationText">Seller Location: {{ equipmentObject.location }} </h5>
+            <h5 id="categoryText">Category: {{ equipmentObject.category }}</h5>
             <a href="{{ equipmentObject.linkToItem }}">View item on eBay</a>
         </div>
         <hr/>
