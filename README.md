@@ -7,36 +7,38 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
    - EID: amw5468
    - GitHub ID: wuhoo16
    - Tasks
-      - Youtube API testing and backend infrastructure: Estimated Completion Hours: 3
-      - Youtube API testing and backend infrastructure: Actual Completion Hours: 3
-      - Flask framework: Estimated Completion Hours: 1
-      - Flask framework: Actual Completion Hours: 1
-      - Youtube Channel model page design: Estimated Completion Hours: 3
-      - Youtube Channel model page design: Actual Completion Hours: 3
-      - Github branch/code integration: Estimated Completion Hours: 0.5
-      - Github branch/code integration: Actual Completion Hours: 6
-      - SERPSTACK API and broken image link debugging: Estimated Completion Hours: 1
-      - SERPSTACK API and broken image link debugging: Actual Completion Hours: 3
-      - Equipment model and instance pages: Estimated Completion Hours: 3
-      - Equipment model and instance pages: Actual Completion Hours: 5
-      - About Page Design and Content: Estimated Completion Hours: 1
-      - About Page Design and Content: Actual Completion Hours: 2
-      - Backend refactoring and MongoDB setup: Estimated Completion Hours: 4
-      - Backend refactoring and MongoDB setup: Actual Completion Hours: 4
-      - Blacklisting Bad Exercises and Fixing Bad Information: Estimated Completion Hours: 2
-      - Blacklisting Bad Exercises and Fixing Bad Information: Actual Completion Hours: 3
-      - Design and API Result Modification for Cross-Model Linking Support: Estimated Completion Hours: 7
-      - Design and API Result Modification for Cross-Model Linking Support: Actual Completion Hours: 5
-      - Integrating Christopher's Branch with Updated Ebay API + Equipment Model/Instance Pages: Estimated Completion Hours: 0.5
-      - Integrating Christopher's Branch with Updated Ebay API + Equipment Model/Instance Pages: Actual Completion Hours: 6
-      - Integrating Kaylee's Branch with Updated YouTube APIs + Channel Model/Instance Pages: Estimated Completion Hours: 0.5
-      - Integrating Kaylee's Branch with Updated Youtube APIs + Channel Model/Instance Pages: Actual Completion Hours: 0.5
-      - Backend Helper Method Implementation for Cross-Model Instance Linking: Estimated Completion Hours: 4
-      - Backend Helper Method Implementation for Cross-Model Instance Linking: Actual Completion Hours: 5
-      - Refactoring codebase to improve runtime and object reference in routing methods and HTML Templates: Estimated Completion Hours: 3
-      - Refactoring codebase to improve runtime and object reference in routing methods and HTML Templates: Actual Completion Hours: 3
-      - Implementing all unittests to test the Python code/database communication: Estimated Completion Hours: 3
-      - Implementing all unittests to test the Python code/database communication: Actual Completion Hours: 3
+      - Phase 1: 
+        - Youtube API testing and backend infrastructure: Estimated Completion Hours: 3
+        - Youtube API testing and backend infrastructure: Actual Completion Hours: 3
+        - Flask framework: Estimated Completion Hours: 1
+        - Flask framework: Actual Completion Hours: 1
+        - Youtube Channel model page design: Estimated Completion Hours: 3
+        - Youtube Channel model page design: Actual Completion Hours: 3
+        - Github branch/code integration: Estimated Completion Hours: 0.5
+        - Github branch/code integration: Actual Completion Hours: 6
+        - SERPSTACK API and broken image link debugging: Estimated Completion Hours: 1
+        - SERPSTACK API and broken image link debugging: Actual Completion Hours: 3
+        - Equipment model and instance pages: Estimated Completion Hours: 3
+        - Equipment model and instance pages: Actual Completion Hours: 5
+        - About Page Design and Content: Estimated Completion Hours: 1
+        - About Page Design and Content: Actual Completion Hours: 2
+        - Backend refactoring and MongoDB setup: Estimated Completion Hours: 4
+        - Backend refactoring and MongoDB setup: Actual Completion Hours: 4
+        - Blacklisting Bad Exercises and Fixing Bad Information: Estimated Completion Hours: 2
+        - Blacklisting Bad Exercises and Fixing Bad Information: Actual Completion Hours: 3
+      - Phase 2:
+        - Design and API Result Modification for Cross-Model Linking Support: Estimated Completion Hours: 7
+        - Design and API Result Modification for Cross-Model Linking Support: Actual Completion Hours: 5
+        - Integrating Christopher's Branch with Updated Ebay API + Equipment Model/Instance Pages: Estimated Completion Hours: 0.5
+        - Integrating Christopher's Branch with Updated Ebay API + Equipment Model/Instance Pages: Actual Completion Hours: 6
+        - Integrating Kaylee's Branch with Updated YouTube APIs + Channel Model/Instance Pages: Estimated Completion Hours: 0.5
+        - Integrating Kaylee's Branch with Updated Youtube APIs + Channel Model/Instance Pages: Actual Completion Hours: 1
+        - Backend Helper Method Implementation for Cross-Model Instance Linking: Estimated Completion Hours: 4
+        - Backend Helper Method Implementation for Cross-Model Instance Linking: Actual Completion Hours: 5
+        - Refactoring codebase to improve runtime and object reference in routing methods and HTML Templates: Estimated Completion Hours: 3
+        - Refactoring codebase to improve runtime and object reference in routing methods and HTML Templates: Actual Completion Hours: 3
+        - Implementing all unittests to test the Python code/database communication: Estimated Completion Hours: 3
+        - Implementing all unittests to test the Python code/database communication: Actual Completion Hours: 3
   
   Kaylee N Trevino
    - EID: knt658
