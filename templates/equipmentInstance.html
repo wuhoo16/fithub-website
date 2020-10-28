@@ -49,9 +49,9 @@
 <!--        </div>-->
         <hr/>
         <div id="equipmentInstanceSellerBox" class="container justify-content-center align-items-center">
-            <h3><b>Price:</b> {{ equipmentObject.price }} USD</h3>
-            <h5>Seller Location: {{ equipmentObject.location }} </h5>
-            <h5>Category: {{ equipmentObject.category }}</h5>
+            <h3 id="priceText"><b>Price:</b> {{ equipmentObject.price }} USD</h3>
+            <h5 id="sellerLocationText">Seller Location: {{ equipmentObject.location }} </h5>
+            <h5 id="categoryText">Category: {{ equipmentObject.category }}</h5>
             <a href="{{ equipmentObject.linkToItem }}">View item on eBay</a>
         </div>
         <hr/>

@@ -1,36 +1,45 @@
+import random
 import unittest
 
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+
 
 class EquipmentTest(unittest.TestCase):
     def setUp(self):
-        self.driver = webdriver.Firefox(executable_path=r"C:\Users\chand\GIT_STUFF_GOES_HERE\EE461L\TeamA13\geckodriver.exe")
-        self.driver.get("http://localhost:8080")
+        self.driver = webdriver.Firefox(executable_path=r"C:\Users\chand\GIT_STUFF_GOES_HERE\EE461L\geckodriver.exe")
+        self.driver.get("http://localhost:8080/equipment/1")
 
     def tearDown(self):
         self.driver.close()
 
-    def test_DirectsToCorrectPage(self):
+    def test_directsToCorrectPage(self):
         self.assertEqual("Equipment Model Page", self.driver.title)
 
-    # TODO: this
-    def test_ModelHasCorrectNumberOfInstances(self, correctNum):
-        equipmentList = self.driver.find_element_by_id("equipmentArray")
+    def test_equipmentHasPrice(self):
+        randNum = random.randint(0, 8)
+        price = self.driver.find_element_by_id("priceText_" + str(randNum)).text
+        self.assertGreater(len(price), len("Price: "))
 
-    # TODO: this
-    def test_EquipmentHasPrice(self):
-        # check if has price
+    def test_equipmentHasCategory(self):
+        randNum = random.randint(0, 8)
+        category = self.driver.find_element_by_id("categoryText_" + str(randNum)).text
+        self.assertGreater(len(category), len("Category: "))
 
-    # TODO: this
-    def test_EquipmentHasCategory(self):
-        # check if has category
+    def test_equipmentHasSellerLocation(self):
+        randNum = random.randint(0, 8)
+        location = self.driver.find_element_by_id("sellerLocationText_" + str(randNum)).text
+        self.assertGreater(len(location), len("Seller Location: "))
 
-    # TODO: this
-    def test_EquipmentHasSellerLocation(self):
-        # check if has seller location
+    def test_cardHasLink(self):
+        randNum = random.randint(0, 8)
+        link = self.driver.find_element_by_id("instancePageLink_" + str(randNum)).get_attribute('href')
+        self.assertGreater(len(str(link)), 0)
 
-    def test_
+    def test_cardLinksToCorrectInstancePage(self):
+        randNum = random.randint(0, 8)
+        link = self.driver.find_element_by_id("instancePageLink_" + str(randNum)).get_attribute('href')
+        self.assertEqual("http://localhost:8080/equipmentinstance/" + str(randNum), link)
 
-if __name__ == '__main__':test
+
+if __name__ == '__main__':
     unittest.main()
