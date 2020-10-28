@@ -9,7 +9,6 @@ class TestHome(unittest.TestCase):
     
     def setUp(self):
         self.driver = webdriver.Firefox(executable_path=r"C:\Users\wenmi\Documents\UTAustin\Fall2020\EE461L_SoftwareLab\geckodriver.exe")
-        # self.driver.get(r"file:///Users/kayleetrevino/Desktop/SoftwareLab/FitHubProject/TeamA13/templates/homepage.html")
         self.driver.get("http://localhost:8080/")
 
     def tearDown(self):
