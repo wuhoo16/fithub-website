@@ -18,10 +18,21 @@ EXERCISE_RENAME_DICT = {'Pushups': 'Chest Push-ups', 'Push Ups': 'Push-ups', 'Sn
 EXERCISE_SZ_BAR_TYPOS = {'French Press (skullcrusher) SZ-bar', 'Biceps Curls With SZ-bar', 'Upright Row, SZ-bar',
                          'Reverse Bar Curl'}
 EXERCISE_GYM_MAT_SET = {'Leg Raises, Lying', 'Side Crunch', 'Superman'}
+EXERCISE_DESCRIPTION = {
+    'Dumbbell Lunges Standing': "Stand up straight with a dumbbell in each hand. Hand your arms at your sides. Palms should face the thighs (hammer grip). Feet should be a little less than shoulder-width apart. Take a big step forward with either leg, bending at the knee until the front thigh approaches parallel to the ground, landing on the heel. Inhale as you go down. The rear leg is bent at the knee and balanced on the toes. For the leg you step forward with, don't let the knee go past the tip of the toes. Step back to your standing starting position while exhaling. Repeat the motion with the other leg.",
+    'Lateral Raises': "Stand or sit with a dumbbell in each hand at your sides. Keep your back straight, brace your core, and then slowly lift the weights out to the side until your arms are parallel with the floor, with the elbow slightly bent. Then lower them back down, again in measured fashion.",
+    'Front Squats': "Begin with the barbell across the front side of your shoulders. Place your fingertips under the barbell just outside of your shoulders and drive your elbows up. Keeping your chest up and core tight, bend at your hips and knees to lower into a squat until your thighs are parallel to the ground. Straighten your hips and knees to drive up to the starting position."
+}
 PLANK_REMOVED_FLAG = False
 
 EQUIPMENT_BLACKLIST = {'BUKA GEARS ARNOLD WEIGHT LIFTING BODYBUILDING BICEP ARM BLASTER EZ BAR CURL ARMS',
-                       '9HORN Exercise Mat/Protective Flooring Mats with EVA Foam Interlocking Tiles and'
+                       '9HORN Exercise Mat/Protective Flooring Mats with EVA Foam Interlocking Tiles and',
+                       'HOMELITE SUPER-EZ Bar Guides Inner/Outer Used',
+                       'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bars Pair w EZ Pin Spotlight Pack',
+                       'Chauvet DJ EZ Bar Battery-Powered Pin Spot Light Bars with Carry Case',
+                       'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bar w 3 Independent Pin Spots',
+                       'Chauvet DJ EZ Bar Battery-Powered Pin Spot Light Bar with Carry Case',
+                       'CHAUVET DJ EZBar EZ Bar 3 Pin Spot Battery-Powered Bar Light PROAUDIOSTAR'
                        }
 EQUIPMENT_IMAGE_MAPPER = {
     'Cast Iron Kettlebell 5, 10, 15, 20, 25, 30 35,40, 45 +some PAIRS(Choose Weight)': "kettlebell_picture_1.jpg",
@@ -30,6 +41,7 @@ EQUIPMENT_IMAGE_MAPPER = {
     'POWERT Competition Kettlebell Coated Cast Steel Weight Lifting Training 10-50LB': "kettlebell_picture_4.jpg",
     'NEW FRAY FITNESS RUBBER HEX DUMBBELLS select-weight 10,15, 20, 25, 30, 35, 40LB': "dumbbell_picture_1.jpg",
     'POWERT HEX Neoprene Coated Colorful Dumbbell Weight Lifting Training--One Pair': "dumbbell_picture_2.jpg",
+    'CAP Single Weight Dumbbell 40 lb, 35 lb, 25 lb, 20 lb - SELECT YOUR WEIGHT!': 'dumbbell_picture_3.jpg',
     'Adjustable Weight Bench Incline Decline Foldable Full Body Workout Gym Exercise': 'bench_picture_1.jpg',
     'Yoga Mats 0.375 inch (10mm) Thick Exercise Gym Mat Non Slip With Carry Straps': "mat_picture_1.png",
     'Extra Thick Non-slip Yoga Mat Pad Exercise Fitness Pilates w/ Strap 72" x 24"': "mat_picture_2.jpg",
@@ -49,9 +61,9 @@ CHANNELS_BANNER_BLACKLIST = {'Jeremy Ethier', 'Squat University', 'Squat Bench D
                              'Fit Now Official',
                              'Stephi Nguyen', 'Juicy Calves Fitness'}
 
-exercisesArray = []  # declared globally and initialized from our mongoDB the first time the homepage is visited
-equipmentArray = []  # declared globally and initialized from our mongoDB the first time the homepage is visited
-channelArray = []  # declared globally and initialized from our mongoDB the first time the homepage is visited
+EXERCISES_ARRAY = []  # declared globally and initialized from our mongoDB the first time the homepage is visited
+EQUIPMENT_ARRAY = []  # declared globally and initialized from our mongoDB the first time the homepage is visited
+CHANNEL_ARRAY = []  # declared globally and initialized from our mongoDB the first time the homepage is visited
 
 EXERCISE_INSTANCE_URL_TEMPLATE = '/exerciseinstance/{}'
 EQUIPMENT_INSTANCE_URL_TEMPLATE = '/equipmentinstance/{}'
@@ -61,8 +73,8 @@ EQUIPMENT_COUNTER = 0
 CHANNEL_COUNTER = 0
 
 client = MongoClient(
-    "mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase1Database?retryWrites=true&w=majority")
-db = client.phase2Database
+    "mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase2Database?retryWrites=true&w=majority")
+DATABASE = client.phase2Database
 
 
 # All classes defined below to help store data attributes
@@ -218,9 +230,10 @@ class Channel:
 # All methods to setup of mongoDB remote database is done below.
 # Note that 'setup_database()' should only be run ONCE (unless you want to reinitialize remote database)
 # ======================================================================================================================
-def clean_database():
+def clean_database(db):
     """
     Cleans the current phase's database by dropping all 3 model collections
+    :param db: The mongo database to add the collection to
     :return: None
     """
     db.exercises.drop()
@@ -228,22 +241,24 @@ def clean_database():
     db.channels.drop()
 
 
-def setup_database():
+def setup_database(db):
     """
     Setup the remote mongoDB by initializing all 3 model collections back to back.
     :return: None
     """
-    initialize_mongoDB_exercises_collection()
-    initialize_mongoDB_equipment_collection()
-    initialize_mongoDB_channel_collection()
+    initialize_mongoDB_exercises_collection(db)
+    initialize_mongoDB_equipment_collection(db)
+    initialize_mongoDB_channel_collection(db)
 
 
-def initialize_mongoDB_exercises_collection():
+def initialize_mongoDB_exercises_collection(db):
     """
     This method drops the existing exercises collection, makes all API calls to wger, and initializes the exercise collection
     in the remote mongoDB.
+    :param db: The mongo database to add the collection to
     :return: None
     """
+
     db.exercises.drop()  # drop the old collection so we initialize a fresh collection
 
     root_URL = 'https://wger.de/api/v2/'  # add &status=2 to only get approved exercises
@@ -272,6 +287,8 @@ def initialize_mongoDB_exercises_collection():
 
             # strip description of html elements
             description = clean_html(x["description"])
+            if x["name"] in EXERCISE_DESCRIPTION:  # replace bad descriptions
+                description = EXERCISE_DESCRIPTION[x["name"]]
 
             # get category name using ID
             categoryID = x["category"]
@@ -302,14 +319,17 @@ def initialize_mongoDB_exercises_collection():
             sec_muscles_string = ", ".join(sec_musclesList)
 
             # get equipment name using ID
+            DEFAULT_EXERCISE_MAT_STRING = "Exercise mat"
             equipment_list = []
             equipment = x["equipment"]
             equip_results = equipment_data["results"]
             for e in equipment:
                 for result in equip_results:
                     if result["id"] == e:
-                        equipment_list.append(result["name"])
-            equipment_string = ", ".join(equipment_list)
+                        equipmentName = result["name"]
+                        equipment_list.append(equipmentName)
+            if len(equipment_list) == 0:  # default equipment is Exercise mat if there is no equipment attribute returned by API
+                equipment_list.append(DEFAULT_EXERCISE_MAT_STRING)
 
             # get image URL using exercise
             images = []
@@ -335,8 +355,9 @@ def initialize_mongoDB_exercises_collection():
                 subcategory = return_legs_subcategory(x['name'])
 
             global EXERCISE_COUNTER
-            exercise = Exercise(exerciseID, EXERCISE_COUNTER, x["name"], description, category_name, subcategory, muscles_string,
-                                sec_muscles_string, equipment_string,
+            exercise = Exercise(exerciseID, EXERCISE_COUNTER, x["name"], description, category_name, subcategory,
+                                muscles_string,
+                                sec_muscles_string, equipment_list,
                                 images, comments)
 
             if exercise.name in EXERCISE_BLACKLIST:
@@ -355,7 +376,7 @@ def initialize_mongoDB_exercises_collection():
                 EXERCISE_COUNTER += 1
 
 
-def initialize_mongoDB_equipment_collection():
+def initialize_mongoDB_equipment_collection(db):
     # PREVIOUS SERPSTACK API CODE
     # queryArray = ['Kettlebell', 'Dumbbell', 'Barbell', 'Bench', 'EZ-Bar', 'Exercise mat']
     # URL_FOR_SERPSTACK = "http://api.serpstack.com/search"
@@ -392,7 +413,7 @@ def initialize_mongoDB_equipment_collection():
     db.equipments.drop()  # drop the old collection so we initialize a fresh collection
     EBAY_APP_ID = "AndrewWu-IMBDProj-PRD-be64e9f22-1cd7edca"  # Andrew's App ID
     api = Connection(appid=EBAY_APP_ID, config_file=None)
-    queryArray = ['Kettlebell', 'Dumbbell', 'Barbell', 'Bench', 'EZ-Bar', 'Exercise mat']
+    queryArray = ['Kettlebell', 'Dumbbell', 'Barbell', 'Bench', 'EZ-Bar', 'Exercise mat', 'Pull-up bar']
     queryMapper = {'Kettlebell': 'Kettlebells'}
 
     for query in queryArray:
@@ -447,10 +468,11 @@ def initialize_mongoDB_equipment_collection():
                     EQUIPMENT_COUNTER += 1
 
 
-def initialize_mongoDB_channel_collection():
+def initialize_mongoDB_channel_collection(db):
     """
     This method drops old collection, makes all the API calls, parse the JSON responses, and initializes fresh channels collection
     in the remote mongoDB
+    :param db: The mongo database to add the collection to
     :return: None
     """
     db.channels.drop()  # drop the old collection so we initialize a fresh collection
@@ -470,8 +492,8 @@ def initialize_mongoDB_channel_collection():
     # Build the API client to access Youtube Data V3 API
     api_service_name = "youtube"
     api_version = "v3"
-    # DEVELOPER_KEY = "AIzaSyBE-YXbak2UQlYM3hnKuiGoxxlt9VALgCk"  # Andy's
-    DEVELOPER_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk'  # Michelle's
+    DEVELOPER_KEY = "AIzaSyBE-YXbak2UQlYM3hnKuiGoxxlt9VALgCk"  # Andy's
+    # DEVELOPER_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk'  # Michelle's
     youtube = build(
         api_service_name, api_version, developerKey=DEVELOPER_KEY)
 
@@ -570,13 +592,19 @@ def initialize_mongoDB_channel_collection():
                 CHANNEL_COUNTER += 1
 
 
-# All methods for reading from the remote mongoDB to initialize our 3 global arrays
+# All methods for loading from the remote mongoDB to initialize our 3 global arrays
 # NOTE THAT ANY CHANGES TO THE OBJECT CONSTRUCTORS MUST BE CHANGED HERE TO MATCH!
 # ====================================================================================================================
-def initialize_exercises_array_from_db():
+def load_exercises_from_db(db):
+    """
+    Return a python list of all Exercise objects.
+    :param db: The database to load all exercises from
+    :return: A python list of Exercise objects
+    """
+    exercise_array = []
     exercisesCursor = db.exercises.find()
     for exerciseDocument in exercisesCursor:
-        exercisesArray.append(
+        exercise_array.append(
             Exercise(exerciseDocument['id'],
                      exerciseDocument['arrayIndex'],
                      exerciseDocument['name'],
@@ -588,41 +616,51 @@ def initialize_exercises_array_from_db():
                      exerciseDocument['equipment'],
                      exerciseDocument['images'],
                      exerciseDocument['comments']))
+    return exercise_array
 
 
-def initialize_equipment_array_from_db():
+def load_equipments_from_db(db):
+    """
+    Return a python list of all Equipment objects.
+    :param db: The database to load all equipments from
+    :return: A python list of Equipment objects
+    """
+    equipment_array = []
     equipmentsCursor = db.equipments.find()
     for equipmentDocument in equipmentsCursor:
-        equipmentArray.append(Equipment(equipmentDocument['id'],
-                                        equipmentDocument['arrayIndex'],
-                                        equipmentDocument['name'],
-                                        equipmentDocument['price'],
-                                        equipmentDocument['category'],
-                                        equipmentDocument['location'],
-                                        equipmentDocument['replacePictureFlag'],
-                                        equipmentDocument['picture'],
-                                        equipmentDocument['linkToItem'],
-                                        equipmentDocument['equipmentCategory']))
+        equipment_array.append(Equipment(equipmentDocument['id'],
+                                         equipmentDocument['arrayIndex'],
+                                         equipmentDocument['name'],
+                                         equipmentDocument['price'],
+                                         equipmentDocument['category'],
+                                         equipmentDocument['location'],
+                                         equipmentDocument['replacePictureFlag'],
+                                         equipmentDocument['picture'],
+                                         equipmentDocument['linkToItem'],
+                                         equipmentDocument['equipmentCategory']))
+    return equipment_array
 
 
-def initialize_channel_array_from_db():
+def load_channels_from_db(db):
+    channel_array = []
     channelCursor = db.channels.find()
     for channelDocument in channelCursor:
-        channelArray.append(Channel(channelDocument['id'],
-                                    channelDocument['arrayIndex'],
-                                    channelDocument['name'],
-                                    channelDocument['description'],
-                                    channelDocument['thumbnailURL'],
-                                    channelDocument['subscriberCount'],
-                                    channelDocument['viewCount'],
-                                    channelDocument['videoCount'],
-                                    channelDocument['playlist'],
-                                    channelDocument['topicIdCategories'],
-                                    channelDocument['exerciseCategory'],
-                                    unsubscribedTrailer=channelDocument['unsubscribedTrailer'],
-                                    bannerUrl=channelDocument['bannerUrl'],
-                                    keywords=channelDocument['keywords'],
-                                    exerciseSubcategory=channelDocument['exerciseSubcategory']))
+        channel_array.append(Channel(channelDocument['id'],
+                                     channelDocument['arrayIndex'],
+                                     channelDocument['name'],
+                                     channelDocument['description'],
+                                     channelDocument['thumbnailURL'],
+                                     channelDocument['subscriberCount'],
+                                     channelDocument['viewCount'],
+                                     channelDocument['videoCount'],
+                                     channelDocument['playlist'],
+                                     channelDocument['topicIdCategories'],
+                                     channelDocument['exerciseCategory'],
+                                     unsubscribedTrailer=channelDocument['unsubscribedTrailer'],
+                                     bannerUrl=channelDocument['bannerUrl'],
+                                     keywords=channelDocument['keywords'],
+                                     exerciseSubcategory=channelDocument['exerciseSubcategory']))
+    return channel_array
 
 
 # All 3 methods for getting 2D list of related cross-model instance id's by using the arrayIndex attribute
@@ -631,10 +669,11 @@ def initialize_channel_array_from_db():
 # <returnedList>[1] will be the list containing all of the related EQUIPMENT instance objects
 # <returnedList>[2] will be the list containing all of the related CHANNEL instance objects
 # ====================================================================================================================
-def get_related_objects_for_exercise_instance(id):
+def get_related_objects_for_exercise_instance(id, db):
     """
     Pass in current instance's id to get 2D list of all related instance object id's
     :param id: The current exercise instance object's id attribute
+    :param db: The mongo database to query
     :return: a 2D list of lists containing all the related instance objects for all 3 model types
     """
     returnList = []
@@ -647,32 +686,33 @@ def get_related_objects_for_exercise_instance(id):
     if currentExerciseDoc:
         category = currentExerciseDoc['category']
         subcategory = currentExerciseDoc['subcategory']  # Note that this can be equal to None
-        equipmentCategory = currentExerciseDoc['equipment']
+        equipmentCategoryList = currentExerciseDoc['equipment']
 
     # Query the exercise collection for all instances matching the current category (and subcategory if it exists)
     if subcategory is None:
         relatedExercisesCursor = db.exercises.find({'category': category})
         for relatedExerciseDoc in relatedExercisesCursor:
-            relatedExercises.append(exercisesArray[relatedExerciseDoc['arrayIndex']])
+            relatedExercises.append(EXERCISES_ARRAY[relatedExerciseDoc['arrayIndex']])
     else:  # subcategory is not None
         relatedExercisesCursor = db.exercises.find({'subcategory': subcategory})
         for relatedExerciseDoc in relatedExercisesCursor:
-            relatedExercises.append(exercisesArray[relatedExerciseDoc['arrayIndex']])
+            relatedExercises.append(EXERCISES_ARRAY[relatedExerciseDoc['arrayIndex']])
 
-    # Query the equipment collection for all instances matching the current equipmentCategory
-    relatedEquipmentsCursor = db.equipments.find({'equipmentCategory': equipmentCategory})
-    for relatedEquipmentDoc in relatedEquipmentsCursor:
-        relatedEquipments.append(equipmentArray[relatedEquipmentDoc['arrayIndex']])
+    # Query the equipment collection for all instances matching each equipmentCategory in the equipmentCategoryList
+    for equipmentCategory in equipmentCategoryList:
+        relatedEquipmentsCursor = db.equipments.find({'equipmentCategory': equipmentCategory})
+        for relatedEquipmentDoc in relatedEquipmentsCursor:
+            relatedEquipments.append(EQUIPMENT_ARRAY[relatedEquipmentDoc['arrayIndex']])
 
     # Query the channels collection for all instances matching the current category (and subcategory if it exists)
     if subcategory is None:
         relatedChannelsCursor = db.channels.find({'exerciseCategory': category})
         for relatedChannelDoc in relatedChannelsCursor:
-            relatedChannels.append(channelArray[relatedChannelDoc['arrayIndex']])
+            relatedChannels.append(CHANNEL_ARRAY[relatedChannelDoc['arrayIndex']])
     else:  # subcategory is not None
         relatedChannelsCursor = db.channels.find({'exerciseSubcategory': subcategory})
         for relatedChannelDoc in relatedChannelsCursor:
-            relatedChannels.append(channelArray[relatedChannelDoc['arrayIndex']])
+            relatedChannels.append(CHANNEL_ARRAY[relatedChannelDoc['arrayIndex']])
 
     # Combine the 3 inner arrays and return
     returnList.append(relatedExercises)
@@ -681,11 +721,12 @@ def get_related_objects_for_exercise_instance(id):
     return returnList
 
 
-def get_related_objects_for_equipment_instance(id):
+def get_related_objects_for_equipment_instance(id, db):
     """
     Pass in current instance's id to get 2D list of all related instance object id's.
     NOTE THAT WE CURRENTLY USE AN INDIRECT METHOD TO FIND ALL RELATED CHANNELS. Result relevance may vary...
     :param id: The current equipment instance object's id attribute
+    :param db: The mongo database to query from
     :return: a 2D list of lists containing all the related instance objects for all 3 model types
     """
     returnList = []
@@ -701,7 +742,7 @@ def get_related_objects_for_equipment_instance(id):
     # Query the exercise collection for all instances that match current equipmentCategory
     relatedExercisesCursor = db.exercises.find({'equipment': equipmentCategory})
     for relatedExerciseDoc in relatedExercisesCursor:
-        relatedExercises.append(exercisesArray[relatedExerciseDoc['arrayIndex']])
+        relatedExercises.append(EXERCISES_ARRAY[relatedExerciseDoc['arrayIndex']])
 
     # Use the first related exercise object to determine what exercise category/subcategory to use when querying channels collection
     topExerciseDoc = db.exercises.find_one({'_id': relatedExercises[0].id})
@@ -712,17 +753,17 @@ def get_related_objects_for_equipment_instance(id):
     # Query the equipment collection for all instances with the same equipmentCategory
     relatedEquipmentsCursor = db.equipments.find({'equipmentCategory': equipmentCategory})
     for relatedEquipmentDoc in relatedEquipmentsCursor:
-        relatedEquipments.append(equipmentArray[relatedEquipmentDoc['arrayIndex']])
+        relatedEquipments.append(EQUIPMENT_ARRAY[relatedEquipmentDoc['arrayIndex']])
 
     # Query the channels collection and find matches using exercise category of the top related exercise in relatedExercises
     if exerciseSubcategory is None:
         relatedChannelsCursor = db.channels.find({'exerciseCategory': exerciseCategory})
         for relatedChannelDoc in relatedChannelsCursor:
-            relatedChannels.append(channelArray[relatedChannelDoc['arrayIndex']])
+            relatedChannels.append(CHANNEL_ARRAY[relatedChannelDoc['arrayIndex']])
     else:  # exerciseSubcategory is not None
         relatedChannelsCursor = db.channels.find({'exerciseSubcategory': exerciseSubcategory})
         for relatedChannelDoc in relatedChannelsCursor:
-            relatedChannels.append(channelArray[relatedChannelDoc['arrayIndex']])
+            relatedChannels.append(CHANNEL_ARRAY[relatedChannelDoc['arrayIndex']])
 
     # Combine the 3 inner arrays and return
     returnList.append(relatedExercises)
@@ -731,11 +772,12 @@ def get_related_objects_for_equipment_instance(id):
     return returnList
 
 
-def get_related_objects_for_channel_instance(id):
+def get_related_objects_for_channel_instance(id, db):
     """
     Pass in current instance's id to get 2D list of all related instance object id's.
     NOTE THAT WE CURRENTLY USE AN INDIRECT METHOD TO FIND ALL RELATED EQUIPMENT. Result relevance may vary...
     :param id: The current channel instance object's id attribute
+    :param db: The mongo database to query from
     :return: a 2D list of lists containing all the related instance ids for all 3 model types
     """
     returnList = []
@@ -753,11 +795,11 @@ def get_related_objects_for_channel_instance(id):
     if exerciseSubcategory is None:
         relatedExercisesCursor = db.exercises.find({'category': exerciseCategory})
         for relatedExerciseDoc in relatedExercisesCursor:
-            relatedExercises.append(exercisesArray[relatedExerciseDoc['arrayIndex']])
+            relatedExercises.append(EXERCISES_ARRAY[relatedExerciseDoc['arrayIndex']])
     else:  # exerciseSubcategory is not None
         relatedExercisesCursor = db.exercises.find({'subcategory': exerciseSubcategory})
         for relatedExerciseDoc in relatedExercisesCursor:
-            relatedExercises.append(exercisesArray[relatedExerciseDoc['arrayIndex']])
+            relatedExercises.append(EXERCISES_ARRAY[relatedExerciseDoc['arrayIndex']])
 
     # Use the first related exercise object to determine what equipmentCategory to use when querying equipments collection
     topExerciseDoc = db.exercises.find_one({'_id': relatedExercises[0].id})
@@ -767,17 +809,17 @@ def get_related_objects_for_channel_instance(id):
     # Query the equipment collection for all instances with the same indirect equipmentCategory
     relatedEquipmentsCursor = db.equipments.find({'equipmentCategory': equipmentCategory})
     for relatedEquipmentDoc in relatedEquipmentsCursor:
-        relatedEquipments.append(equipmentArray[relatedEquipmentDoc['arrayIndex']])
+        relatedEquipments.append(EQUIPMENT_ARRAY[relatedEquipmentDoc['arrayIndex']])
 
     # Query the channels collection and find matches with the current exerciseCategory/Subcategory
     if exerciseSubcategory is None:
         relatedChannelsCursor = db.channels.find({'exerciseCategory': exerciseCategory})
         for relatedChannelDoc in relatedChannelsCursor:
-            relatedChannels.append(channelArray[relatedChannelDoc['arrayIndex']])
+            relatedChannels.append(CHANNEL_ARRAY[relatedChannelDoc['arrayIndex']])
     else:  # exerciseSubcategory is not None
         relatedChannelsCursor = db.channels.find({'exerciseSubcategory': exerciseSubcategory})
         for relatedChannelDoc in relatedChannelsCursor:
-            relatedChannels.append(channelArray[relatedChannelDoc['arrayIndex']])
+            relatedChannels.append(CHANNEL_ARRAY[relatedChannelDoc['arrayIndex']])
 
     # Combine the 3 inner arrays and return
     returnList.append(relatedExercises)
@@ -834,8 +876,13 @@ def fix_SZ_bar_typo(exercise):
     exercise.name = exercise.name.replace('SZ-bar', 'EZ-bar')
     exercise.description = exercise.description.replace('SZ-Bar', 'EZ-Bar')
     exercise.description = exercise.description.replace('SZ-bar', 'EZ-bar')
-    exercise.equipment = exercise.equipment.replace('SZ-Bar', 'EZ-Bar')
-    exercise.equipment = exercise.equipment.replace('SZ-bar', 'EZ-bar')
+    new_equipment_list = []
+    for e in exercise.equipment:
+        if e == 'SZ-Bar':
+            new_equipment_list.append('EZ-Bar')
+        else:
+            new_equipment_list.append(e)
+    exercise.equipment = new_equipment_list
 
 
 def convert_gym_mat_to_exercise_mat(exercise):
@@ -845,7 +892,7 @@ def convert_gym_mat_to_exercise_mat(exercise):
     :param exercise: An exercise object from the EXERCISE_GYM_MAT_SET
     :return: None
     """
-    exercise.equipment = 'Exercise mat'
+    exercise.equipment = ['Exercise mat']
 
 
 def return_arms_subcategory(exerciseName, muscles_string, sec_muscles_string):
@@ -903,8 +950,17 @@ def get_google_images(search_string, file_type=None):
     if search_items:
         for item in search_items:
             image_link = item["link"]
-            images.append(image_link)
+            if imageURL_exists(image_link):
+                images.append(image_link)
     return images
+
+
+def imageURL_exists(path):
+    try:
+        r = requests.head(path)
+        return r.status_code == requests.codes.ok
+    except:
+        return False
 
 
 def create_serpstack_request_params(queryArray, numResults):
@@ -1089,6 +1145,7 @@ def convert_channels_embeddedUrl(embeddedTag):
             break
     return url
 
+
 def convert_channels_keywords(keywords):
     keyword_arr = []
     words = keywords.split(" ")
@@ -1114,37 +1171,38 @@ app = Flask("__name__")
 # homepage
 @app.route("/", methods=['GET'])
 def index():
-    # Initialize global arrays from database before starting the web app
-    if len(exercisesArray) == 0:
-        initialize_exercises_array_from_db()
-    if len(equipmentArray) == 0:
-        initialize_equipment_array_from_db()
-    if len(channelArray) == 0:
-        initialize_channel_array_from_db()
+    # Initialize all 3 global arrays from database
+    global EXERCISES_ARRAY, EQUIPMENT_ARRAY, CHANNEL_ARRAY
+    if len(EXERCISES_ARRAY) == 0:
+        EXERCISES_ARRAY = load_exercises_from_db(DATABASE)
+    if len(EQUIPMENT_ARRAY) == 0:
+        EQUIPMENT_ARRAY = load_equipments_from_db(DATABASE)
+    if len(CHANNEL_ARRAY) == 0:
+        CHANNEL_ARRAY = load_channels_from_db(DATABASE)
     return render_template('homepage.html')
 
 
 # exercises model page
 @app.route("/exercises/<int:page_number>", methods=['GET'])
 def exercises(page_number):
-    start, end, num_pages = paginate(page_number, exercisesArray)
-    return render_template('exercises.html', exercisesArray=exercisesArray, start=start, end=end,
+    start, end, num_pages = paginate(page_number, EXERCISES_ARRAY)
+    return render_template('exercises.html', exercisesArray=EXERCISES_ARRAY, start=start, end=end,
                            page_number=page_number, num_pages=num_pages)
 
 
 # equipments model page
 @app.route("/equipment/<int:page_number>", methods=['GET'])
 def equipments(page_number):
-    start, end, num_pages = paginate(page_number, equipmentArray)
-    return render_template('equipments.html', equipmentArray=equipmentArray, start=start, end=end,
+    start, end, num_pages = paginate(page_number, EQUIPMENT_ARRAY)
+    return render_template('equipments.html', equipmentArray=EQUIPMENT_ARRAY, start=start, end=end,
                            page_number=page_number, num_pages=num_pages)
 
 
 # channels model page
 @app.route("/channels/<int:page_number>", methods=['GET'])
 def channels(page_number):
-    start, end, num_pages = paginate(page_number, channelArray)
-    return render_template('channels.html', channelArray=channelArray, start=start, end=end, page_number=page_number,
+    start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
+    return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end, page_number=page_number,
                            num_pages=num_pages)
 
 
@@ -1172,9 +1230,9 @@ def paginate(page_number, array):
 @app.route(EXERCISE_INSTANCE_URL_TEMPLATE.format('<int:arrayIndex>'), methods=['GET'])
 def exercise_instance(arrayIndex):
     # Find current exercise instance object
-    e = exercisesArray[arrayIndex]
+    e = EXERCISES_ARRAY[arrayIndex]
     # Call method to retrieve 2D List of related indices
-    relatedObjects = get_related_objects_for_exercise_instance(e.id)
+    relatedObjects = get_related_objects_for_exercise_instance(e.id, DATABASE)
     return render_template('exerciseInstance.html', e=e, relatedObjects=relatedObjects)
 
 
@@ -1182,9 +1240,9 @@ def exercise_instance(arrayIndex):
 @app.route(EQUIPMENT_INSTANCE_URL_TEMPLATE.format('<int:arrayIndex>'), methods=['GET'])
 def equipment_instance(arrayIndex):
     # Find current equipment instance object
-    eq = equipmentArray[arrayIndex]
+    eq = EQUIPMENT_ARRAY[arrayIndex]
     # Call method to retrieve 2D List of related indices
-    relatedObjects = get_related_objects_for_equipment_instance(eq.id)
+    relatedObjects = get_related_objects_for_equipment_instance(eq.id, DATABASE)
     return render_template('equipmentInstance.html', equipmentObject=eq, relatedObjects=relatedObjects)
     # TODO: replace this line with error handling page (see Google API Client tutorial, the one where you rickrolled the TAs)
     # return render_template('equipmentInstance.html', equipmentObject=equipmentArray[0], equipmentArray=equipmentArray)
@@ -1194,20 +1252,20 @@ def equipment_instance(arrayIndex):
 @app.route(CHANNEL_INSTANCE_URL_TEMPLATE.format('<int:arrayIndex>'), methods=['GET'])
 def channel_instance(arrayIndex):
     # Find current channel instance object
-    channelObj = channelArray[arrayIndex]
+    channelObj = CHANNEL_ARRAY[arrayIndex]
     # Call method to retrieve 2D List of related indices
-    relatedObjects = get_related_objects_for_channel_instance(channelObj.id)
+    relatedObjects = get_related_objects_for_channel_instance(channelObj.id, DATABASE)
     return render_template('channelInstance.html', channelObj=channelObj, relatedObjects=relatedObjects)
 
 
 # Start the Flask web-application when main.py file is run
 if __name__ == "__main__":
     # ONLY UNCOMMENT THE LINE BELOW IF YOU WANT TO COMPLETELY RE-INITIALIZE OUR MONGODB. Requires 1-2 minutes to call APIs and setup all 3 collections.
-    # setup_database()
+    # setup_database(DATABASE)
 
     # UNCOMMENT ONE OF THE FOLLOWING 3 LINES IF YOU WANT TO RE-INITIALIZE A SPECIFIC MODEL'S COLLECTION
-    # initialize_mongoDB_exercises_collection()
-    # initialize_mongoDB_equipment_collection()
-    # initialize_mongoDB_channel_collection()
+    # initialize_mongoDB_exercises_collection(DATABASE)
+    # initialize_mongoDB_equipment_collection(DATABASE)
+    # initialize_mongoDB_channel_collection(DATABASE)
 
     app.run(host="localhost", port=8080, debug=True, use_reloader=True)
