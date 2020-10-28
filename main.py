@@ -21,7 +21,13 @@ EXERCISE_GYM_MAT_SET = {'Leg Raises, Lying', 'Side Crunch', 'Superman'}
 PLANK_REMOVED_FLAG = False
 
 EQUIPMENT_BLACKLIST = {'BUKA GEARS ARNOLD WEIGHT LIFTING BODYBUILDING BICEP ARM BLASTER EZ BAR CURL ARMS',
-                       '9HORN Exercise Mat/Protective Flooring Mats with EVA Foam Interlocking Tiles and'
+                       '9HORN Exercise Mat/Protective Flooring Mats with EVA Foam Interlocking Tiles and',
+                        'HOMELITE SUPER-EZ Bar Guides Inner/Outer Used',
+                        'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bars Pair w EZ Pin Spotlight Pack',
+                        'Chauvet DJ EZ Bar Battery-Powered Pin Spot Light Bars with Carry Case',
+                        'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bar w 3 Independent Pin Spots',
+                        'Chauvet DJ EZ Bar Battery-Powered Pin Spot Light Bar with Carry Case',
+                        'CHAUVET DJ EZBar EZ Bar 3 Pin Spot Battery-Powered Bar Light PROAUDIOSTAR'
                        }
 EQUIPMENT_IMAGE_MAPPER = {
     'Cast Iron Kettlebell 5, 10, 15, 20, 25, 30 35,40, 45 +some PAIRS(Choose Weight)': "kettlebell_picture_1.jpg",
@@ -188,12 +194,7 @@ class Channel:
         # Optional parameters are initialized below (set to None if not passed)
         self.unsubscribedTrailer = unsubscribedTrailer
         self.bannerUrl = bannerUrl
-        self.keywords = []  # WILL ALWAYS BE SET TO AN EMPTY LIST BY DEFAULT FOR NOW UNTIL BUG FIXED
-        # @Kaylee CURRENTLY THE SPLIT LOGIC BREAKS THE CODE (AttributeError: List has not method split). Drop old keyword parsing method here to fix
-        # if keywords:
-        #     self.keywords = keywords.split(" ")
-        # else:
-        #     self.keywords = keywords
+        self.keywords = keywords
         self.exerciseSubcategory = exerciseSubcategory
 
     def to_dictionary(self):
@@ -475,8 +476,8 @@ def initialize_mongoDB_channel_collection():
     # Build the API client to access Youtube Data V3 API
     api_service_name = "youtube"
     api_version = "v3"
-    DEVELOPER_KEY = "AIzaSyBE-YXbak2UQlYM3hnKuiGoxxlt9VALgCk"  # Andy's
-    # DEVELOPER_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk'  # Michelle's
+    # DEVELOPER_KEY = "AIzaSyBE-YXbak2UQlYM3hnKuiGoxxlt9VALgCk"  # Andy's
+    DEVELOPER_KEY = 'AIzaSyB_ga1HNh1X3pdONl6VaxQHlgLkFnEC2fk'  # Michelle's
     youtube = build(
         api_service_name, api_version, developerKey=DEVELOPER_KEY)
 
@@ -502,7 +503,7 @@ def initialize_mongoDB_channel_collection():
             brandingSettingsImage = None
             brandingSettingsTrailer = None
             try:
-                brandingSettingsKeywords = brandingSettings['channel']['keywords']
+                brandingSettingsKeywords = convert_channels_keywords(brandingSettings['channel']['keywords'])
             except:
                 pass
 
@@ -537,6 +538,12 @@ def initialize_mongoDB_channel_collection():
             except:
                 pass
 
+            statisticsSubscriberCount = 0
+            try:
+                statisticsSubscriberCount = statistics['subscriberCount']
+            except:
+                pass
+
             exerciseCategory = searchTerm
             exerciseSubcategory = None
             # If searching a subcategory term, map and save the broader exercise category
@@ -551,7 +558,7 @@ def initialize_mongoDB_channel_collection():
                               snippet['channelTitle'],
                               snippet['description'],
                               snippet['thumbnails']['high']['url'],
-                              statistics['subscriberCount'],
+                              statisticsSubscriberCount,
                               statistics['viewCount'],
                               statistics['videoCount'],
                               playlist,
@@ -1087,6 +1094,22 @@ def convert_channels_embeddedUrl(embeddedTag):
             url = el.replace('"', "")
             break
     return url
+
+def convert_channels_keywords(keywords):
+    keyword_arr = []
+    words = keywords.split(" ")
+    for i in range(len(words)):
+        if words[i].startswith('"'):
+            phrase = ""
+            while not words[i].endswith('"'):
+                phrase = phrase + words[i].replace('"', "") + " "
+                i += 1
+            phrase = phrase + words[i].replace('"', "")
+            keyword_arr.append(phrase)
+        else:
+            keyword_arr.append(words[i])
+
+    return keyword_arr
 
 
 # Flask and view methods for home, models, model instances, and about pages below

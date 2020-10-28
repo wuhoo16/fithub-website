@@ -144,10 +144,18 @@
                 <li>
                     <a href="https://serpstack.com/documentation">SERPSTACK API Documentation</a>
                     <p>
-                        SERPSTACK was the API we used for finding results for fitness equipment. First, we did a pull to get an
-                        example JSON file of the search results, then used the information in the JSON file to construct a
-                        method for making a list of Equipment objects. We then used this list in the Equipment page to list
-                        search results in a grid.
+                        SERPSTACK was the API we initially used for finding results for fitness equipments. Unfortunately,
+                        the API returned many incorrect or broken images, resulting in numerous cases where equipment would
+                        be misrepresented by their thumbnails and image carousels. Nevertheless, we may revisit this API in
+                        the future to aggregate rating and vendor information if possible.
+                    </p>
+                </li>
+                <li>
+                    <a href="https://developer.ebay.com/api-docs/buy/browse/overview.html">eBay Browse API</a>
+                    <p>
+                        In lieu of SERPSTACK, we used eBay's Browse API for finding fitness equipment results. Multiple calls
+                        to the API were made, one for each specified search keyword. The dictionaries obtained from the API
+                        from each call were then converted into Equipment objects and stored into our database.
                     </p>
                 </li>
             </ul>
