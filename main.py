@@ -19,20 +19,20 @@ EXERCISE_SZ_BAR_TYPOS = {'French Press (skullcrusher) SZ-bar', 'Biceps Curls Wit
                          'Reverse Bar Curl'}
 EXERCISE_GYM_MAT_SET = {'Leg Raises, Lying', 'Side Crunch', 'Superman'}
 EXERCISE_DESCRIPTION = {
-    'Dumbbell Lunges Standing' : "Stand up straight with a dumbbell in each hand. Hand your arms at your sides. Palms should face the thighs (hammer grip). Feet should be a little less than shoulder-width apart. Take a big step forward with either leg, bending at the knee until the front thigh approaches parallel to the ground, landing on the heel. Inhale as you go down. The rear leg is bent at the knee and balanced on the toes. For the leg you step forward with, don't let the knee go past the tip of the toes. Step back to your standing starting position while exhaling. Repeat the motion with the other leg.",
-    'Lateral Raises' : "Stand or sit with a dumbbell in each hand at your sides. Keep your back straight, brace your core, and then slowly lift the weights out to the side until your arms are parallel with the floor, with the elbow slightly bent. Then lower them back down, again in measured fashion.",
-    'Front Squats' : "Begin with the barbell across the front side of your shoulders. Place your fingertips under the barbell just outside of your shoulders and drive your elbows up. Keeping your chest up and core tight, bend at your hips and knees to lower into a squat until your thighs are parallel to the ground. Straighten your hips and knees to drive up to the starting position."
+    'Dumbbell Lunges Standing': "Stand up straight with a dumbbell in each hand. Hand your arms at your sides. Palms should face the thighs (hammer grip). Feet should be a little less than shoulder-width apart. Take a big step forward with either leg, bending at the knee until the front thigh approaches parallel to the ground, landing on the heel. Inhale as you go down. The rear leg is bent at the knee and balanced on the toes. For the leg you step forward with, don't let the knee go past the tip of the toes. Step back to your standing starting position while exhaling. Repeat the motion with the other leg.",
+    'Lateral Raises': "Stand or sit with a dumbbell in each hand at your sides. Keep your back straight, brace your core, and then slowly lift the weights out to the side until your arms are parallel with the floor, with the elbow slightly bent. Then lower them back down, again in measured fashion.",
+    'Front Squats': "Begin with the barbell across the front side of your shoulders. Place your fingertips under the barbell just outside of your shoulders and drive your elbows up. Keeping your chest up and core tight, bend at your hips and knees to lower into a squat until your thighs are parallel to the ground. Straighten your hips and knees to drive up to the starting position."
 }
 PLANK_REMOVED_FLAG = False
 
 EQUIPMENT_BLACKLIST = {'BUKA GEARS ARNOLD WEIGHT LIFTING BODYBUILDING BICEP ARM BLASTER EZ BAR CURL ARMS',
                        '9HORN Exercise Mat/Protective Flooring Mats with EVA Foam Interlocking Tiles and',
-                        'HOMELITE SUPER-EZ Bar Guides Inner/Outer Used',
-                        'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bars Pair w EZ Pin Spotlight Pack',
-                        'Chauvet DJ EZ Bar Battery-Powered Pin Spot Light Bars with Carry Case',
-                        'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bar w 3 Independent Pin Spots',
-                        'Chauvet DJ EZ Bar Battery-Powered Pin Spot Light Bar with Carry Case',
-                        'CHAUVET DJ EZBar EZ Bar 3 Pin Spot Battery-Powered Bar Light PROAUDIOSTAR'
+                       'HOMELITE SUPER-EZ Bar Guides Inner/Outer Used',
+                       'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bars Pair w EZ Pin Spotlight Pack',
+                       'Chauvet DJ EZ Bar Battery-Powered Pin Spot Light Bars with Carry Case',
+                       'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bar w 3 Independent Pin Spots',
+                       'Chauvet DJ EZ Bar Battery-Powered Pin Spot Light Bar with Carry Case',
+                       'CHAUVET DJ EZBar EZ Bar 3 Pin Spot Battery-Powered Bar Light PROAUDIOSTAR'
                        }
 EQUIPMENT_IMAGE_MAPPER = {
     'Cast Iron Kettlebell 5, 10, 15, 20, 25, 30 35,40, 45 +some PAIRS(Choose Weight)': "kettlebell_picture_1.jpg",
@@ -41,6 +41,7 @@ EQUIPMENT_IMAGE_MAPPER = {
     'POWERT Competition Kettlebell Coated Cast Steel Weight Lifting Training 10-50LB': "kettlebell_picture_4.jpg",
     'NEW FRAY FITNESS RUBBER HEX DUMBBELLS select-weight 10,15, 20, 25, 30, 35, 40LB': "dumbbell_picture_1.jpg",
     'POWERT HEX Neoprene Coated Colorful Dumbbell Weight Lifting Training--One Pair': "dumbbell_picture_2.jpg",
+    'CAP Single Weight Dumbbell 40 lb, 35 lb, 25 lb, 20 lb - SELECT YOUR WEIGHT!': 'dumbbell_picture_3.jpg',
     'Adjustable Weight Bench Incline Decline Foldable Full Body Workout Gym Exercise': 'bench_picture_1.jpg',
     'Yoga Mats 0.375 inch (10mm) Thick Exercise Gym Mat Non Slip With Carry Straps': "mat_picture_1.png",
     'Extra Thick Non-slip Yoga Mat Pad Exercise Fitness Pilates w/ Strap 72" x 24"': "mat_picture_2.jpg",
@@ -283,7 +284,7 @@ def initialize_mongoDB_exercises_collection():
 
             # strip description of html elements
             description = clean_html(x["description"])
-            if x["name"] in EXERCISE_DESCRIPTION:           # replace bad descriptions
+            if x["name"] in EXERCISE_DESCRIPTION:  # replace bad descriptions
                 description = EXERCISE_DESCRIPTION[x["name"]]
 
             # get category name using ID
@@ -315,15 +316,21 @@ def initialize_mongoDB_exercises_collection():
             sec_muscles_string = ", ".join(sec_musclesList)
 
             # get equipment name using ID
+            DEFAULT_EXERCISE_MAT_STRING = "Exercise mat"
             equipment_list = []
             equipment = x["equipment"]
             equip_results = equipment_data["results"]
             for e in equipment:
                 for result in equip_results:
                     if result["id"] == e:
-                        equipment_list.append(result["name"])
-            if equipment_list == []:            # default equipment is gym mat if there are no other equipments
-                equipment_list.append("Exercise mat")
+                        equipmentName = result["name"]
+                        # Change all "Gym mat" occurrences to be normalized to "Exercise mat"
+                        if equipmentName == 'Gym mat':
+                            equipmentName = DEFAULT_EXERCISE_MAT_STRING
+                        equipment_list.append(equipmentName)
+            if len(
+                    equipment_list) == 0:  # default equipment is Exercise mat if there is no equipment attribute returned by API
+                equipment_list.append(DEFAULT_EXERCISE_MAT_STRING)
 
             # get image URL using exercise
             images = []
@@ -349,7 +356,8 @@ def initialize_mongoDB_exercises_collection():
                 subcategory = return_legs_subcategory(x['name'])
 
             global EXERCISE_COUNTER
-            exercise = Exercise(exerciseID, EXERCISE_COUNTER, x["name"], description, category_name, subcategory, muscles_string,
+            exercise = Exercise(exerciseID, EXERCISE_COUNTER, x["name"], description, category_name, subcategory,
+                                muscles_string,
                                 sec_muscles_string, equipment_list,
                                 images, comments)
 
@@ -406,7 +414,7 @@ def initialize_mongoDB_equipment_collection():
     db.equipments.drop()  # drop the old collection so we initialize a fresh collection
     EBAY_APP_ID = "AndrewWu-IMBDProj-PRD-be64e9f22-1cd7edca"  # Andrew's App ID
     api = Connection(appid=EBAY_APP_ID, config_file=None)
-    queryArray = ['Kettlebell', 'Dumbbell', 'Barbell', 'Bench', 'EZ-Bar', 'Exercise mat']
+    queryArray = ['Kettlebell', 'Dumbbell', 'Barbell', 'Bench', 'EZ-Bar', 'Exercise mat', 'Pull-up bar']
     queryMapper = {'Kettlebell': 'Kettlebells'}
 
     for query in queryArray:
@@ -661,7 +669,7 @@ def get_related_objects_for_exercise_instance(id):
     if currentExerciseDoc:
         category = currentExerciseDoc['category']
         subcategory = currentExerciseDoc['subcategory']  # Note that this can be equal to None
-        equipmentCategory = currentExerciseDoc['equipment']
+        equipmentCategoryList = currentExerciseDoc['equipment']
 
     # Query the exercise collection for all instances matching the current category (and subcategory if it exists)
     if subcategory is None:
@@ -673,10 +681,11 @@ def get_related_objects_for_exercise_instance(id):
         for relatedExerciseDoc in relatedExercisesCursor:
             relatedExercises.append(exercisesArray[relatedExerciseDoc['arrayIndex']])
 
-    # Query the equipment collection for all instances matching the current equipmentCategory
-    relatedEquipmentsCursor = db.equipments.find({'equipmentCategory': equipmentCategory})
-    for relatedEquipmentDoc in relatedEquipmentsCursor:
-        relatedEquipments.append(equipmentArray[relatedEquipmentDoc['arrayIndex']])
+    # Query the equipment collection for all instances matching each equipmentCategory in the equipmentCategoryList
+    for equipmentCategory in equipmentCategoryList:
+        relatedEquipmentsCursor = db.equipments.find({'equipmentCategory': equipmentCategory})
+        for relatedEquipmentDoc in relatedEquipmentsCursor:
+            relatedEquipments.append(equipmentArray[relatedEquipmentDoc['arrayIndex']])
 
     # Query the channels collection for all instances matching the current category (and subcategory if it exists)
     if subcategory is None:
@@ -853,7 +862,7 @@ def fix_SZ_bar_typo(exercise):
         if e == 'SZ-Bar':
             new_equipment_list.append('EZ-Bar')
         else:
-            new_equipment_list.append(e)    
+            new_equipment_list.append(e)
     exercise.equipment = new_equipment_list
 
 
@@ -863,8 +872,8 @@ def convert_gym_mat_to_exercise_mat(exercise):
     To have consistent tags and link instances across models, we need consistent names.
     :param exercise: An exercise object from the EXERCISE_GYM_MAT_SET
     :return: None
-    """ 
-    exercise.equipment = ['Exercise mat']         
+    """
+    exercise.equipment = ['Exercise mat']
 
 
 def return_arms_subcategory(exerciseName, muscles_string, sec_muscles_string):
@@ -926,12 +935,14 @@ def get_google_images(search_string, file_type=None):
                 images.append(image_link)
     return images
 
+
 def imageURL_exists(path):
     try:
         r = requests.head(path)
         return r.status_code == requests.codes.ok
     except:
-        return False            
+        return False
+
 
 def create_serpstack_request_params(queryArray, numResults):
     """
@@ -1114,6 +1125,7 @@ def convert_channels_embeddedUrl(embeddedTag):
             url = el.replace('"', "")
             break
     return url
+
 
 def convert_channels_keywords(keywords):
     keyword_arr = []
