@@ -16,13 +16,13 @@
             {% for offset in range(3) %}
                 <div class="col-md-4 p-4">
                     <div class="card bg-light h-100 pt-4">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[start + 3*i + offset].images[0] }}" alt="{{ exercisesArray[start + 3*i + offset].name }}">
+                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[start + 3*i + offset].images[0] }}" onerror="this.onerror=null; this.src='{{ exercisesArray[start + 3*i+offset].images[1] }}'"; alt="{{ exercisesArray[start + 3*i + offset].name }}">
                         <div class="card-body">
                             <h2 class="card-title text-center text-dark">{{ exercisesArray[start + 3*i + offset].name }}</h2>
                             <p class="card-text">
                                 <ul class="exerciseAttributesList list-unstyled">
                                     <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Category: </b>{{ exercisesArray[start + 3*i + offset].category }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Equipment: </b>{{ exercisesArray[start + 3*i + offset].equipment }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Equipment: </b>{{ exercisesArray[start + 3*i + offset].equipment|join(', ') }}</li>
                                     <li style="padding-left: 1em;"><b>Description: </b>{{ exercisesArray[start + 3*i + offset].description }}</li>
                                 </ul>
                             </p>
@@ -39,13 +39,13 @@
             {% for i in range(-numLeftOverChannels, 0) %}
                 <div class="col-md-4 p-4">
                     <div class="card bg-light h-100 pt-4">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[end + 1 + i].images[0] }}" alt="{{ exercisesArray[end + 1 + i].name }}">
+                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[end + 1 + i].images[0] }}" onerror="this.onerror=null; this.src='{{ exercisesArray[end + 1 + i].images[1] }}'"; alt="{{ exercisesArray[end + 1 + i].name }}">
                         <div class="card-body">
                             <h2 class="card-title text-center text-dark">{{ exercisesArray[end + 1 + i].name }}</h2>
                             <p class="card-text">
                                 <ul class="exerciseAttributesList list-unstyled">
                                     <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Category: </b>{{ exercisesArray[end + 1 + i].category }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Equipment: </b>{{ exercisesArray[end + 1 + i].equipment }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Equipment: </b>{{ exercisesArray[end + 1 + i].equipment|join(', ') }}</li>
                                     <li style="padding-left: 1em;"><b>Description: </b>{{ exercisesArray[end + 1 + i].description }}</li>
                                 </ul>
                             </p>
