@@ -35,6 +35,8 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
       - Backend Helper Method Implementation for Cross-Model Instance Linking: Actual Completion Hours: 5
       - Refactoring codebase to improve runtime and object reference in routing methods and HTML Templates: Estimated Completion Hours: 3
       - Refactoring codebase to improve runtime and object reference in routing methods and HTML Templates: Actual Completion Hours: 3
+      - Implementing all unittests to test the Python code/database communication: Estimated Completion Hours: 3
+      - Implementing all unittests to test the Python code/database communication: Actual Completion Hours: 3
   
   Kaylee N Trevino
    - EID: knt658
