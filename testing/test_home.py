@@ -16,10 +16,10 @@ class TestHome(unittest.TestCase):
         self.assertEqual("Fithub Homepage", self.driver.title)
 
     def test_exercise_carousel_link(self):
-        link = self.driver.find_element_by_link_text("See Exercises")
-        print(link)
+        btn = self.driver.find_element_by_id("exerciseCarouselBtn")
         print(self.driver.current_url)
-        link.click()
+        btn.click()
+        self.driver.implicitly_wait(60)
         print(self.driver.current_url)
 
         self.assertEqual("Exercises Model Page", self.driver.title)
