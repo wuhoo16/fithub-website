@@ -17,3 +17,4 @@
 # Other local-testing or project-specific files
 /apiTesting.py
 /testMongoDB.py
+**/geckodriver.exe
