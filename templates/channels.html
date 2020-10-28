@@ -25,10 +25,14 @@
                             <h2 class="card-title text-center text-dark">{{ channelArray[start + 3*i + offset].name }}</h2>
                             <p class="card-text">
                                 <ul class="channelAttributesList list-unstyled">
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Description: </b>{{ channelArray[start + 3*i + offset].description }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Subscribers: </b>{{ channelArray[start + 3*i + offset].subscriberCount }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Total Views: </b>{{ channelArray[start + 3*i + offset].viewCount }}</li>
-                                    <li style="padding-left: 1em;"><b>Videos: </b>{{ channelArray[start + 3*i + offset].videoCount }}</li>
+                                    {% if channelArray[start + 3*i + offset].description|length != 0 %}
+                                        <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="descriptionTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Description: </b>{{ channelArray[start + 3*i + offset].description }}</li>
+                                    {% else %}
+                                        <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="descriptionNoTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Description: </b>No description provided.</li>
+                                    {% endif %}
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="subscriberTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Subscribers: </b>{{ channelArray[start + 3*i + offset].subscriberCount }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="viewTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Total Views: </b>{{ channelArray[start + 3*i + offset].viewCount }}</li>
+                                    <li style="padding-left: 1em;" id="videoTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Videos: </b>{{ channelArray[start + 3*i + offset].videoCount }}</li>
                                 </ul>
                             </p>
                             <a href="{{ url_for('channel_instance', arrayIndex=channelArray[start + 3*i + offset].arrayIndex) }}" class="stretched-link"></a>
