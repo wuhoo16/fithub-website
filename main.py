@@ -320,7 +320,8 @@ def initialize_mongoDB_exercises_collection():
                 for result in equip_results:
                     if result["id"] == e:
                         equipment_list.append(result["name"])
-            equipment_string = ", ".join(equipment_list)
+            if equipment_list == []:            # default equipment is gym mat if there are no other equipments
+                equipment_list.append("Exercise mat")
 
             # get image URL using exercise
             images = []
@@ -347,7 +348,7 @@ def initialize_mongoDB_exercises_collection():
 
             global EXERCISE_COUNTER
             exercise = Exercise(exerciseID, EXERCISE_COUNTER, x["name"], description, category_name, subcategory, muscles_string,
-                                sec_muscles_string, equipment_string,
+                                sec_muscles_string, equipment_list,
                                 images, comments)
 
             if exercise.name in EXERCISE_BLACKLIST:
@@ -839,8 +840,13 @@ def fix_SZ_bar_typo(exercise):
     exercise.name = exercise.name.replace('SZ-bar', 'EZ-bar')
     exercise.description = exercise.description.replace('SZ-Bar', 'EZ-Bar')
     exercise.description = exercise.description.replace('SZ-bar', 'EZ-bar')
-    exercise.equipment = exercise.equipment.replace('SZ-Bar', 'EZ-Bar')
-    exercise.equipment = exercise.equipment.replace('SZ-bar', 'EZ-bar')
+    new_equipment_list = []
+    for e in exercise.equipment:
+        if e == 'SZ-Bar':
+            new_equipment_list.append('EZ-Bar')
+        else:
+            new_equipment_list.append(e)    
+    exercise.equipment = new_equipment_list
 
 
 def convert_gym_mat_to_exercise_mat(exercise):
@@ -849,8 +855,8 @@ def convert_gym_mat_to_exercise_mat(exercise):
     To have consistent tags and link instances across models, we need consistent names.
     :param exercise: An exercise object from the EXERCISE_GYM_MAT_SET
     :return: None
-    """
-    exercise.equipment = 'Exercise mat'
+    """ 
+    exercise.equipment = ['Exercise mat']         
 
 
 def return_arms_subcategory(exerciseName, muscles_string, sec_muscles_string):
