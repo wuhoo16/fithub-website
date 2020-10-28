@@ -6,7 +6,6 @@ class TestHome(unittest.TestCase):
     
     def setUp(self):
         self.driver = webdriver.Safari()
-        # self.driver.get(r"file:///Users/kayleetrevino/Desktop/SoftwareLab/FitHubProject/TeamA13/templates/homepage.html")
         self.driver.get("http://localhost:8080/")
 
     def tearDown(self):

@@ -23,7 +23,6 @@ class TestHome(unittest.TestCase):
     def test_channel_with_no_description_does_not_show_empty_string(self):
         try:
             description = self.driver.find_element_by_id("descriptionTxt_5")
-            print(description.text)
             self.assertEqual(0, 1) #will automatically fail test
         except NoSuchElementException:
             pass
@@ -32,14 +31,20 @@ class TestHome(unittest.TestCase):
         description = self.driver.find_element_by_id("descriptionNoTxt_5")
         self.assertEqual("Description: No description provided.", description.text)
 
-    def test_channel_has_view_count_and_video_count(self):
+    def test_channel_has_view_count(self):
         view_count = self.driver.find_element_by_id("viewTxt_8").text
         view_count = view_count.replace("Total Views: ", "")
         self.assertNotEqual(0, len(view_count))
 
+    def test_channel_has_video_count(self):
         video_count = self.driver.find_element_by_id("videoTxt_8").text
         video_count = video_count.replace("Videos: ", "")
         self.assertNotEqual(0, len(video_count))
+
+    def test_next_button(self):
+         self.driver.find_element_by_link_text("Next").click()
+         url = self.driver.current_url
+         self.assertEqual("http://localhost:8080/channels/2", url) 
 
 
 
