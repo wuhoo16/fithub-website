@@ -19,6 +19,7 @@
                     <img
                       src="{{ e.images[0] }}"
                       style="width:auto; max-height: 500px;"
+                      onerror="this.onerror=null; this.src='/static/exercise_backup.jpg'"
                       alt="{{ e.name }}"
                     />
                   </div>
@@ -27,6 +28,7 @@
                         <img
                         src="{{ e.images[i] }}"
                         style="width:auto; max-height: 500px;"
+                        onerror="this.onerror=null; this.src='/static/exercise_backup.jpg'"
                         alt="{{ e.name }}"
                         />
                     </div>
