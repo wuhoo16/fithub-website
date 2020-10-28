@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block head %}
+    <title>About Me Page</title>
 {% endblock %}
 
 {% block body %}
@@ -59,7 +60,7 @@
                     <p class="card-text">Major: Electrical and Computer Engineering with a focus in Software Engineering and Systems</p>
                 </div>
                 <div class="card-footer">
-                    <small class="text-muted">Primary responsibilities: Youtube Data API framework, SERPSTACK API debugging, Youtube channels page, Equipment page & instances, About page, Backend infrastructure, MongoDB infrastructure, code/branch integration </small>
+                    <small class="text-muted">Primary responsibilities: Youtube Data API framework, SERPSTACK API debugging, Youtube channels page, Equipment page & instances, About page, Python infrastructure, MongoDB infrastructure, Cross-Model backend support, Github code/branch integration </small>
                 </div>
             </div>
 
@@ -92,7 +93,7 @@
                     <p class="card-text">Major: Electrical and Computer Engineering with a focus in Software Engineering and Systems</p>
                 </div>
                 <div class="card-footer">
-                    <small class="text-muted">Primary responsibilities: WGER API framework, Google Custom Search API, Exercise page, About page</small>
+                    <small class="text-muted">Primary responsibilities: WGER API framework, Google Custom Search API, Exercise page, About page, Home page, Model pages overall UI </small>
                 </div>
             </div>
 
@@ -144,10 +145,18 @@
                 <li>
                     <a href="https://serpstack.com/documentation">SERPSTACK API Documentation</a>
                     <p>
-                        SERPSTACK was the API we used for finding results for fitness equipment. First, we did a pull to get an
-                        example JSON file of the search results, then used the information in the JSON file to construct a
-                        method for making a list of Equipment objects. We then used this list in the Equipment page to list
-                        search results in a grid.
+                        SERPSTACK was the API we initially used for finding results for fitness equipments. Unfortunately,
+                        the API returned many incorrect or broken images, resulting in numerous cases where equipment would
+                        be misrepresented by their thumbnails and image carousels. Nevertheless, we may revisit this API in
+                        the future to aggregate rating and vendor information if possible.
+                    </p>
+                </li>
+                <li>
+                    <a href="https://developer.ebay.com/api-docs/buy/browse/overview.html">eBay Browse API</a>
+                    <p>
+                        In lieu of SERPSTACK, we used eBay's Browse API for finding fitness equipment results. Multiple calls
+                        to the API were made, one for each specified search keyword. The dictionaries obtained from the API
+                        from each call were then converted into Equipment objects and stored into our database.
                     </p>
                 </li>
             </ul>
@@ -197,6 +206,18 @@
                     <p>
                         We used MongoDB to store our data gathered from the APIs. Instead of having to call the API multiple times when the user is on the website, 
                         we store all that data into a database for easier and faster access. This decreases the # of API calls made and ensures faster access to information displayed on the website.
+                    </p>
+                </li>
+                <li>
+                    <b>Selenium</b>
+                    <p>
+                        We used Selenium to test multiple components of our website frontend and GUI. These components include the three model pages, instance pages, homepage, and about page. Within these components, we tested the content, validity of the pages, carousel, navigation bar, attributes, pagination, etc.
+                    </p>
+                </li>
+                <li>
+                    <b>Unittest</b>
+                    <p>
+                        We used Python unittest, a unit testing framework, to easily verify that the Python backend methods that communicate to our MongoDB database are working as intended.   
                     </p>
                 </li>
             </ul>

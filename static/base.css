@@ -1,23 +1,4 @@
-#modelGrid .row .col-md-4 {
-  outline: 2px solid black;
-  align-content: center;
-}
-
-#equipmentGrid .row .col-md-4 {
-  outline: 2px solid black;
-  align-content: center;
-}
-
-#modelGrid .row .col-md-4 .card .card-body .card-title {
-  color: white;
-}
-
-.channelAttributesList li {
-  color: white;
-}
-
-#modelGrid .row .col-md-4 .card .card-img-top,
-#equipmentGrid .row .col-md-4 .card .card-img-top {
+#modelGrid .row .col-md-4 .card .card-img-top {
   width: 360px;
   height: 270px;
 }
@@ -27,11 +8,12 @@
   display: block;
 }
 
-.carousel,
-.carousel-item,
-.carousel-pic {
-  width: 100%;
-  margin: auto;
+.carousel-inner>.item {
+    width: 100%;
+}
+
+#homepageWelcomeMessage {
+    text-align: center;
 }
 
 .carousel-control-next,
@@ -47,4 +29,15 @@
 .instance-pic {
   width: 30%;
   height: 40%;
+}
+
+.card {
+  box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);
+  transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
 }

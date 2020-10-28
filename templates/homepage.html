@@ -1,7 +1,7 @@
 {% extends 'base.html' %} {% block head %}
 <title>Fithub Homepage</title>
 {% endblock %} {% block body %}
-<h1>Welcome to the Fithub Homepage!</h1>
+<h1 id="homepageWelcomeMessage">Welcome to the Fithub Homepage!</h1>
 <div id="myCarousel" class="carousel slide centered" data-ride="carousel">
   <ol class="carousel-indicators">
     <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -19,7 +19,11 @@
           <h1>Exercises</h1>
           <p></p>
           <p>
-            <a class="btn btn-lg btn-primary" href="/exercises" role="button"
+            <a
+              class="btn btn-lg btn-primary"
+              id="exerciseCarouselBtn"
+              href="/exercises/1"
+              role="button"
               >See Exercises</a
             >
           </p>
@@ -36,7 +40,11 @@
           <h1>Equipment</h1>
           <p></p>
           <p>
-            <a class="btn btn-lg btn-primary" href="/equipment" role="button"
+            <a
+              class="btn btn-lg btn-primary"
+              id="equipmentCarouselBtn"
+              href="/equipment/1"
+              role="button"
               >See Equipment</a
             >
           </p>
@@ -53,7 +61,11 @@
           <h1>Channels</h1>
           <p></p>
           <p>
-            <a class="btn btn-lg btn-primary" href="/channels" role="button"
+            <a
+              class="btn btn-lg btn-primary"
+              id="channelCarouselBtn"
+              href="/channels/1"
+              role="button"
               >See Channels</a
             >
           </p>
@@ -61,10 +73,20 @@
       </div>
     </div>
   </div>
-  <a class="carousel-control-prev" href="#myCarousel" data-slide="prev">
+  <a
+    class="carousel-control-prev"
+    id="carousel_prev"
+    href="#myCarousel"
+    data-slide="prev"
+  >
     <span class="carousel-control-prev-icon"></span>
   </a>
-  <a class="carousel-control-next" href="#myCarousel" data-slide="next">
+  <a
+    class="carousel-control-next"
+    id="carousel_next"
+    href="#myCarousel"
+    data-slide="next"
+  >
     <span class="carousel-control-next-icon"></span>
   </a>
 </div>
