@@ -21,7 +21,13 @@ EXERCISE_GYM_MAT_SET = {'Leg Raises, Lying', 'Side Crunch', 'Superman'}
 PLANK_REMOVED_FLAG = False
 
 EQUIPMENT_BLACKLIST = {'BUKA GEARS ARNOLD WEIGHT LIFTING BODYBUILDING BICEP ARM BLASTER EZ BAR CURL ARMS',
-                       '9HORN Exercise Mat/Protective Flooring Mats with EVA Foam Interlocking Tiles and'
+                       '9HORN Exercise Mat/Protective Flooring Mats with EVA Foam Interlocking Tiles and',
+                        'HOMELITE SUPER-EZ Bar Guides Inner/Outer Used',
+                        'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bars Pair w EZ Pin Spotlight Pack',
+                        'Chauvet DJ EZ Bar Battery-Powered Pin Spot Light Bars with Carry Case',
+                        'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bar w 3 Independent Pin Spots',
+                        'Chauvet DJ EZ Bar Battery-Powered Pin Spot Light Bar with Carry Case',
+                        'CHAUVET DJ EZBar EZ Bar 3 Pin Spot Battery-Powered Bar Light PROAUDIOSTAR'
                        }
 EQUIPMENT_IMAGE_MAPPER = {
     'Cast Iron Kettlebell 5, 10, 15, 20, 25, 30 35,40, 45 +some PAIRS(Choose Weight)': "kettlebell_picture_1.jpg",
