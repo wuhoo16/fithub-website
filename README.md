@@ -7,6 +7,7 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
    - EID: amw5468
    - GitHub ID: wuhoo16
    - Tasks
+      Phase 1:
       - Youtube API testing and backend infrastructure: Estimated Completion Hours: 3
       - Youtube API testing and backend infrastructure: Actual Completion Hours: 3
       - Flask framework: Estimated Completion Hours: 1
@@ -23,11 +24,13 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
       - About Page Design and Content: Actual Completion Hours: 2
       - Backend refactoring and MongoDB setup: Estimated Completion Hours: 4
       - Backend refactoring and MongoDB setup: Actual Completion Hours: 4
+      Phase 2:
   
   Kaylee N Trevino
    - EID: knt658
    - GitHub ID: kntrevi1
    - Tasks:
+      Phase 1: 
       - Flask framework: Estimated Completion Hours: 1
       - Flask framework: Actual Completion Hours: 2
       - Youtube API testing & backend infrastructure: Estimated Completion Hours: 3
@@ -42,24 +45,30 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
       - Home/Splash Page Design and Content: Actual Completion Hours: 4
       - Starting .py file to populate database in MongoDB: Estimated Completion Hours: 2
       - Starting .py file to populate database in MongoDB: Actual Completion Hours: 3
+      Phase 2:
+      - Backend refactoring and MongoDB setup
+      - Selenium testing on channel and channel instance pages: 5
 
 
   Christopher Saenz
    - EID: cgs2258
    - GitHub ID: ChriSaenz
    - Tasks:
+      Phase 1:
       - SERPSTACK API Setup and Integration: Estimated Completion Hours: 3
       - SERPSTACK API Setup and Integration: Actual Completion Hours: 4
       - Equipment Model Page Functionality and Design: Estimated Completion Hours: 4
       - Equipment Model Page Functionality and Design: Actual Completion Hours: 7
       - About Page Content: Estimated Completion Hours: 1
       - About Page Content: Estimated Completion Hours: 0.5
+      Phase 2:
 
 
   Michelle Wen
    - EID: mw37583
    - GitHub ID: michellewen3
    - Tasks:
+      Phase 1:
       - wger API integration: Estimated Completion Hours: 2
       - wger API integration: Actual Completion Hours: 6
       - wger API model page: Estimated Completion Hours: 1
@@ -74,6 +83,7 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
       - Google Custom Search API integration: Actual Completion Hours: 2
       - About Page Content: Estimated Completion Hours: 0.5
       - About Page Content: Actual Completion Hours: 1.5
+      Phase 2: 
 
   
   
