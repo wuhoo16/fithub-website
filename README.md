@@ -42,21 +42,37 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
    - EID: knt658
    - GitHub ID: kntrevi1
    - Tasks:
-      - Flask framework: Estimated Completion Hours: 1
-      - Flask framework: Actual Completion Hours: 2
-      - Youtube API testing & backend infrastructure: Estimated Completion Hours: 3
-      - Youtube API testing & backend infrastructure: Actual Completion Hours: 4
-      - Youtube Channel model page design: Estimated Completion Hours: 2
-      - Youtube Channel model page design: Actual Completion Hours: 3
-      - Youtube Channel three instance page designs: Estimated Completion Hours: 4
-      - Youtube Channel three instance page designs: Actual Completion Hours: 6
-      - Github branch/code integration: Estimated Completion Hours: 1
-      - Github branch/code integration: Actual Completion Hours: 3
-      - Home/Splash Page Design and Content: Estimated Completion Hours: 2
-      - Home/Splash Page Design and Content: Actual Completion Hours: 4
-      - Starting .py file to populate database in MongoDB: Estimated Completion Hours: 2
-      - Starting .py file to populate database in MongoDB: Actual Completion Hours: 3
-
+      - Phase 1: 
+        - Flask framework: Estimated Completion Hours: 1
+        - Flask framework: Actual Completion Hours: 2
+        - Youtube API testing & backend infrastructure: Estimated Completion Hours: 3
+        - Youtube API testing & backend infrastructure: Actual Completion Hours: 4
+        - Youtube Channel model page design: Estimated Completion Hours: 2
+        - Youtube Channel model page design: Actual Completion Hours: 3
+        - Youtube Channel three instance page designs: Estimated Completion Hours: 4
+        - Youtube Channel three instance page designs: Actual Completion Hours: 6
+        - Github branch/code integration: Estimated Completion Hours: 1
+        - Github branch/code integration: Actual Completion Hours: 3
+        - Home/Splash Page Design and Content: Estimated Completion Hours: 2
+        - Home/Splash Page Design and Content: Actual Completion Hours: 4
+        - Starting .py file to populate database in MongoDB: Estimated Completion Hours: 2
+        - Starting .py file to populate database in MongoDB: Actual Completion Hours: 3
+      - Phase 2: 
+        - Adding API calls to backend for channel model: 6 
+        - Adding API calls to backend for channel model: 7
+        - Working on backend for channel model: 5
+        - Working on backend for channel model: 8
+        - Cleaning up and creating objects sent to MongoDB for channels: 3
+        - Cleaning up and creating objects sent to MongoDB for channels: 3
+        - Channel instance pages changing static data to dynamic data: 4
+        - Channel instance pages changing static data to dynamic data: 4
+        - Github branch/code integration: 1
+        - Github branch/code integration: 1
+        - Adding Selenium testing for channels model and channels instance pages: 2
+        - Adding Selenium testing for channels model and channels instance pages: 3
+        - Worked on reports and organization of leading team as project lead: 3 
+        - Worked on reports and organization of leading team as project lead: 3 
+        
 
   Christopher Saenz
    - EID: cgs2258
