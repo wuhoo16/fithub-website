@@ -1096,10 +1096,9 @@ def convert_channels_keywords(keywords):
         if words[i].startswith('"'):
             phrase = ""
             while not words[i].endswith('"'):
-                phrase = phrase + words[i] + " "
+                phrase = phrase + words[i].replace('"', "") + " "
                 i += 1
-            print(phrase)
-            phrase = phrase + words[i]
+            phrase = phrase + words[i].replace('"', "")
             keyword_arr.append(phrase)
         else:
             keyword_arr.append(words[i])
