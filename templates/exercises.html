@@ -22,7 +22,7 @@
                             <p class="card-text">
                                 <ul class="exerciseAttributesList list-unstyled">
                                     <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Category: </b>{{ exercisesArray[start + 3*i + offset].category }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Equipment: </b>{{ exercisesArray[start + 3*i + offset].equipment }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Equipment: </b>{{ exercisesArray[start + 3*i + offset].equipment|join(', ') }}</li>
                                     <li style="padding-left: 1em;"><b>Description: </b>{{ exercisesArray[start + 3*i + offset].description }}</li>
                                 </ul>
                             </p>
@@ -45,7 +45,7 @@
                             <p class="card-text">
                                 <ul class="exerciseAttributesList list-unstyled">
                                     <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Category: </b>{{ exercisesArray[end + 1 + i].category }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Equipment: </b>{{ exercisesArray[end + 1 + i].equipment }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Equipment: </b>{{ exercisesArray[end + 1 + i].equipment|join(', ') }}</li>
                                     <li style="padding-left: 1em;"><b>Description: </b>{{ exercisesArray[end + 1 + i].description }}</li>
                                 </ul>
                             </p>
