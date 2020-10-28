@@ -96,20 +96,38 @@ This is the master branch for TeamA13's IMBD web application project for EE461L.
    - EID: mw37583
    - GitHub ID: michellewen3
    - Tasks:
-      - wger API integration: Estimated Completion Hours: 2
-      - wger API integration: Actual Completion Hours: 6
-      - wger API model page: Estimated Completion Hours: 1
-      - wger API model page: Actual Completion Hours: 1
-      - wger API instance pages and connection to other models: Estimated Completion Hours: 0.5
-      - wger API instance pages and connection to other models: Actual Completion Hours: 1
-      - wger API testing and filtering data: Estimated Completion Hours: 1
-      - wger API testing and filtering data: Actual Completion Hours: 3.5
-      - Flask framework: Estimated Completion Hours: 0.5
-      - Flask framework: Actual Completion Hours: 1
-      - Google Custom Search API integration: Estimated Completion Hours: 1
-      - Google Custom Search API integration: Actual Completion Hours: 2
-      - About Page Content: Estimated Completion Hours: 0.5
-      - About Page Content: Actual Completion Hours: 1.5
-
+      - Phase 1:
+        - wger API integration: Estimated Completion Hours: 2
+        - wger API integration: Actual Completion Hours: 6
+        - wger API model page: Estimated Completion Hours: 1
+        - wger API model page: Actual Completion Hours: 1
+        - wger API instance pages and connection to other models: Estimated Completion Hours: 0.5
+        - wger API instance pages and connection to other models: Actual Completion Hours: 1
+        - wger API testing and filtering data: Estimated Completion Hours: 1
+        - wger API testing and filtering data: Actual Completion Hours: 3.5
+        - Flask framework: Estimated Completion Hours: 0.5
+        - Flask framework: Actual Completion Hours: 1
+        - Google Custom Search API integration: Estimated Completion Hours: 1
+        - Google Custom Search API integration: Actual Completion Hours: 2
+        - About Page Content: Estimated Completion Hours: 0.5
+        - About Page Content: Actual Completion Hours: 1.5
+      - Phase 2: 
+        - Pagination on all 3 model pages: Estimated Completion Hours: 3
+        - Pagination on all 3 model pages: Actual Completion Hours: 2.5
+        - Model Page User Interface with dynamic cards, hovering, better spacing for all 3 model pages: Estimated Completion Hours: 1
+        - Model Page User Interface with dynamic cards, hovering, better spacing for all 3 model pages: Actual Completion Hours: 2.5
+        - Exercise Model Page repairment (filling in missing description, fix broken image links): Estimated Completion Hours: 1
+        - Exercise Model Page repairment (filling in missing description, fix broken image links): Actual Completion Hours: 2
+        - Exercise Instance Pages User Interface with Carousel and better UI: Estimated Completion Hours: 1
+        - Exercise Instance Pages User Interface with Carousel and better UI: Actual Completion Hours: 0.75
+        - Update Exercise Equipment Data Store from Comma-Separated Strings to Array: Estimated Completion Hours: 0.15
+        - Update Exercise Equipment Data Store from Comma-Separated Strings to Array: Actual Completion Hours: 0.25
+        - Selenium Testing for Exercises Model Page, Instance Pages, and Pagination: Estimated Completion Hours: 1
+        - Selenium Testing for Exercises Model Page, Instance Pages, and Pagination: Actual Completion Hours: 1.5
+        - Selenium Testing for Homepage Carousel and NavBar: Estimated Completion Hours: 0.5
+        - Selenium Testing for Homepage Carousel and NavBar: Actual Completion Hours: 1
+        - Updating AboutMe page, Github code integration, Technical Report: Estimated Completion Hours: 0.5
+        - Updating AboutMe page, Github code integration, Technical Report: Actual Completion Hours: 1
+  
   
 Website Link: https://imbdproject.wn.r.appspot.com/
