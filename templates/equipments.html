@@ -8,7 +8,70 @@
 
 {% block body %}
     <div class="container-fluid bg-light">
-        <h1 class="modelHeader">Welcome to the Equipment Model Page!</h1>
+        <div class="row">
+            <div class="col-sm-8">
+                <h1 class="modelHeader">Welcome to the Equipment Model Page!</h1>
+            </div>
+            <div class="col-sm-2">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter By
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu checkbox-menu allow-focus">
+                        <li class="dropdown-header">Category</li>
+                        <li>
+                            <label><input type="checkbox" id="exercise_abs"> Abs </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" id="exercise_arms"> Arms </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" id="exercise_back"> Back </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" id="exercise_calves"> Calves </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" id="exercise_chest"> Chest </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" id="exercise_legs"> Legs </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" id="exercise_shoulders"> Shoulders </label>
+                        </li>
+                        <li class="divider"></li>
+                        <li class="dropdown-header">Price</li>
+                        <li>
+                            <label> <input type="checkbox"> $0 - $50 </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> $50 - $100 </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> $100+ </label>
+                        </li>
+                        <li class="divider"></li>
+                        <li class="dropdown-header">Seller Location</li>
+                        <li>
+                            <label> <input type="checkbox"> ??? </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> ??? </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> ?? </label>
+                        </li>
+                        <li>
+                            <button type="button" onclick="filterEquipment()">Filter</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button type="button" onclick="sortAscending()">Ascending</button>
+                <button type="button" onclick="sortDescending()">Descending</button>
+            </div>
+        </div>
         <p class="modelDescription">
             This model page includes a database of different types of workout equipment, gear, and products. You can also
             quickly find the price rating and seller/vendor of each product in one place.
