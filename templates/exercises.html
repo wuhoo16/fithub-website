@@ -5,8 +5,70 @@
 {% endblock %}
 
 {% block body %}
+    <meta id="exercise-data" data-array="{{exercisesArray}}">
     <div class="container-fluid bg-light">
-        <h1 class="modelHeader">Welcome to the Exercises page! </h1>
+        <div class="row">
+            <div class="col-sm-8">
+                <h1 class="modelHeader">Welcome to the Exercises page!</h1>
+            </div>
+            <div class="col-sm-2">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter By
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu checkbox-menu allow-focus">
+                        <li class="dropdown-header">Category</li>
+                        <li>
+                            <label><input type="checkbox" id="exercise_abs"> Abs </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" id="exercise_arms"> Arms </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" id="exercise_back"> Back </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" id="exercise_calves"> Calves </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" id="exercise_chest"> Chest </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" id="exercise_legs"> Legs </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox" id="exercise_shoulders"> Shoulders </label>
+                        </li>
+                        <li class="divider"></li>
+                        <li class="dropdown-header">Equipment</li>
+                        <li>
+                            <label> <input type="checkbox"> Barbell </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> Bench </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> Dumbbell </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> Exercise Mat </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> EZ-Bar </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> Kettlebell </label>
+                        </li>
+                        <li>
+                            <button type="button" onclick="filterExercises()">Filter</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button type="button" onclick="sortAscending()">Ascending</button>
+                <button type="button" onclick="sortDescending()">Descending</button>
+            </div>
+        </div>
         <p class=modelDescription>This model page includes a database of 100+ different exercises along with its category, equipment, and description. Click on an exercise to learn more!</p>
         <div class="container-fluid bg-light" id="modelGrid">
         {% set numFullRows = ((end + 1) - start) // 3 %}
