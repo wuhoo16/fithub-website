@@ -7,7 +7,58 @@
 
 {% block body %}
     <div class="container-fluid bg-light">
-        <h1 class="modelHeader">Welcome to the Youtube Channel Model page!</h1>
+        <div class="row">
+            <div class="col-sm-8">
+                <h1 class="modelHeader">Welcome to the Youtube Channel Model page!</h1>
+            </div>
+            <div class="col-sm-2">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter By
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu checkbox-menu allow-focus">
+                        <li class="dropdown-header">Subscribers</li>
+                        <li>
+                            <label> <input type="checkbox"> 0 - 100 </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> 100 - 10000 </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> 10000+ </label>
+                        </li>
+                        <li class="divider"></li>
+                        <li class="dropdown-header">Total Views</li>
+                        <li>
+                            <label> <input type="checkbox"> 0 - 100 </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> 100 - 10000 </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> 10000+ </label>
+                        </li>
+                        <li class="divider"></li>
+                        <li class="dropdown-header">Videos</li>
+                        <li>
+                            <label> <input type="checkbox"> 0 - 10 </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> 10 - 100 </label>
+                        </li>
+                        <li>
+                            <label><input type="checkbox"> 100+ </label>
+                        </li>
+                        <li>
+                            <button type="button" onclick="filterChannels()">Filter</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button type="button" onclick="sortAscending()">Ascending</button>
+                <button type="button" onclick="sortDescending()">Descending</button>
+            </div>
+        </div>
         <p class="modelDescription">This model page includes a database of many different Youtube fitness channels that can be sorted by subscriber count,
         view count, and/or number of total videos. In addition, channels will be internally tagged with up to 3 exercise tags that correspond with their
         most popular videos to help filter channels based on specific exercises. Each page will show a grid of channels with the channel's name, thumbnail, description,
