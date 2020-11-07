@@ -25,7 +25,9 @@ EXERCISE_DESCRIPTION = {
 }
 PLANK_REMOVED_FLAG = False
 
-EQUIPMENT_BLACKLIST = {'BUKA GEARS ARNOLD WEIGHT LIFTING BODYBUILDING BICEP ARM BLASTER EZ BAR CURL ARMS',
+EQUIPMENT_BLACKLIST = {'NEW CAP Barbell Standard Barbell Weight Lifting Exercise Bar 5 foot ft - NEW',
+                       'NOS BMX Freestyle SKYWAY EZ Bar handlebar decals',
+                       'BUKA GEARS ARNOLD WEIGHT LIFTING BODYBUILDING BICEP ARM BLASTER EZ BAR CURL ARMS',
                        '9HORN Exercise Mat/Protective Flooring Mats with EVA Foam Interlocking Tiles and',
                        'HOMELITE SUPER-EZ Bar Guides Inner/Outer Used',
                        'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bars Pair w EZ Pin Spotlight Pack',
@@ -35,17 +37,17 @@ EQUIPMENT_BLACKLIST = {'BUKA GEARS ARNOLD WEIGHT LIFTING BODYBUILDING BICEP ARM 
                        'CHAUVET DJ EZBar EZ Bar 3 Pin Spot Battery-Powered Bar Light PROAUDIOSTAR'
                        }
 EQUIPMENT_IMAGE_MAPPER = {
-    'Cast Iron Kettlebell 5, 10, 15, 20, 25, 30 35,40, 45 +some PAIRS(Choose Weight)': "kettlebell_picture_1.jpg",
-    'NEW Weider Cast Iron Kettlebell 10, 15, 20, 25, 30 & 35lb Single (Choose Weight)': "kettlebell_picture_2.jpg",
+    'Cast Iron Kettlebell 5, 10, 15, 20, 25, 30 35,40,45 50+some PAIRS(Choose Weight': "kettlebell_picture_1.jpg",
+    'POWERT Cast Iron Kettlebell Weight Lifting 10-50LB': "kettlebell_picture_2.jpg",
     'POWERT Vinyl Coated Kettlebell for Weight Lifting Workout 5-50LB--Single': "kettlebell_picture_3.jpg",
-    'POWERT Competition Kettlebell Coated Cast Steel Weight Lifting Training 10-50LB': "kettlebell_picture_4.jpg",
     'NEW FRAY FITNESS RUBBER HEX DUMBBELLS select-weight 10,15, 20, 25, 30, 35, 40LB': "dumbbell_picture_1.jpg",
-    'POWERT HEX Neoprene Coated Colorful Dumbbell Weight Lifting Training--One Pair': "dumbbell_picture_2.jpg",
-    'CAP Single Weight Dumbbell 40 lb, 35 lb, 25 lb, 20 lb - SELECT YOUR WEIGHT!': 'dumbbell_picture_3.jpg',
-    'Adjustable Weight Bench Incline Decline Foldable Full Body Workout Gym Exercise': 'bench_picture_1.jpg',
+    'New Dumbbell Dumbbells from 5-25 Lbs Rubber Coated Hex Sold by pairs': "dumbbell_picture_2.jpg",
+    'FLYBIRD Adjustable Weight Bench Incline Decline Foldable Workout Gym Exercise': 'bench_picture_1.png',
     'Yoga Mats 0.375 inch (10mm) Thick Exercise Gym Mat Non Slip With Carry Straps': "mat_picture_1.png",
     'Extra Thick Non-slip Yoga Mat Pad Exercise Fitness Pilates w/ Strap 72" x 24"': "mat_picture_2.jpg",
-    'Thick Yoga Mat Gym Camping Non-Slip Fitness Exercise Pilates Meditation Pad US': "mat_picture_3.jpg"
+    'Thick Yoga Mat Gym Camping Non-Slip Fitness Exercise Pilates Meditation Pad US': "mat_picture_3.jpg",
+    'Exercise Yoga Mat Thick Fitness Meditation Camping Workout Pad or Carrier Strap': "mat_picture_4.jpg",
+    '72" x 24" Exercise Yoga Mat 1/2" Thick w/ Carry Strap - Pilates Fitness': "mat_picture_5.jpg"
 }
 EQUIPMENT_ID_SET = set()
 
@@ -76,6 +78,10 @@ client = MongoClient(
     "mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase2Database?retryWrites=true&w=majority")
 DATABASE = client.phase2Database
 
+exerciseFilterIsActive = False
+filteredExercisesArray = []
+equipmentFilterIsActive = False
+filteredEquipmentsArray = []
 
 # All classes defined below to help store data attributes
 # =============================================================================================================================
@@ -448,7 +454,7 @@ def initialize_mongoDB_equipment_collection(db):
                 eq = Equipment(result['itemId'],
                                EQUIPMENT_COUNTER,
                                result['title'],
-                               result['sellingStatus']['convertedCurrentPrice']['value'],
+                               float(result['sellingStatus']['convertedCurrentPrice']['value']),
                                result['primaryCategory']['categoryName'], result['location'],
                                replacePictureFlag,
                                galleryURL,
@@ -828,6 +834,63 @@ def get_related_objects_for_channel_instance(id, db):
     return returnList
 
 
+# All helper methods for filtering mongoDB collections given lists of user-selected categories from the HTML form
+# ====================================================================================================================
+def filter_exercises(selectedExerciseCategories, selectedEquipmentCategories, db):
+    """
+    Pass in the selected categories to filter on and return all of the filtered Exercise objects in a Python list.
+    :param selectedEquipmentCategories:
+    :param selectedExerciseCategories:
+    :param db: The remote mongoDB to query
+    :return: a list containing all of the filtered Exercise objects
+    """
+    filteredExercises = []
+
+    # Query the entire exercises collection on each of the selected exercise category terms and append matching Exercise objects
+    for exerciseCategory in selectedExerciseCategories:
+        exercisesCursor = db.exercises.find({'category': exerciseCategory})
+        for exerciseDoc in exercisesCursor:
+            filteredExercises.append(EXERCISES_ARRAY[exerciseDoc['arrayIndex']])
+
+    # Query the entire exercises collection on each of the selected equipment category terms and append matching Exercise objects
+    for equipmentCategory in selectedEquipmentCategories:
+        exercisesCursor = db.exercises.find({'equipment': equipmentCategory})
+        for exerciseDoc in exercisesCursor:
+            filteredExercises.append(EXERCISES_ARRAY[exerciseDoc['arrayIndex']])
+
+    # Return all of filtered Exercise objects
+    return filteredExercises
+
+
+def filter_equipments(selectedPriceRanges, selectedEquipmentCategories, db):
+    """
+    Pass in the selected categories to filter on and return all of the filtered Exercise objects in a Python list.
+    :param selectedPriceRanges: Passed in as a string of 2 space delimited values... needs to be converted to list of integers
+    :param selectedEquipmentCategories:
+    :param db: The remote mongoDB to query
+    :return: a list containing all of the filtered Exercise objects
+    """
+    filteredEquipments = []
+
+    # Query the entire exercises collection on each of the selected exercise category terms and append matching Exercise objects
+    for priceString in selectedPriceRanges:
+        priceRangeList = priceString.split(" ")
+        # print(priceRangeList[0])
+        # print(priceRangeList[1])
+        equipmentCursor = db.equipments.find({'price': {'$gte': float(priceRangeList[0]), '$lt': float(priceRangeList[1])} })
+        for equipmentDoc in equipmentCursor:
+            filteredEquipments.append(EQUIPMENT_ARRAY[equipmentDoc['arrayIndex']])
+
+    # Query the entire exercises collection on each of the selected equipment category terms and append matching Exercise objects
+    for equipmentCategory in selectedEquipmentCategories:
+        equipmentCursor = db.equipments.find({'equipmentCategory': equipmentCategory})
+        for equipmentDoc in equipmentCursor:
+            filteredEquipments.append(EQUIPMENT_ARRAY[equipmentDoc['arrayIndex']])
+
+    # Return all of filtered Exercise objects
+    return filteredEquipments
+
+
 # All helper methods for creating HTTP requests, cleaning, filtering, or executing APIs defined below
 # ======================================================================================================================
 def get_json(exercise_URL, category_URL, muscle_URL, equipment_URL, image_URL, comment_URL, data, headers):
@@ -1183,19 +1246,69 @@ def index():
 
 
 # exercises model page
-@app.route("/exercises/<int:page_number>", methods=['GET'])
+@app.route("/exercises/<int:page_number>", methods=['GET', 'POST'])
 def exercises(page_number):
-    start, end, num_pages = paginate(page_number, EXERCISES_ARRAY)
-    return render_template('exercises.html', exercisesArray=EXERCISES_ARRAY, start=start, end=end,
-                           page_number=page_number, num_pages=num_pages)
+    global exerciseFilterIsActive
+    global filteredExercisesArray
+
+    if request.method == 'POST':
+        if request.form.get('Reset') == 'clicked':
+            exerciseFilterIsActive = False
+            start, end, num_pages = paginate(page_number, EXERCISES_ARRAY)
+            return render_template('exercises.html', exercisesArray=EXERCISES_ARRAY, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+        else:
+            exerciseFilterIsActive = True
+            selectedExerciseCategories = request.form.getlist('checkedExerciseCategories')
+            selectedEquipmentCategories = request.form.getlist('checkedEquipmentCategories')
+            # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
+            filteredExercisesArray = filter_exercises(selectedExerciseCategories, selectedEquipmentCategories, DATABASE)
+            start, end, num_pages = paginate(page_number, filteredExercisesArray)
+            return render_template('exercises.html', exercisesArray=filteredExercisesArray, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+    elif request.method == 'GET':
+        if exerciseFilterIsActive:
+            start, end, num_pages = paginate(page_number, filteredExercisesArray)
+            return render_template('exercises.html', exercisesArray=filteredExercisesArray, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+        else:  # render template using the global array with every Exercise object
+            start, end, num_pages = paginate(page_number, EXERCISES_ARRAY)
+            return render_template('exercises.html', exercisesArray=EXERCISES_ARRAY, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
 
 
 # equipments model page
-@app.route("/equipment/<int:page_number>", methods=['GET'])
+@app.route("/equipment/<int:page_number>", methods=['GET', 'POST'])
 def equipments(page_number):
-    start, end, num_pages = paginate(page_number, EQUIPMENT_ARRAY)
-    return render_template('equipments.html', equipmentArray=EQUIPMENT_ARRAY, start=start, end=end,
-                           page_number=page_number, num_pages=num_pages)
+    global equipmentFilterIsActive
+    global filteredEquipmentsArray
+
+    if request.method == 'POST':
+        if request.form.get('Reset') == 'clicked':
+            equipmentFilterIsActive = False
+            start, end, num_pages = paginate(page_number, EQUIPMENT_ARRAY)
+            return render_template('equipments.html', equipmentArray=EQUIPMENT_ARRAY, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+        else:
+            equipmentFilterIsActive = True
+            print(request.form.getlist('checkedPriceRange'))
+            print(request.form.getlist('checkedEquipmentCategories'))
+            selectedPriceRanges = request.form.getlist('checkedPriceRange')
+            selectedEquipmentCategories = request.form.getlist('checkedEquipmentCategories')
+            # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
+            filteredEquipmentsArray = filter_equipments(selectedPriceRanges, selectedEquipmentCategories, DATABASE)
+            start, end, num_pages = paginate(page_number, filteredEquipmentsArray)
+            return render_template('equipments.html', equipmentArray=filteredEquipmentsArray, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+    elif request.method == 'GET':
+        if equipmentFilterIsActive:
+            start, end, num_pages = paginate(page_number, filteredEquipmentsArray)
+            return render_template('equipments.html', equipmentArray=filteredEquipmentsArray, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+        else:  # render template using the global array with every Equipment object
+            start, end, num_pages = paginate(page_number, EQUIPMENT_ARRAY)
+            return render_template('equipments.html', equipmentArray=EQUIPMENT_ARRAY, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
 
 
 # channels model page

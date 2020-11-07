@@ -17,53 +17,46 @@
                     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter By
                     <span class="caret"></span></button>
                     <ul class="dropdown-menu checkbox-menu allow-focus">
-                        <li class="dropdown-header">Category</li>
-                        <li>
-                            <label><input type="checkbox" id="exercise_abs"> Abs </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox" id="exercise_arms"> Arms </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox" id="exercise_back"> Back </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox" id="exercise_calves"> Calves </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox" id="exercise_chest"> Chest </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox" id="exercise_legs"> Legs </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox" id="exercise_shoulders"> Shoulders </label>
-                        </li>
-                        <li class="divider"></li>
-                        <li class="dropdown-header">Price</li>
-                        <li>
-                            <label> <input type="checkbox"> $0 - $50 </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox"> $50 - $100 </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox"> $100+ </label>
-                        </li>
-                        <li class="divider"></li>
-                        <li class="dropdown-header">Seller Location</li>
-                        <li>
-                            <label> <input type="checkbox"> ??? </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox"> ??? </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox"> ?? </label>
-                        </li>
-                        <li>
-                            <button type="button" onclick="filterEquipment()">Filter</button>
-                        </li>
+                        <form id="equipmentFilterForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
+                            <li class="dropdown-header">Price</li>
+                            <li>
+                                <label> <input type="checkbox" name='checkedPriceRange' value="0 50"> $0 - $50 </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedPriceRange' value="50 100"> $50 - $100 </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedPriceRange' value="100 9999"> $100+ </label>
+                            </li>
+
+                            <li class="divider"></li>
+
+                            <li class="dropdown-header">Category</li>
+                            <li>
+                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Barbell"> Barbell </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Bench"> Bench </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Dumbbell"> Dumbbell </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Exercise mat"> Exercise Mat </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedEquipmentCategories' value="EZ-Bar"> EZ-Bar </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
+                            </li>
+                            <li>
+                                <button type="button" name="Filter" onclick="verifyCheckBoxesAndSubmit('equipmentFilterForm')">Filter</button>
+                            </li>
+                            <li>
+                                <button type="submit" name="Reset" value="clicked">Reset</button>
+                            </li>
+                        </form>
                     </ul>
                 </div>
             </div>
@@ -94,7 +87,7 @@
                             <p class="card-text">
                                 <ul class="equipmentData list-unstyled">
                                     <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ start + 3*i+offset }}"><b>Price: </b>{{ equipmentArray[start + 3*i+offset].price }} USD</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="categoryText_{{ start + 3*i+offset }}"><b>Category: </b>{{ equipmentArray[start + 3*i+offset].category }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="categoryText_{{ start + 3*i+offset }}"><b>Category: </b>{{ equipmentArray[start + 3*i+offset].equipmentCategory }}</li>
                                     <li style="padding-left: 1em;" id="sellerLocationText_{{ start + 3*i+offset }}"><b>Seller Location: </b>{{ equipmentArray[start + 3*i+offset].location }}</li>
                                 </ul>
                             </p>
@@ -121,9 +114,9 @@
                             <h2 class="card-title text-center text-dark">{{ equipmentArray[end + 1 + i].name }}</h2>
                             <p class="card-text">
                                 <ul class="equipmentData list-unstyled">
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ start + 3*i+offset }}"><b>Price: </b>{{ equipmentArray[start + 3*i+offset].price }} USD</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="categoryText_{{ start + 3*i+offset }}"><b>Category: </b>{{ equipmentArray[start + 3*i+offset].category }}</li>
-                                    <li style="padding-left: 1em;" id="sellerLocationText_{{ start + 3*i+offset }}"><b>Seller Location: </b>{{ equipmentArray[start + 3*i+offset].location }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ end + 1 + i }}"><b>Price: </b>{{ equipmentArray[end + 1 + i].price }} USD</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="categoryText_{{ end + 1 + i }}"><b>Category: </b>{{ equipmentArray[end + 1 + i].equipmentCategory }}</li>
+                                    <li style="padding-left: 1em;" id="sellerLocationText_{{ end + 1 + i }}"><b>Seller Location: </b>{{ equipmentArray[end + 1 + i].location }}</li>
                                 </ul>
                             </p>
                             <a href="{{ url_for('equipment_instance', arrayIndex=equipmentArray[end + 1 + i].arrayIndex) }}" class="stretched-link"></a>
