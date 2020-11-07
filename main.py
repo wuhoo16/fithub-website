@@ -82,6 +82,8 @@ exerciseFilterIsActive = False
 filteredExercisesArray = []
 equipmentFilterIsActive = False
 filteredEquipmentsArray = []
+channelsFilterIsActive = False
+filteredChannelsArray = []
 
 # All classes defined below to help store data attributes
 # =============================================================================================================================
@@ -580,9 +582,9 @@ def initialize_mongoDB_channel_collection(db):
                               snippet['channelTitle'],
                               snippet['description'],
                               snippet['thumbnails']['high']['url'],
-                              statisticsSubscriberCount,
-                              statistics['viewCount'],
-                              statistics['videoCount'],
+                              int(statisticsSubscriberCount),
+                              int(statistics['viewCount']),
+                              int(statistics['videoCount']),
                               playlist,
                               topicIdCat,
                               exerciseCategory,
@@ -864,7 +866,7 @@ def filter_exercises(selectedExerciseCategories, selectedEquipmentCategories, db
 
 def filter_equipments(selectedPriceRanges, selectedEquipmentCategories, db):
     """
-    Pass in the selected categories to filter on and return all of the filtered Exercise objects in a Python list.
+    Pass in the selected price ranges and categories to filter on and return all of the filtered Exercise objects in a Python list.
     :param selectedPriceRanges: Passed in as a string of 2 space delimited values... needs to be converted to list of integers
     :param selectedEquipmentCategories:
     :param db: The remote mongoDB to query
@@ -889,6 +891,42 @@ def filter_equipments(selectedPriceRanges, selectedEquipmentCategories, db):
 
     # Return all of filtered Exercise objects
     return filteredEquipments
+
+
+def filter_channels(selectedSubscriberRange, selectedTotalViewsRange, selectedVideosRange, db):
+    """
+    Pass in the selected categories to filter on and return all of the filtered Exercise objects in a Python list.
+    :param selectedVideosRange:
+    :param selectedTotalViewsRange:
+    :param selectedSubscriberRange:
+    :param db: The remote mongoDB to query
+    :return: a list containing all of the filtered Exercise objects
+    """
+    filteredChannels = []
+
+    # Query the entire exercises collection on all selected ranges and append matching Exercise objects
+    for subscriberRangeString in selectedSubscriberRange:
+        subscriberRangeList = subscriberRangeString.split(" ")
+        channelsCursor = db.channels.find({'subscriberCount': {'$gte': int(subscriberRangeList[0]), '$lt': int(subscriberRangeList[1])} })
+        for channelDoc in channelsCursor:
+            filteredChannels.append(CHANNEL_ARRAY[channelDoc['arrayIndex']])
+
+    # Query the entire exercises collection on selected ranges and append matching Exercise objects
+    for totalViewsString in selectedTotalViewsRange:
+        totalViewsList = totalViewsString.split(" ")
+        channelsCursor = db.channels.find({'viewCount': {'$gte': int(totalViewsList[0]), '$lt': int(totalViewsList[1])} })
+        for channelDoc in channelsCursor:
+            filteredChannels.append(CHANNEL_ARRAY[channelDoc['arrayIndex']])
+
+    # Query the entire exercises collection on each of the selected ranges and append matching Exercise objects
+    for videoRangeString in selectedVideosRange:
+        videoRangeList = videoRangeString.split(" ")
+        channelsCursor = db.channels.find({'videoCount': {'$gte': int(videoRangeList[0]), '$lt': int(videoRangeList[1])} })
+        for channelDoc in channelsCursor:
+            filteredChannels.append(CHANNEL_ARRAY[channelDoc['arrayIndex']])
+
+    # Return all of filtered Exercise objects
+    return filteredChannels
 
 
 # All helper methods for creating HTTP requests, cleaning, filtering, or executing APIs defined below
@@ -1206,7 +1244,7 @@ def convert_channels_embeddedUrl(embeddedTag):
             el = el.replace("src=", "")
             url = el.replace('"', "")
             break
-    return url
+    return url.replace('http', 'https')
 
 
 def convert_channels_keywords(keywords):
@@ -1291,8 +1329,6 @@ def equipments(page_number):
                                    page_number=page_number, num_pages=num_pages)
         else:
             equipmentFilterIsActive = True
-            print(request.form.getlist('checkedPriceRange'))
-            print(request.form.getlist('checkedEquipmentCategories'))
             selectedPriceRanges = request.form.getlist('checkedPriceRange')
             selectedEquipmentCategories = request.form.getlist('checkedEquipmentCategories')
             # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
@@ -1312,11 +1348,36 @@ def equipments(page_number):
 
 
 # channels model page
-@app.route("/channels/<int:page_number>", methods=['GET'])
+@app.route("/channels/<int:page_number>", methods=['GET', 'POST'])
 def channels(page_number):
-    start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
-    return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end, page_number=page_number,
-                           num_pages=num_pages)
+    global channelsFilterIsActive
+    global filteredChannelsArray
+
+    if request.method == 'POST':
+        if request.form.get('Reset') == 'clicked':
+            channelsFilterIsActive = False
+            start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
+            return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+        else:
+            channelsFilterIsActive = True
+            selectedSubscriberRange = request.form.getlist('checkedSubscriberRange')
+            selectedTotalViewsRange = request.form.getlist('checkedTotalViewsRange')
+            selectedVideosRange = request.form.getlist('checkedVideosRange')
+            # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
+            filteredChannelsArray = filter_channels(selectedSubscriberRange, selectedTotalViewsRange, selectedVideosRange, DATABASE)
+            start, end, num_pages = paginate(page_number, filteredChannelsArray)
+            return render_template('channels.html', channelArray=filteredChannelsArray, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+    elif request.method == 'GET':
+        if channelsFilterIsActive:
+            start, end, num_pages = paginate(page_number, filteredChannelsArray)
+            return render_template('channels.html', channelArray=filteredChannelsArray, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+        else:  # render template using the global array with every Equipment object
+            start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
+            return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
 
 
 # about page
