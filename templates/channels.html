@@ -7,7 +7,88 @@
 
 {% block body %}
     <div class="container-fluid bg-light">
-        <h1 class="modelHeader">Welcome to the Youtube Channel Model page!</h1>
+        <div class="row">
+            <div class="col-sm-8">
+                <h1 class="modelHeader">Welcome to the Youtube Channel Model page!</h1>
+            </div>
+            <div class="col-sm-2">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter By
+                    <span class="caret"></span></button>
+                    <ul class="dropdown-menu checkbox-menu allow-focus">
+                        <form id="channelsFilterForm" action="{{ url_for('channels', page_number=1) }}" method="post">
+                            <li class="dropdown-header">Number of Subscribers</li>
+                            <li>
+                                <label><input type="checkbox" name='checkedSubscriberRange' value="0 1000"> 0 - 1K </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedSubscriberRange' value="1000 100000"> 1K- 100K </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedSubscriberRange' value="100000 1000000">100K - 1M</label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedSubscriberRange' value="1000000 10000000">1M - 10M</label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedSubscriberRange' value="10000000 999000000">10M+</label>
+                            </li>
+
+                            <li class="divider"></li>
+
+                            <li class="dropdown-header">Total Views</li>
+                            <li>
+                                <label> <input type="checkbox" name='checkedTotalViewsRange' value="0 100000"> 0 - 100K </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedTotalViewsRange' value="100000 1000000"> 100K - 1M </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedTotalViewsRange' value="1000000 5000000"> 1M - 5M </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedTotalViewsRange' value="5000000 25000000"> 5M - 25M </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedTotalViewsRange' value="25000000 50000000"> 25M - 50M </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedTotalViewsRange' value="50000000 999000000000"> 50M+ </label>
+                            </li>
+
+                            <li class="divider"></li>
+
+                            <li class="dropdown-header">Number of Videos</li>
+                            <li>
+                                <label> <input type="checkbox" name='checkedVideosRange' value="0 100"> 0 - 100</label>
+                            </li>
+                            <li>
+                                <label> <input type="checkbox" name='checkedVideosRange' value="100 250"> 100 - 250</label>
+                            </li>
+                            <li>
+                                <label> <input type="checkbox" name='checkedVideosRange' value="250 500"> 250 - 500</label>
+                            </li>
+                            <li>
+                                <label> <input type="checkbox" name='checkedVideosRange' value="500 1000"> 500 - 1K</label>
+                            </li>
+                            <li>
+                                <label> <input type="checkbox" name='checkedVideosRange' value="1000 9999"> 1K+ </label>
+                            </li>
+                            <li>
+                                <button type="button" name="Filter" onclick="verifyCheckBoxesAndSubmit('channelsFilterForm')">Filter</button>
+                            </li>
+                            <li>
+                                <button type="submit" name="Reset" value="clicked">Reset</button>
+                            </li>
+                        </form>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <button type="button" onclick="sortAscending()">Ascending</button>
+                <button type="button" onclick="sortDescending()">Descending</button>
+            </div>
+        </div>
         <p class="modelDescription">This model page includes a database of many different Youtube fitness channels that can be sorted by subscriber count,
         view count, and/or number of total videos. In addition, channels will be internally tagged with up to 3 exercise tags that correspond with their
         most popular videos to help filter channels based on specific exercises. Each page will show a grid of channels with the channel's name, thumbnail, description,
