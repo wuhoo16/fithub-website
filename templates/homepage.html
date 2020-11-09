@@ -1,90 +1,66 @@
 {% extends 'base.html' %} {% block head %}
 <title>Fithub Homepage</title>
+
 {% endblock %} {% block body %}
-<h1 id="homepageWelcomeMessage">Welcome to the Fithub Homepage!</h1>
-<div id="myCarousel" class="carousel slide centered" data-ride="carousel">
+<div id="homepageCarousel" class="carousel slide" data-ride="carousel">
   <ol class="carousel-indicators">
-    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-    <li data-target="#myCarousel" data-slide-to="1"></li>
-    <li data-target="#myCarousel" data-slide-to="2"></li>
+    <li data-target="#homepageCarousel" data-slide-to="0" class="active"></li>
+    <li data-target="#homepageCarousel" data-slide-to="1"></li>
+    <li data-target="#homepageCarousel" data-slide-to="2"></li>
   </ol>
   <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img
-        src="{{url_for('static', filename='carousel1.jpg')}}"
-        alt="Exercises"
-      />
-      <div class="container">
-        <div class="carousel-caption">
-          <h1>Exercises</h1>
-          <p></p>
-          <p>
-            <a
-              class="btn btn-lg btn-primary"
-              id="exerciseCarouselBtn"
-              href="/exercises/1"
-              role="button"
-              >See Exercises</a
-            >
-          </p>
-        </div>
+    <div class="carousel-item active carousel-item-homepage">
+      <img src="static/carousel1.jpg">
+      <div class="carousel-caption text-center">
+        <h1>Exercises</h1>
+        <h3>something something</h3>
+        <a
+          class="btn btn-lg btn-outline-light"
+          id="exerciseCarouselBtn"
+          href="/exercises/1"
+          role="button"
+          >See Exercises</a
+        >
       </div>
     </div>
-    <div class="carousel-item">
-      <img
-        src="{{url_for('static', filename='carousel2.jpg')}}"
-        alt="Equipment"
-      />
-      <div class="container">
-        <div class="carousel-caption">
-          <h1>Equipment</h1>
-          <p></p>
-          <p>
-            <a
-              class="btn btn-lg btn-primary"
-              id="equipmentCarouselBtn"
-              href="/equipment/1"
-              role="button"
-              >See Equipment</a
-            >
-          </p>
-        </div>
+    <div class="carousel-item carousel-item-homepage">
+      <img src="static/carousel2.jpg">
+      <div class="carousel-caption text-center">
+        <h1>Equipment</h1>
+        <a
+          class="btn btn-lg btn-outline-light"
+          id="equipmentCarouselBtn"
+          href="/equipment/1"
+          role="button"
+          >See Equipment</a
+        >
       </div>
     </div>
-    <div class="carousel-item">
-      <img
-        src="{{url_for('static', filename='carousel3.jpg')}}"
-        alt="Channels"
-      />
-      <div class="container">
-        <div class="carousel-caption">
-          <h1>Channels</h1>
-          <p></p>
-          <p>
-            <a
-              class="btn btn-lg btn-primary"
-              id="channelCarouselBtn"
-              href="/channels/1"
-              role="button"
-              >See Channels</a
-            >
-          </p>
-        </div>
+    <div class="carousel-item carousel-item-homepage">
+      <img src="static/carousel3.jpg">
+      <div class="carousel-caption text-center">
+        <h1>Channels</h1>
+        <a
+          class="btn btn-lg btn-outline-light"
+          id="channelCarouselBtn"
+          href="/channels/1"
+          role="button"
+          >See Channels</a
+        >
       </div>
     </div>
   </div>
   <a
     class="carousel-control-prev"
-    id="carousel_prev"
-    href="#myCarousel"
+    href="#homepageCarousel"
     data-slide="prev"
   >
     <span class="carousel-control-prev-icon"></span>
   </a>
+
   <a
     class="carousel-control-next"
-    id="carousel_next"
-    href="#myCarousel"
+    href="#homepageCarousel"
     data-slide="next"
   >
     <span class="carousel-control-next-icon"></span>
