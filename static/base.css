@@ -102,13 +102,14 @@ body {
 .card-body {
   color: whitesmoke;
 }
-
+.card-image-style {
+  background-color: whitesmoke; 
+  border: whitesmoke; 
+  border-style: solid; 
+  border-width: 0.2rem;
+}
 .checkbox-menu label {
   margin-left: 0.5rem;
-}
-
-.pagination {
-
 }
 
 /* CAROUSEL */
@@ -117,42 +118,52 @@ body {
     max-width: 100%;
 }
 
-.carousel-item img {
+.carousel-item-homepage img {
   height: 100%;
   width: 100%;
   object-fit: cover;
 }
-
-/* .carousel-caption {
+.homepage-controls {
+  margin-top: auto;
+}
+.carousel-caption {
   position: absolute;
   top: 38%;
-  text-transform: uppercase;
   width: 100%;
   right: 0;
   left: 0;
 }
 .carousel-caption h1 {
-  font-size: 3.8rem;
+  font-size: 4rem;
   font-weight: 700;
   letter-spacing: 0.3rem;
   text-shadow: .1rem .1rem .8rem black;
-  padding-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  text-transform: uppercase;
 }
 .carousel-caption h3 {
   font-size: 2rem;
   text-shadow: .1rem .1rem .5rem black;
   padding-bottom: 1.6rem;
+  text-transform: uppercase;
 }
 .btn-lg {
   border-width: medium;
   border-radius: 0;
   font-size: 1.1rem;
-} */
+} 
 
 /* INSTANCE PAGES */
+.exercise-instance-div {
+  padding-top: 6rem;
+  background: linear-gradient(0deg, rgb(255 255 255 / 0%), rgb(255 255 255 / 0%)), url(jumbotron1.png);
+  padding-bottom: 1rem;
+}
 .jumbotron-exercise-instance {
   background-image: url(jumbotron1.png);
-  border: rgb(197, 197, 197);
+  border: rgb(151, 151, 151);
+  border-top: whitesmoke;
+  border-left: whitesmoke;
   border-style: solid;
   border-width: 0.6rem;
   padding: 1rem 5rem 1rem 5rem;

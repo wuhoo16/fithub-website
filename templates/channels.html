@@ -6,11 +6,15 @@
 
 
 {% block body %}
-    <div class="container-fluid bg-light">
+    <div class="exercise-div container-fluid">   
+        <div class="jumbotron-exercise jumbotron jumbotron-fluid text-center">
+            <h1 class="modelHeader">Welcome to the Youtube Channel Model page!</h1>
+            <p class="modelDescription">This model page includes a database of many different Youtube fitness channels that can be sorted by subscriber count,
+                view count, and/or number of total videos. In addition, channels will be internally tagged with up to 3 exercise tags that correspond with their
+                most popular videos to help filter channels based on specific exercises. Each page will show a grid of channels with the channel's name, thumbnail, description,
+                and statistics.</p>
+        </div> 
         <div class="row">
-            <div class="col-sm-8">
-                <h1 class="modelHeader">Welcome to the Youtube Channel Model page!</h1>
-            </div>
             <div class="col-sm-2">
                 <div class="dropdown">
                     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter By
@@ -59,21 +63,18 @@
                 <button type="button" onclick="sortDescending()">Descending</button>
             </div>
         </div>
-        <p class="modelDescription">This model page includes a database of many different Youtube fitness channels that can be sorted by subscriber count,
-        view count, and/or number of total videos. In addition, channels will be internally tagged with up to 3 exercise tags that correspond with their
-        most popular videos to help filter channels based on specific exercises. Each page will show a grid of channels with the channel's name, thumbnail, description,
-        and statistics.</p>
-        <div class="container-fluid bg-light" id="modelGrid">
+
+        <div class="grid-div container-fluid" id="modelGrid">
         {% set numFullRows = ((end + 1) - start) // 3 %}
         {% set numLeftOverChannels = ((end + 1) - start) % 3 %}
         {% for i in range(numFullRows) %}
-            <div class="row" id="row{{ i|string }}">
+            <div class="row justify-content-center" id="row{{ i|string }}">
                 {% for offset in range(3) %}
                 <div class="col-md-4 p-4">
-                    <div class="card bg-light h-100 pt-4">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ channelArray[start + 3*i + offset].thumbnailURL }}" alt="{{ channelArray[start + 3*i + offset].name }}">
+                    <div class="card card-style h-100 pt-4">
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ channelArray[start + 3*i + offset].thumbnailURL }}" alt="{{ channelArray[start + 3*i + offset].name }}">
                         <div class="card-body">
-                            <h2 class="card-title text-center text-dark">{{ channelArray[start + 3*i + offset].name }}</h2>
+                            <h2 class="card-title text-center">{{ channelArray[start + 3*i + offset].name }}</h2>
                             <p class="card-text">
                                 <ul class="channelAttributesList list-unstyled">
                                     {% if channelArray[start + 3*i + offset].description|length != 0 %}
@@ -99,10 +100,10 @@
             <div class="row" id="bottomRow">
             {% for i in range(-numLeftOverChannels, 0) %}
                 <div class="col-md-4 p-4">
-                    <div class="card bg-light h-100 pt-4">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ channelArray[end + 1 + i].thumbnailURL }}" alt="{{ channelArray[end + 1 + i].name }}">
+                    <div class="card card-style h-100 pt-4">
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ channelArray[end + 1 + i].thumbnailURL }}" alt="{{ channelArray[end + 1 + i].name }}">
                         <div class="card-body">
-                            <h2 class="card-title text-center text-dark">{{ channelArray[end + 1 + i].name }}</h2>
+                            <h2 class="card-title text-center">{{ channelArray[end + 1 + i].name }}</h2>
                             <p class="card-text">
                                 <ul class="channelAttributesList list-unstyled">
                                     <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Description: </b>{{ channelArray[end + 1 + i].description }}</li>
