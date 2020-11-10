@@ -4,6 +4,30 @@
     <!-- Vars: equipmentArray, start, end, page_number, num_pages-->
 
     <title>Equipment Model Page</title>
+    <script>
+        function sortBy(sortParam)
+        {
+            var x1 = String("");
+            switch(String(sortParam))
+            {
+                case "Name, A to Z": // by alphabetical name
+                {x1 = String(); break;}
+                case "Price, low to high": // by price, low to high
+                {break;}
+                case "Price, high to low": // by price, high to low
+                {break;}
+                case "Category, A to Z": // by category, alphabetical
+                {
+                    break;
+                }
+                case "Seller location, A to Z": // by seller location, alphabetical
+                {
+                    break;
+                }
+            }
+            sorted(equipmentArray
+        }
+    </script>
 {% endblock %}
 
 {% block body %}
@@ -58,6 +82,17 @@
                             </li>
                         </form>
                     </ul>
+                </div>
+                <!-- dropdown for sorting menu -->
+                <div class="dropdown">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Sort by</button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="" onclick="sortBy('Name, A to Z')">Name, A to Z</a>
+                        <a class="dropdown-item" href="" onclick="sortBy('Price, low to high')">Price, low to high</a>
+                        <a class="dropdown-item" href="" onclick="sortBy('Price, high to low')">Price, high to low</a>
+                        <a class="dropdown-item" href="" onclick="sortBy('Category, A to Z')">Category, A to Z</a>
+                        <a class="dropdown-item" href="" onclick="sortBy('Seller location, A to Z')">Seller location, A to Z</a>
+                    </div>
                 </div>
             </div>
             <div class="col-sm-2">
