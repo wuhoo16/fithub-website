@@ -10,7 +10,7 @@
 {% endblock %}
 
 {% block body %}
-<div class="exercise-div container-fluid mx-auto">
+<div class="exercise-instance-div container-fluid mx-auto">
   <div class="jumbotron-exercise-instance jumbotron jumbotron-fluid text-center">
     <h1>{{ e.name }}</h1>
   </div>
@@ -18,19 +18,19 @@
   <!-- Carousel for Images -->
   <div id="myCarousel" class="carousel slide centered" data-ride="carousel">
     <div class="carousel-inner">
-      <div class="carousel-item active" style="max-height: 500px;">
+      <div class="carousel-item active" style="height: 400px;">
         <img
           src="{{ e.images[0] }}"
-          style="width:auto; max-height: 500px; background-color: whitesmoke;"
+          style="width: auto; max-height: 400px; background-color: whitesmoke;"
           onerror="this.onerror=null; this.src='/static/exercise_backup.jpg'"
           alt="{{ e.name }}"
         />
       </div>
       {% for i in range(1, e.images|length) %}
-        <div class="carousel-item"  style="max-height: 500px;">
+        <div class="carousel-item"  style="height: 400px;">
             <img
             src="{{ e.images[i] }}"
-            style="width:auto; max-height: 500px; background-color: whitesmoke;"
+            style="width: auto; max-height: 400px; background-color: whitesmoke;"
             onerror="this.onerror=null; this.src='/static/exercise_backup.jpg'"
             alt="{{ e.name }}"
             />
@@ -163,7 +163,6 @@
         </tr>
       {% endfor %}
     </table>
-
   </div>
 </div>
 {% endblock %}

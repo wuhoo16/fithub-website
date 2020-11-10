@@ -8,8 +8,8 @@
     <meta id="exercise-data" data-array="{{exercisesArray}}">
     <div class="exercise-div container-fluid">
         <div class="jumbotron-exercise jumbotron jumbotron-fluid text-center">
-            <h1>Welcome to the Exercise page!</h1>
-            <p class=modelDescription>This model page includes a database of 100+ different exercises along with its category, equipment, and description. Click on an exercise to learn more!</p>
+            <h1>Achieve your fitness goals</h1>
+            <p class=modelDescription>Try out 100+ different exercises. </p>
         </div>
         <div class="row">
             <div class="col-sm-2">
@@ -79,8 +79,7 @@
             {% for offset in range(3) %}
                 <div class="col-md-4 p-4">
                     <div class="card card-style h-100 pt-4" id="instanceCard_{{exercisesArray[start + 3*i + offset].arrayIndex}}">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[start + 3*i + offset].images[0] }}" onerror="this.onerror=null; this.src='{{ exercisesArray[start + 3*i+offset].images[1] }}'"; alt="{{ exercisesArray[start + 3*i + offset].name }}" 
-                            style="background-color: whitesmoke; border: whitesmoke; border-style: solid; border-width: 0.2rem;">
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ exercisesArray[start + 3*i + offset].images[0] }}" onerror="this.onerror=null; this.src='{{ exercisesArray[start + 3*i+offset].images[1] }}'"; alt="{{ exercisesArray[start + 3*i + offset].name }}">
                         <div class="card-body">
                             <h2 class="card-title text-center" id="exerciseName_{{exercisesArray[start + 3*i + offset].arrayIndex}}">{{ exercisesArray[start + 3*i + offset].name }}</h2>
                             <p class="card-text">
@@ -102,10 +101,10 @@
             <div class="row" id="bottomRow">
             {% for i in range(-numLeftOverChannels, 0) %}
                 <div class="col-md-4 p-4">
-                    <div class="card bg-light h-100 pt-4">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ exercisesArray[end + 1 + i].images[0] }}" onerror="this.onerror=null; this.src='{{ exercisesArray[end + 1 + i].images[1] }}'"; alt="{{ exercisesArray[end + 1 + i].name }}">
+                    <div class="card card-style h-100 pt-4">
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ exercisesArray[end + 1 + i].images[0] }}" onerror="this.onerror=null; this.src='{{ exercisesArray[end + 1 + i].images[1] }}'"; alt="{{ exercisesArray[end + 1 + i].name }}">
                         <div class="card-body">
-                            <h2 class="card-title text-center text-dark">{{ exercisesArray[end + 1 + i].name }}</h2>
+                            <h2 class="card-title text-center">{{ exercisesArray[end + 1 + i].name }}</h2>
                             <p class="card-text">
                                 <ul class="exerciseAttributesList list-unstyled">
                                     <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Category: </b>{{ exercisesArray[end + 1 + i].category }}</li>
