@@ -16,13 +16,12 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
     <link rel="stylesheet" type="text/css" href="/static/base.css" />
     <script type="text/javascript" src="/static/filtering.js"></script>
+    <script type="text/javascript" src="/static/filter_verification.js"></script>
     <link rel="icon" href="/static/fithub_icon.png">
     {% block head %} {% endblock %}
   </head>
   <body>
-    <nav
-      class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-center fixed-top"
-    >
+    <nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-center fixed-top">
       <button
         class="navbar-toggler"
         type="button"
@@ -63,6 +62,5 @@
     </nav>
 
     {% block body %} {% endblock %}
-
   </body>
 </html>

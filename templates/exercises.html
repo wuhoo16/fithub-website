@@ -17,51 +17,56 @@
                     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter By
                     <span class="caret"></span></button>
                     <ul class="dropdown-menu checkbox-menu allow-focus">
-                        <li class="dropdown-header">Category</li>
-                        <li>
-                            <label><input type="checkbox" id="exercise_abs"> Abs </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox" id="exercise_arms"> Arms </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox" id="exercise_back"> Back </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox" id="exercise_calves"> Calves </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox" id="exercise_chest"> Chest </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox" id="exercise_legs"> Legs </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox" id="exercise_shoulders"> Shoulders </label>
-                        </li>
-                        <li class="divider"></li>
-                        <li class="dropdown-header">Equipment</li>
-                        <li>
-                            <label> <input type="checkbox"> Barbell </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox"> Bench </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox"> Dumbbell </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox"> Exercise Mat </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox"> EZ-Bar </label>
-                        </li>
-                        <li>
-                            <label><input type="checkbox"> Kettlebell </label>
-                        </li>
-                        <li>
-                            <button type="button" onclick="filterExercises()">Filter</button>
-                        </li>
+                        <form id="exercisesFilterForm" action="{{ url_for('exercises', page_number=1) }}" method="post">
+                            <li class="dropdown-header">Category</li>
+                            <li>
+                                <label><input type="checkbox" name='checkedExerciseCategories' value="Abs"> Abs </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedExerciseCategories' value="Arms"> Arms </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedExerciseCategories' value="Back"> Back </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedExerciseCategories' value="Calves"> Calves </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedExerciseCategories' value="Chest"> Chest </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedExerciseCategories' value="Legs"> Legs </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedExerciseCategories' value="Shoulders"> Shoulders </label>
+                            </li>
+                            <li class="divider"></li>
+                            <li class="dropdown-header">Equipment</li>
+                            <li>
+                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Barbell"> Barbell </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Bench"> Bench </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Dumbbell"> Dumbbell </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Exercise mat"> Exercise Mat </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedEquipmentCategories' value="EZ-Bar"> EZ-Bar </label>
+                            </li>
+                            <li>
+                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
+                            </li>
+                            <li>
+                                <button type="button" name="Filter" onclick="verifyCheckBoxesAndSubmit('exercisesFilterForm')">Filter</button>
+                            </li>
+                            <li>
+                                <button type="submit" name="Reset" value="clicked">Reset</button>
+                            </li>
+                        </form>
                     </ul>
                 </div>
             </div>
