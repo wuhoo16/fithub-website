@@ -7,66 +7,61 @@
 {% endblock %}
 
 {% block body %}
-    <div class="exercise-div container-fluid">
-        <div class="jumbotron-exercise jumbotron jumbotron-fluid text-center">
-            <h1 class="modelHeader">Find your gear</h1>
-            <p class="modelDescription">Check out our selection of fitness equipment.</p>
-        </div>
-        <div class="row">
-            <div class="col-sm-2">
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter By
-                    <span class="caret"></span></button>
-                    <ul class="dropdown-menu checkbox-menu allow-focus">
-                        <form id="equipmentFilterForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
-                            <li class="dropdown-header">Price</li>
-                            <li>
-                                <label> <input type="checkbox" name='checkedPriceRange' value="0 50"> $0 - $50 </label>
-                            </li>
-                            <li>
-                                <label><input type="checkbox" name='checkedPriceRange' value="50 100"> $50 - $100 </label>
-                            </li>
-                            <li>
-                                <label><input type="checkbox" name='checkedPriceRange' value="100 9999"> $100+ </label>
-                            </li>
+<div class="exercise-div container-fluid">
+    <div class="jumbotron-exercise jumbotron jumbotron-fluid text-center">
+        <h1 class="modelHeader">Find your gear</h1>
+        <p class="modelDescription">Check out our selection of fitness equipment.</p>
+    </div>
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <form id="equipmentFilterForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
+            <ul class="checkbox-menu">
+                <li class="dropdown-header">Price</li>
+                <li>
+                    <label> <input type="checkbox" name='checkedPriceRange' value="0 50"> $0 - $50 </label>
+                </li>
+                <li>
+                    <label><input type="checkbox" name='checkedPriceRange' value="50 100"> $50 - $100 </label>
+                </li>
+                <li>
+                    <label><input type="checkbox" name='checkedPriceRange' value="100 9999"> $100+ </label>
+                </li>
+                <li class="dropdown-header">Category</li>
+                <li>
+                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Barbell"> Barbell </label>
+                </li>
+                <li>
+                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Bench"> Bench </label>
+                </li>
+                <li>
+                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Dumbbell"> Dumbbell </label>
+                </li>
+                <li>
+                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Exercise mat"> Exercise Mat </label>
+                </li>
+                <li>
+                    <label><input type="checkbox" name='checkedEquipmentCategories' value="EZ-Bar"> EZ-Bar </label>
+                </li>
+                <li>
+                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
+                </li>
+                <li style="text-align: center; margin-top: 1rem;">
+                    <button class="reset-button btn btn-outline-light" type="submit" name="Reset" value="clicked">Reset</button>
+                    <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxesAndSubmit('equipmentFilterForm')">Filter</button>
+                </li>
+            </ul>
+        </form>    
+    </div>
 
-                            <li class="divider"></li>
+    <!-- Use any element to open the sidenav -->
+    <div>
+        <button class="filter-open-button" onclick="openNav()">Filter ></button>
+        <a href="#"><img class="ascending-button" src="/static/arrow.png" alt="Ascending" onclick="sortAscending();"></a>
+        <a href="#"><img class="descending-button" src="/static/arrow.png" alt="Descending" onclick="sortDescending();"></a>
+    </div>
 
-                            <li class="dropdown-header">Category</li>
-                            <li>
-                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Barbell"> Barbell </label>
-                            </li>
-                            <li>
-                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Bench"> Bench </label>
-                            </li>
-                            <li>
-                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Dumbbell"> Dumbbell </label>
-                            </li>
-                            <li>
-                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Exercise mat"> Exercise Mat </label>
-                            </li>
-                            <li>
-                                <label><input type="checkbox" name='checkedEquipmentCategories' value="EZ-Bar"> EZ-Bar </label>
-                            </li>
-                            <li>
-                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
-                            </li>
-                            <li>
-                                <button type="button" name="Filter" onclick="verifyCheckBoxesAndSubmit('equipmentFilterForm')">Filter</button>
-                            </li>
-                            <li>
-                                <button type="submit" name="Reset" value="clicked">Reset</button>
-                            </li>
-                        </form>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <button type="button" onclick="sortAscending()">Ascending</button>
-                <button type="button" onclick="sortDescending()">Descending</button>
-            </div>
-        </div>
-
+    <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
+    <div id="main">
         <div class="grid-div container-fluid" id="modelGrid">
         {% set numRows = ((end + 1) - start) // 3 %}
         {% set remainder = ((end + 1) - start) % 3 %}
@@ -150,6 +145,6 @@
                 <li class="page-item"><a class="page-link" href="{{ url_for('equipments', page_number=page_number+1) }}">Next</a></li>
             {% endif %}
         </ul>
-
     </div>
+</div>
 {% endblock %}
