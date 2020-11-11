@@ -4,30 +4,6 @@
     <!-- Vars: equipmentArray, start, end, page_number, num_pages-->
 
     <title>Equipment Model Page</title>
-    <script>
-        function sortBy(sortParam)
-        {
-            var x1 = String("");
-            switch(String(sortParam))
-            {
-                case "Name, A to Z": // by alphabetical name
-                {x1 = String(); break;}
-                case "Price, low to high": // by price, low to high
-                {break;}
-                case "Price, high to low": // by price, high to low
-                {break;}
-                case "Category, A to Z": // by category, alphabetical
-                {
-                    break;
-                }
-                case "Seller location, A to Z": // by seller location, alphabetical
-                {
-                    break;
-                }
-            }
-            sorted(equipmentArray
-        }
-    </script>
 {% endblock %}
 
 {% block body %}
@@ -84,62 +60,9 @@
         <a href="#"><img class="descending-button" src="/static/arrow.png" alt="Descending" onclick="sortDescending();"></a>
     </div>
 
-<<<<<<< HEAD
-                            <li class="dropdown-header">Category</li>
-                            <li>
-                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Barbell"> Barbell </label>
-                            </li>
-                            <li>
-                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Bench"> Bench </label>
-                            </li>
-                            <li>
-                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Dumbbell"> Dumbbell </label>
-                            </li>
-                            <li>
-                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Exercise mat"> Exercise Mat </label>
-                            </li>
-                            <li>
-                                <label><input type="checkbox" name='checkedEquipmentCategories' value="EZ-Bar"> EZ-Bar </label>
-                            </li>
-                            <li>
-                                <label><input type="checkbox" name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
-                            </li>
-                            <li>
-                                <button type="button" name="Filter" onclick="verifyCheckBoxesAndSubmit('equipmentFilterForm')">Filter</button>
-                            </li>
-                            <li>
-                                <button type="submit" name="Reset" value="clicked">Reset</button>
-                            </li>
-                        </form>
-                    </ul>
-                </div>
-                <!-- dropdown for sorting menu -->
-                <div class="dropdown">
-                    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Sort by</button>
-                    <div class="dropdown-menu">
-                        <a class="dropdown-item" href="" onclick="sortBy('Name, A to Z')">Name, A to Z</a>
-                        <a class="dropdown-item" href="" onclick="sortBy('Price, low to high')">Price, low to high</a>
-                        <a class="dropdown-item" href="" onclick="sortBy('Price, high to low')">Price, high to low</a>
-                        <a class="dropdown-item" href="" onclick="sortBy('Category, A to Z')">Category, A to Z</a>
-                        <a class="dropdown-item" href="" onclick="sortBy('Seller location, A to Z')">Seller location, A to Z</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <button type="button" onclick="sortAscending()">Ascending</button>
-                <button type="button" onclick="sortDescending()">Descending</button>
-            </div>
-        </div>
-        <p class="modelDescription">
-            This model page includes a database of different types of workout equipment, gear, and products. You can also
-            quickly find the price rating and seller/vendor of each product in one place.
-        </p>
-        <div class="container-fluid bg-light" id="modelGrid">
-=======
     <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
     <div id="main">
         <div class="grid-div container-fluid" id="modelGrid">
->>>>>>> origin/dev
         {% set numRows = ((end + 1) - start) // 3 %}
         {% set remainder = ((end + 1) - start) % 3 %}
         {% for i in range(numRows) %}

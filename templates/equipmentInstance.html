@@ -15,43 +15,6 @@
   </div>
       <!-- There's no rating returned by the API -->
 <!--            <img id="equipmentInstanceRating" class="img-fluid w-50 h-auto" src="{{ url_for('static', filename='{{ equipmentObject.rating }}stars.png') }}" alt="Rating: {{ equipmentObject.rating }}/5 stars">-->
-<<<<<<< HEAD
-        </div>
-
-        <!-- Carousel -->
-<!--        <div id="equipmentCarousel"class="carousel slide centered" data-ride="carousel">-->
-<!--              <ol class="carousel-indicators">-->
-<!--                <li data-target="#equipmentCarousel" data-slide-to="0" class="active"></li>-->
-<!--                <li data-target="#equipmentCarousel" data-slide-to="1"></li>-->
-<!--              </ol>-->
-<!--              <div class="carousel-inner">-->
-<!--                  <div class="carousel-item active">-->
-<!--                        {% if equipmentObject.replacePictureFlag %}-->
-<!--                            <img class="card-img-top img-fluid mx-auto" style="width: auto; max-height: 500px;" src="/../static/{{ equipmentObject.picture }}" alt="{{ equipmentObject.name }}'s image">-->
-<!--                        {% else %}-->
-<!--                            <img class="card-img-top img-fluid mx-auto" style="width: auto; max-height: 500px;" src="{{ equipmentObject.picture }}" onerror="this.onerror=null; this.src='{{ equipmentObject.picture }}'"; alt="{{ equipmentObject.name }}'s image">-->
-<!--                        {% endif %}-->
-<!--                  </div>-->
-<!--&lt;!&ndash;                  <div class="carousel-item">&ndash;&gt;-->
-<!--&lt;!&ndash;                      <img src="{{ equipmentObject.picture }}" onerror="this.onerror=null; this.src='{{ equipmentObject.picture }}'"; alt=" {{ equipmentObject.name }}'s carousel image"/>&ndash;&gt;-->
-<!--&lt;!&ndash;                  </div>&ndash;&gt;-->
-<!--              </div>-->
-<!--              <a class="carousel-control-prev" href="#equipmentCarousel" data-slide="prev">-->
-<!--                <span class="carousel-control-prev-icon"></span>-->
-<!--              </a>-->
-<!--              <a class="carousel-control-next" href="#equipmentCarousel" data-slide="next">-->
-<!--                <span class="carousel-control-next-icon"></span>-->
-<!--              </a>-->
-<!--        </div>-->
-
-        <div id=""equipmentImage>
-            <!-- TODO: test these image resizing lines -->
-            {% if equipmentObject.replacePictureFlag %}
-                <img class="card-img-top img-fluid mx-auto" style="width: auto; max-height: 500px;" src="/../static/{{ equipmentObject.picture }}" alt="{{ equipmentObject.name }}'s image">
-            {% else %}
-                <img class="card-img-top img-fluid mx-auto" style="width: auto; max-height: 500px;" src="{{ equipmentObject.picture }}" onerror="this.onerror=null; this.src='{{ equipmentObject.picture }}'"; alt="{{ equipmentObject.name }}'s image">
-            {% endif %}
-=======
   <!-- Carousel -->
   <div id="equipmentCarousel"class="carousel slide centered" data-ride="carousel">
         <div class="carousel-inner">
@@ -66,7 +29,6 @@
 <!--                  <div class="carousel-item">-->
 <!--                      <img src="{{ equipmentObject.picture }}" onerror="this.onerror=null; this.src='{{ equipmentObject.picture }}'"; alt=" {{ equipmentObject.name }}'s carousel image"/>-->
 <!--                  </div>-->
->>>>>>> origin/dev
         </div>
         <a class="carousel-control-prev" href="#equipmentCarousel" data-slide="prev">
           <span class="carousel-control-prev-icon"></span>
