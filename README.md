@@ -2,7 +2,7 @@
 
 This is the master branch for TeamA13's IMBD web application project for EE461L. Note that all code in this repo is production-ready and should match the current deployed, functional state. The buildfiles for this project to run on Google App Engine include requirements.txt and app.yaml. Requirements.txt lists all of the python libraries and dependencies that our web app needs to deploy.
 
-Note: Channel instance pages currently have placeholder boxes in phase 2 for videos that will be added in phase 3.
+Website Link: https://imbdproject.wn.r.appspot.com/
 
 # Team Members:
   Andy Wu
@@ -50,6 +50,8 @@ Note: Channel instance pages currently have placeholder boxes in phase 2 for vid
         - Debugging and fixing frontend carousel control bug and linking issues from phase 2: Actual Completion Hours: 2
         - Adding javascript code to prevent bad form submission and persist checkbox states: Estimated Completion Hours: 4
         - Adding javascript code to prevent bad form submission and persist checkbox states: Actual Completion Hours: 8
+        - Checking images on the exercises model page for mismatch on equipment usage + replacing with relevant GIFs: Estimated Completion Hours: 3
+        - Checking images on the exercises model page for mismatch on equipment usage + replacing with relevant GIFs: Actual Completion Hours: 4
   
   Kaylee N Trevino
    - EID: knt658
@@ -158,7 +160,3 @@ Note: Channel instance pages currently have placeholder boxes in phase 2 for vid
         - Selenium Testing for Homepage Carousel and NavBar: Actual Completion Hours: 1
         - Updating AboutMe page, Github code integration, Technical Report: Estimated Completion Hours: 0.5
         - Updating AboutMe page, Github code integration, Technical Report: Actual Completion Hours: 1
-
-  
-  
-Website Link: https://imbdproject.wn.r.appspot.com/
