@@ -4,6 +4,14 @@
     <!-- Vars: equipmentArray, start, end, page_number, num_pages-->
 
     <title>Equipment Model Page</title>
+    <script>
+        function sortSelect(sortMethod)
+        {
+            document.getElementById("sortSelectionButton").innerHTML = sortMethod;
+
+        }
+    </script>
+
 {% endblock %}
 
 {% block body %}
@@ -51,13 +59,13 @@
                 </li>
             </ul>
         </form>
+        <!-- dropdown for sorting menu -->
         <div class="dropdown">
-            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="sortSelectionButton">Sort results by</button>
+            <button type="button" name="sortSelectionButton" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="sortSelectionButton">Sort results by</button>
             <div class="dropdown-menu">
                 <a class="dropdown-item" href="#" onclick="sortSelect('No Sorting')">No Sorting</a>
                 <a class="dropdown-item" href="#" onclick="sortSelect('Name, A to Z')">Name, A to Z</a>
                 <a class="dropdown-item" href="#" onclick="sortSelect('Price, low to high')">Price, low to high</a>
-                <a class="dropdown-item" href="#" onclick="sortSelect('Price, high to low')">Price, high to low</a>
                 <a class="dropdown-item" href="#" onclick="sortSelect('Category, A to Z')">Category, A to Z</a>
                 <a class="dropdown-item" href="#" onclick="sortSelect('Seller location, A to Z')">Seller location, A to Z</a>
             </div>

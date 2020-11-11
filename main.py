@@ -85,6 +85,7 @@ filteredEquipmentsArray = []
 channelsFilterIsActive = False
 filteredChannelsArray = []
 
+
 # All classes defined below to help store data attributes
 # =============================================================================================================================
 # Class for exercise object
@@ -148,10 +149,10 @@ class Equipment:
                  equipmentCategory):
         self.id = itemId
         self.arrayIndex = arrayIndex
-        self.name = title
-        self.price = value
-        self.category = categoryName
-        self.location = location
+        self.name = title  # x[2]
+        self.price = value  # x[3]
+        self.category = categoryName  # x[4]
+        self.location = location  # x[5]
         self.replacePictureFlag = replacePictureFlag
         self.picture = galleryURL
         self.linkToItem = viewItemURL
@@ -336,7 +337,8 @@ def initialize_mongoDB_exercises_collection(db):
                     if result["id"] == e:
                         equipmentName = result["name"]
                         equipment_list.append(equipmentName)
-            if len(equipment_list) == 0:  # default equipment is Exercise mat if there is no equipment attribute returned by API
+            if len(
+                    equipment_list) == 0:  # default equipment is Exercise mat if there is no equipment attribute returned by API
                 equipment_list.append(DEFAULT_EXERCISE_MAT_STRING)
 
             # get image URL using exercise
@@ -864,6 +866,28 @@ def filter_exercises(selectedExerciseCategories, selectedEquipmentCategories, db
     return filteredExercises
 
 
+def sort_array(arrayToSort, typeOfArray, sortBy):
+    sortDict = {}
+    if typeOfArray == 'Equipment':
+        sortDict = {
+            'Name, A to Z': lambda x: x[2],
+            'Price, low to high': lambda x: x[3],
+            'Category, A to Z': lambda x: x[4],
+            'Seller location, A to Z': lambda x: x[5]
+        }
+
+    elif typeOfArray == 'Exercise':
+        sortDict = {}
+
+    elif typeOfArray == 'Channel':
+        sortDict = {}
+
+    if sortBy in sortDict:
+        arrayToSort = sorted(arrayToSort, key=sortDict.get(sortBy))
+
+    return arrayToSort
+
+
 def filter_equipments(selectedPriceRanges, selectedEquipmentCategories, db):
     """
     Pass in the selected price ranges and categories to filter on and return all of the filtered Exercise objects in a Python list.
@@ -879,7 +903,8 @@ def filter_equipments(selectedPriceRanges, selectedEquipmentCategories, db):
         priceRangeList = priceString.split(" ")
         # print(priceRangeList[0])
         # print(priceRangeList[1])
-        equipmentCursor = db.equipments.find({'price': {'$gte': float(priceRangeList[0]), '$lt': float(priceRangeList[1])} })
+        equipmentCursor = db.equipments.find(
+            {'price': {'$gte': float(priceRangeList[0]), '$lt': float(priceRangeList[1])}})
         for equipmentDoc in equipmentCursor:
             filteredEquipments.append(EQUIPMENT_ARRAY[equipmentDoc['arrayIndex']])
 
@@ -907,21 +932,24 @@ def filter_channels(selectedSubscriberRange, selectedTotalViewsRange, selectedVi
     # Query the entire exercises collection on all selected ranges and append matching Exercise objects
     for subscriberRangeString in selectedSubscriberRange:
         subscriberRangeList = subscriberRangeString.split(" ")
-        channelsCursor = db.channels.find({'subscriberCount': {'$gte': int(subscriberRangeList[0]), '$lt': int(subscriberRangeList[1])} })
+        channelsCursor = db.channels.find(
+            {'subscriberCount': {'$gte': int(subscriberRangeList[0]), '$lt': int(subscriberRangeList[1])}})
         for channelDoc in channelsCursor:
             filteredChannels.append(CHANNEL_ARRAY[channelDoc['arrayIndex']])
 
     # Query the entire exercises collection on selected ranges and append matching Exercise objects
     for totalViewsString in selectedTotalViewsRange:
         totalViewsList = totalViewsString.split(" ")
-        channelsCursor = db.channels.find({'viewCount': {'$gte': int(totalViewsList[0]), '$lt': int(totalViewsList[1])} })
+        channelsCursor = db.channels.find(
+            {'viewCount': {'$gte': int(totalViewsList[0]), '$lt': int(totalViewsList[1])}})
         for channelDoc in channelsCursor:
             filteredChannels.append(CHANNEL_ARRAY[channelDoc['arrayIndex']])
 
     # Query the entire exercises collection on each of the selected ranges and append matching Exercise objects
     for videoRangeString in selectedVideosRange:
         videoRangeList = videoRangeString.split(" ")
-        channelsCursor = db.channels.find({'videoCount': {'$gte': int(videoRangeList[0]), '$lt': int(videoRangeList[1])} })
+        channelsCursor = db.channels.find(
+            {'videoCount': {'$gte': int(videoRangeList[0]), '$lt': int(videoRangeList[1])}})
         for channelDoc in channelsCursor:
             filteredChannels.append(CHANNEL_ARRAY[channelDoc['arrayIndex']])
 
@@ -1334,6 +1362,11 @@ def equipments(page_number):
             # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
             filteredEquipmentsArray = filter_equipments(selectedPriceRanges, selectedEquipmentCategories, DATABASE)
             start, end, num_pages = paginate(page_number, filteredEquipmentsArray)
+
+            # sorting filtered equipment array based on sortSelectionButton's value
+            filteredEquipmentsArray = sort_array(filteredEquipmentsArray, 'Equipment',
+                                                 request.form.get('sortSelectionButton').text)
+
             return render_template('equipments.html', equipmentArray=filteredEquipmentsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
     elif request.method == 'GET':
@@ -1365,7 +1398,8 @@ def channels(page_number):
             selectedTotalViewsRange = request.form.getlist('checkedTotalViewsRange')
             selectedVideosRange = request.form.getlist('checkedVideosRange')
             # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
-            filteredChannelsArray = filter_channels(selectedSubscriberRange, selectedTotalViewsRange, selectedVideosRange, DATABASE)
+            filteredChannelsArray = filter_channels(selectedSubscriberRange, selectedTotalViewsRange,
+                                                    selectedVideosRange, DATABASE)
             start, end, num_pages = paginate(page_number, filteredChannelsArray)
             return render_template('channels.html', channelArray=filteredChannelsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
