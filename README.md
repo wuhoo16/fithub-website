@@ -106,6 +106,11 @@ Note: Channel instance pages currently have placeholder boxes in phase 2 for vid
         - Equipment Model Page Testing: Actual Completion Hours: 3
         - Equipment Instance Page Testing: Estimated Completion Hours: 1
         - Equipment Instance Page Testing: Estimated Completion Hours: 3
+      - Phase 3:
+        - Replace Carousel in Equipment Instance Page: Estimated Completion Hours: 0
+        - Replace Carousel in Equipment Instance Page: Estimated Completion Hours: 1
+        - Sorting for All Three Model Pages: Estimated Completion Hours: 6
+        - Sorting for ALl Three Model Pages: Actual Completion Hours: 4+ (In Progress)
 
 
   Michelle Wen
