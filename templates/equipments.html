@@ -31,30 +31,60 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container-fluid bg-light">
-        <div class="row">
-            <div class="col-sm-8">
-                <h1 class="modelHeader">Welcome to the Equipment Model Page!</h1>
-            </div>
-            <div class="col-sm-2">
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter By
-                    <span class="caret"></span></button>
-                    <ul class="dropdown-menu checkbox-menu allow-focus">
-                        <form id="equipmentFilterForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
-                            <li class="dropdown-header">Price</li>
-                            <li>
-                                <label> <input type="checkbox" name='checkedPriceRange' value="0 50"> $0 - $50 </label>
-                            </li>
-                            <li>
-                                <label><input type="checkbox" name='checkedPriceRange' value="50 100"> $50 - $100 </label>
-                            </li>
-                            <li>
-                                <label><input type="checkbox" name='checkedPriceRange' value="100 9999"> $100+ </label>
-                            </li>
+<div class="exercise-div container-fluid">
+    <div class="jumbotron-exercise jumbotron jumbotron-fluid text-center">
+        <h1 class="modelHeader">Find your gear</h1>
+        <p class="modelDescription">Check out our selection of fitness equipment.</p>
+    </div>
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <form id="equipmentFilterForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
+            <ul class="checkbox-menu">
+                <li class="dropdown-header">Price</li>
+                <li>
+                    <label> <input type="checkbox" name='checkedPriceRange' value="0 50"> $0 - $50 </label>
+                </li>
+                <li>
+                    <label><input type="checkbox" name='checkedPriceRange' value="50 100"> $50 - $100 </label>
+                </li>
+                <li>
+                    <label><input type="checkbox" name='checkedPriceRange' value="100 9999"> $100+ </label>
+                </li>
+                <li class="dropdown-header">Category</li>
+                <li>
+                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Barbell"> Barbell </label>
+                </li>
+                <li>
+                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Bench"> Bench </label>
+                </li>
+                <li>
+                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Dumbbell"> Dumbbell </label>
+                </li>
+                <li>
+                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Exercise mat"> Exercise Mat </label>
+                </li>
+                <li>
+                    <label><input type="checkbox" name='checkedEquipmentCategories' value="EZ-Bar"> EZ-Bar </label>
+                </li>
+                <li>
+                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
+                </li>
+                <li style="text-align: center; margin-top: 1rem;">
+                    <button class="reset-button btn btn-outline-light" type="submit" name="Reset" value="clicked">Reset</button>
+                    <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxesAndSubmit('equipmentFilterForm')">Filter</button>
+                </li>
+            </ul>
+        </form>    
+    </div>
 
-                            <li class="divider"></li>
+    <!-- Use any element to open the sidenav -->
+    <div>
+        <button class="filter-open-button" onclick="openNav()">Filter ></button>
+        <a href="#"><img class="ascending-button" src="/static/arrow.png" alt="Ascending" onclick="sortAscending();"></a>
+        <a href="#"><img class="descending-button" src="/static/arrow.png" alt="Descending" onclick="sortDescending();"></a>
+    </div>
 
+<<<<<<< HEAD
                             <li class="dropdown-header">Category</li>
                             <li>
                                 <label><input type="checkbox" name='checkedEquipmentCategories' value="Barbell"> Barbell </label>
@@ -105,20 +135,25 @@
             quickly find the price rating and seller/vendor of each product in one place.
         </p>
         <div class="container-fluid bg-light" id="modelGrid">
+=======
+    <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
+    <div id="main">
+        <div class="grid-div container-fluid" id="modelGrid">
+>>>>>>> origin/dev
         {% set numRows = ((end + 1) - start) // 3 %}
         {% set remainder = ((end + 1) - start) % 3 %}
         {% for i in range(numRows) %}
-            <div class="row" id="row {{ i|string }}">
+            <div class="row justify-content-center" id="row {{ i|string }}">
             {% for offset in range(3) %}
                 <div class="col-md-4 p-4">
-                    <div class="card bg-light h-100 pt-4">
+                    <div class="card card-style h-100 pt-4">
                     {% if equipmentArray[start + 3*i+offset].replacePictureFlag %}
-                        <img class="card-img-top img-fluid mx-auto" src="/../static/{{ equipmentArray[start+3*i+offset].picture }}" alt="{{ equipmentArray[start + 3*i+offset].name }}">
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="/../static/{{ equipmentArray[start+3*i+offset].picture }}" alt="{{ equipmentArray[start + 3*i+offset].name }}">
                     {% else %}
-                        <img class="card-img-top img-fluid mx-auto" src="{{ equipmentArray[start+3*i+offset].picture }}" onerror="this.onerror=null; this.src='{{ equipmentArray[start + 3*i+offset].picture }}'"; alt="{{ equipmentArray[start + 3*i+offset].name }}">
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ equipmentArray[start+3*i+offset].picture }}" onerror="this.onerror=null; this.src='{{ equipmentArray[start + 3*i+offset].picture }}'"; alt="{{ equipmentArray[start + 3*i+offset].name }}">
                     {% endif %}
                         <div class="card-body">
-                            <h2 class="card-title text-center text-dark">{{ equipmentArray[start + 3*i+offset].name }}</h2>
+                            <h2 class="card-title text-center">{{ equipmentArray[start + 3*i+offset].name }}</h2>
                             <p class="card-text">
                                 <ul class="equipmentData list-unstyled">
                                     <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ start + 3*i+offset }}"><b>Price: </b>{{ equipmentArray[start + 3*i+offset].price }} USD</li>
@@ -126,7 +161,6 @@
                                     <li style="padding-left: 1em;" id="sellerLocationText_{{ start + 3*i+offset }}"><b>Seller Location: </b>{{ equipmentArray[start + 3*i+offset].location }}</li>
                                 </ul>
                             </p>
-                            <!-- TODO: use this next line as reference for param names when building equipmentInstance.html -->
                             <a href="{{ url_for('equipment_instance', arrayIndex=equipmentArray[start + 3*i+offset].arrayIndex) }}" class="stretched-link" id="instancePageLink_{{ start + 3*i+offset }}"></a>
                         </div>
                     </div>
@@ -139,14 +173,14 @@
             <div class="row" id="bottomRow">
             {% for i in range(-remainder, 0) %}
                 <div class="col-md-4 p-4">
-                    <div class="card bg-light h-100 pt-4">
+                    <div class="card card-style h-100 pt-4">
                         {% if equipmentArray[end + 1 + i].replacePictureFlag %}
-                            <img class="card-img-top img-fluid mx-auto" src="/../static/{{ equipmentArray[end + 1 + i].picture }}" alt="{{ equipmentArray[end + 1 + i].name }}">
+                            <img class="card-img-top card-image-style img-fluid mx-auto" src="/../static/{{ equipmentArray[end + 1 + i].picture }}" alt="{{ equipmentArray[end + 1 + i].name }}">
                         {% else %}
-                            <img class="card-img-top img-fluid mx-auto" src="{{ equipmentArray[end + 1 + i].picture }}" onerror="this.onerror=null; this.src='{{ equipmentArray[end + 1 + i].picture }}'"; alt="{{ equipmentArray[end + 1 + i].name }}">
+                            <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ equipmentArray[end + 1 + i].picture }}" onerror="this.onerror=null; this.src='{{ equipmentArray[end + 1 + i].picture }}'"; alt="{{ equipmentArray[end + 1 + i].name }}">
                         {% endif %}
                         <div class="card-body">
-                            <h2 class="card-title text-center text-dark">{{ equipmentArray[end + 1 + i].name }}</h2>
+                            <h2 class="card-title text-center">{{ equipmentArray[end + 1 + i].name }}</h2>
                             <p class="card-text">
                                 <ul class="equipmentData list-unstyled">
                                     <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ end + 1 + i }}"><b>Price: </b>{{ equipmentArray[end + 1 + i].price }} USD</li>
@@ -163,7 +197,7 @@
         {% endif %}
         </div>
 
-        <ul class="pagination justify-content-center">
+        <ul class="pagination justify-content-center" style="margin: 20px;">
             <!--Previous Page Button-->
             {% if page_number == 1 %}
                 <li class="page-item disabled"><a class="page-link" href="">Previous</a></li>
@@ -188,6 +222,6 @@
                 <li class="page-item"><a class="page-link" href="{{ url_for('equipments', page_number=page_number+1) }}">Next</a></li>
             {% endif %}
         </ul>
-
     </div>
+</div>
 {% endblock %}
