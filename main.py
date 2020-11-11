@@ -85,6 +85,7 @@ filteredEquipmentsArray = []
 channelsFilterIsActive = False
 filteredChannelsArray = []
 
+
 # All classes defined below to help store data attributes
 # =============================================================================================================================
 # Class for exercise object
@@ -812,9 +813,9 @@ def get_related_objects_for_channel_instance(id, db):
     # Use the first related exercise object to determine what equipmentCategory to use when querying equipments collection
     topExerciseDoc = db.exercises.find_one({'_id': relatedExercises[0].id})
     if topExerciseDoc:
-        equipmentCategory = topExerciseDoc['equipment']
+        equipmentCategory = topExerciseDoc['equipment'][0]  # Select the first equipment term in the equipment array attribute to use
 
-    # Query the equipment collection for all instances with the same indirect equipmentCategory
+    # Query the equipment collection for all instances with the same indirect equipmentCategory term
     relatedEquipmentsCursor = db.equipments.find({'equipmentCategory': equipmentCategory})
     for relatedEquipmentDoc in relatedEquipmentsCursor:
         relatedEquipments.append(EQUIPMENT_ARRAY[relatedEquipmentDoc['arrayIndex']])

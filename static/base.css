@@ -118,9 +118,11 @@ body {
   width: 100%;
   object-fit: cover;
 }
-.homepage-controls {
-  margin-top: auto;
+
+.carousel-control-next, .carousel-control-prev {
+  z-index: 10;
 }
+
 .carousel-caption {
   position: absolute;
   top: 38%;
@@ -146,7 +148,7 @@ body {
   border-width: medium;
   border-radius: 0;
   font-size: 1.1rem;
-} 
+}
 
 /* INSTANCE PAGES */
 .exercise-instance-div {
