@@ -50,12 +50,23 @@
                     <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxesAndSubmit('equipmentFilterForm')">Filter</button>
                 </li>
             </ul>
-        </form>    
+        </form>
+        <div class="dropdown">
+            <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" id="sortSelectionButton">Sort results by</button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#" onclick="sortSelect('No Sorting')">No Sorting</a>
+                <a class="dropdown-item" href="#" onclick="sortSelect('Name, A to Z')">Name, A to Z</a>
+                <a class="dropdown-item" href="#" onclick="sortSelect('Price, low to high')">Price, low to high</a>
+                <a class="dropdown-item" href="#" onclick="sortSelect('Price, high to low')">Price, high to low</a>
+                <a class="dropdown-item" href="#" onclick="sortSelect('Category, A to Z')">Category, A to Z</a>
+                <a class="dropdown-item" href="#" onclick="sortSelect('Seller location, A to Z')">Seller location, A to Z</a>
+            </div>
+        </div>
     </div>
 
     <!-- Use any element to open the sidenav -->
     <div>
-        <button class="filter-open-button" onclick="openNav()">Filter ></button>
+        <button class="filter-open-button" onclick="openNav()">Filter and Sort</button>
         <a href="#"><img class="ascending-button" src="/static/arrow.png" alt="Ascending" onclick="sortAscending();"></a>
         <a href="#"><img class="descending-button" src="/static/arrow.png" alt="Descending" onclick="sortDescending();"></a>
     </div>
