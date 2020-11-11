@@ -41,6 +41,15 @@ Note: Channel instance pages currently have placeholder boxes in phase 2 for vid
         - Refactoring codebase to improve runtime and object reference in routing methods and HTML Templates: Actual Completion Hours: 3
         - Implementing all unittests to test the Python code/database communication: Estimated Completion Hours: 3
         - Implementing all unittests to test the Python code/database communication: Actual Completion Hours: 3
+      - Phase 3:
+        - Filtering implementation for all 3 model pages: Estimated Completion Hours: 5
+        - Filtering implementation for all 3 model pages: Actual Completion Hours: 5
+        - Updating Flask view function to support persisting filtered results across pagination pages: Estimated Completion Hours: 2
+        - Updating Flask view function to support persisting filtered results across pagination pages: Actual Completion Hours: 3
+        - Debugging and fixing frontend carousel control bug and linking issues from phase 2: Estimated Completion Hours: 1
+        - Debugging and fixing frontend carousel control bug and linking issues from phase 2: Actual Completion Hours: 2
+        - Adding javascript code to prevent bad form submission and persist checkbox states: Estimated Completion Hours: 4
+        - Adding javascript code to prevent bad form submission and persist checkbox states: Actual Completion Hours: 8
   
   Kaylee N Trevino
    - EID: knt658

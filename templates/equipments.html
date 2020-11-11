@@ -2,8 +2,8 @@
 
 {% block head %}
     <!-- Vars: equipmentArray, start, end, page_number, num_pages-->
-
     <title>Equipment Model Page</title>
+    <script type="text/javascript" src="/static/equipments_filter_verification.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -14,40 +14,41 @@
     </div>
     <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <form id="equipmentFilterForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
+        <form id="equipmentsFilterForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
             <ul class="checkbox-menu">
                 <li class="dropdown-header">Price</li>
                 <li>
-                    <label> <input type="checkbox" name='checkedPriceRange' value="0 50"> $0 - $50 </label>
+                    <label> <input type="checkbox" id='equipmentsOption1' name='checkedPriceRange' value="0 50"> $0 - $50 </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedPriceRange' value="50 100"> $50 - $100 </label>
+                    <label><input type="checkbox" id='equipmentsOption2' name='checkedPriceRange' value="50 100"> $50 - $100 </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedPriceRange' value="100 9999"> $100+ </label>
+                    <label><input type="checkbox" id='equipmentsOption3' name='checkedPriceRange' value="100 9999"> $100+ </label>
                 </li>
                 <li class="dropdown-header">Category</li>
                 <li>
-                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Barbell"> Barbell </label>
+                    <label><input type="checkbox" id='equipmentsOption4' name='checkedEquipmentCategories' value="Barbell"> Barbell </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Bench"> Bench </label>
+                    <label><input type="checkbox" id='equipmentsOption5' name='checkedEquipmentCategories' value="Bench"> Bench </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Dumbbell"> Dumbbell </label>
+                    <label><input type="checkbox" id='equipmentsOption6' name='checkedEquipmentCategories' value="Dumbbell"> Dumbbell </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Exercise mat"> Exercise Mat </label>
+                    <label><input type="checkbox" id='equipmentsOption7' name='checkedEquipmentCategories' value="Exercise mat"> Exercise Mat </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedEquipmentCategories' value="EZ-Bar"> EZ-Bar </label>
+                    <label><input type="checkbox" id='equipmentsOption8' name='checkedEquipmentCategories' value="EZ-Bar"> EZ-Bar </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
+                    <label><input type="checkbox" id='equipmentsOption9' name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
                 </li>
                 <li style="text-align: center; margin-top: 1rem;">
-                    <button class="reset-button btn btn-outline-light" type="submit" name="Reset" value="clicked">Reset</button>
-                    <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxesAndSubmit('equipmentFilterForm')">Filter</button>
+                    <input type="hidden" id='equipmentsResetHiddenField' name='resetHiddenField' value="">
+                    <button class="reset-button btn btn-outline-light" type="button" name="Reset" onclick="resetCheckboxState('equipmentsFilterForm', 'equipmentsResetHiddenField')">Reset</button>
+                    <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxes('equipmentsFilterForm')">Filter</button>
                 </li>
             </ul>
         </form>    

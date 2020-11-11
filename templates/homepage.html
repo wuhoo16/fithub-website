@@ -1,7 +1,11 @@
-{% extends 'base.html' %} {% block head %}
-<title>Fithub Homepage</title>
+{% extends 'base.html' %}
 
-{% endblock %} {% block body %}
+{% block head %}
+<title>Fithub Homepage</title>
+<script type="text/javascript" src="/static/homepage.js"></script>
+{% endblock %}
+
+{% block body %}
 <div id="homepageCarousel" class="carousel slide" data-ride="carousel">
   <ol class="carousel-indicators">
     <li data-target="#homepageCarousel" data-slide-to="0" class="active"></li>
@@ -70,4 +74,10 @@
     <span class="carousel-control-next-icon"></span>
   </a>
 </div>
+
+<!-- Invoke the javascript function to clear the local storage and sync up with the current flag states-->
+<!-- This ensures that when the server restarts, all checkbox states match up with the original unfiltered arrays-->
+<script>
+  clearLocalStorage({{ exerciseFilterIsActive }}, {{ equipmentFilterIsActive }}, {{ channelsFilterIsActive }});
+</script>
 {% endblock %}
