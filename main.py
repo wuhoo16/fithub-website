@@ -1202,7 +1202,7 @@ def equipments(page_number):
 @app.route("/channels/<int:page_number>", methods=['GET'])
 def channels(page_number):
     start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
-    return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end, page_number=page_number,
+    return render_template('channels.html', channelArray=CHANNEL_ARRAY, channelArrayLength=len(CHANNEL_ARRAY),start=start, end=end, page_number=page_number,
                            num_pages=num_pages)
 
 

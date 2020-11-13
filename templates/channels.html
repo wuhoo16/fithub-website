@@ -7,6 +7,22 @@
 
 {% block body %}
     <div class="container-fluid bg-light">
+        {% set dataArr = [] %}
+        {% for i in range(channelArrayLength) %}
+            {% if channelArray[i].description|length == 0 %}
+                {% set dataArr = dataArr.append({"name": channelArray[i].name, "description": "|No description provided.", "subscriber": channelArray[i].subscriberCount, "view": channelArray[i].viewCount, "video": channelArray[i].videoCount}) %}
+            {% else %}
+            {% set dataArr = dataArr.append({"name": channelArray[i].name, "description": channelArray[i].description, "subscriber": channelArray[i].subscriberCount, "view": channelArray[i].viewCount, "video": channelArray[i].videoCount}) %}
+            {% endif %}
+        {% endfor %}
+        <meta id="channelArrayData" data-arr='{{dataArr}}'/>
+        <div class="dropdown">
+            <input class="form-control ml-3 w-75 dropdown-toggle" id = "searchBar" type="text" placeholder="Search"/>
+            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins">
+                <div id="menuItems"></div>
+                <div id="empty" class="dropdown-header">No items found</div>
+            </div>
+        </div>
         <h1 class="modelHeader">Welcome to the Youtube Channel Model page!</h1>
         <p class="modelDescription">This model page includes a database of many different Youtube fitness channels that can be sorted by subscriber count,
         view count, and/or number of total videos. In addition, channels will be internally tagged with up to 3 exercise tags that correspond with their
@@ -18,17 +34,17 @@
         {% for i in range(numFullRows) %}
             <div class="row" id="row{{ i|string }}">
                 {% for offset in range(3) %}
-                <div class="col-md-4 p-4">
-                    <div class="card bg-light h-100 pt-4">
-                        <img class="card-img-top img-fluid mx-auto" src="{{ channelArray[start + 3*i + offset].thumbnailURL }}" alt="{{ channelArray[start + 3*i + offset].name }}">
+                <div class="col-md-4 p-4" id="col_{{channelArray[start + 3*i + offset].arrayIndex}}">
+                    <div class="card bg-light h-100 pt-4" id = "cardSearch_{{channelArray[start + 3*i + offset].arrayIndex}}">
+                        <img class="card-img-top img-fluid mx-auto filterizable" src="{{ channelArray[start + 3*i + offset].thumbnailURL }}" alt="{{ channelArray[start + 3*i + offset].name }}" id="img_{{channelArray[start + 3*i + offset].arrayIndex}}">
                         <div class="card-body">
-                            <h2 class="card-title text-center text-dark">{{ channelArray[start + 3*i + offset].name }}</h2>
+                            <h2 class="card-title text-center text-dark filterizable" id="h2_{{channelArray[start + 3*i + offset].arrayIndex}}">{{ channelArray[start + 3*i + offset].name }}</h2>
                             <p class="card-text">
-                                <ul class="channelAttributesList list-unstyled">
+                                <ul class="channelAttributesList list-unstyled" id="list_{{channelArray[start + 3*i + offset].arrayIndex}}">
                                     {% if channelArray[start + 3*i + offset].description|length != 0 %}
                                         <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="descriptionTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Description: </b>{{ channelArray[start + 3*i + offset].description }}</li>
                                     {% else %}
-                                        <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="descriptionNoTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Description: </b>No description provided.</li>
+                                        <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="descriptionTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Description: </b>No description provided.</li>
                                     {% endif %}
                                     <li style="padding-bottom: 0.5em; padding-left: 1em;" id="subscriberTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Subscribers: </b>{{ channelArray[start + 3*i + offset].subscriberCount }}</li>
                                     <li style="padding-bottom: 0.5em; padding-left: 1em;" id="viewTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Total Views: </b>{{ channelArray[start + 3*i + offset].viewCount }}</li>
@@ -95,4 +111,114 @@
         </ul>
 
     </div>
+
+    <script>
+        let items = document.getElementsByClassName("dropdown-item");
+        var data = $('#channelArrayData').data().arr;
+        var dataArr = processData(data);
+
+        function buildDropDown() {
+            let contents = [];
+            for (const [name, info] of Object.entries(dataArr) ) {
+                contents.push('<button class="dropdown-item"><b>' + name + '</b></button>');
+                contents.push('<button class="dropdown-item"><b>' + name + '</b> - Description: ' + info.description + '</button>');
+                contents.push('<button class="dropdown-item"><b>' + name + '</b> - Subscribers: ' + info.subscriber + '</button>');
+                contents.push('<button class="dropdown-item"><b>' + name + '</b> - Total Views: ' + info.view + '</button>');
+                contents.push('<button class="dropdown-item"><b>' + name + '</b> - Videos: ' + info.video + '</button>');
+            }
+            console.log(contents);
+            $('#menuItems').append(contents.join(""));
+
+            //Hide the row that shows no items were found
+            $('#empty').hide()
+        }
+        buildDropDown();
+
+        function filter(phrase) {
+            var headers = {};
+            var hidden = 0;
+
+            for (const [name, info] of Object.entries(dataArr)) {
+                if (name.toLowerCase().includes(phrase)) {
+                    headers[name.toLowerCase()] = 1;
+                } else if (("description: " + info.description.toLowerCase()).includes(phrase)) {
+                    headers[name.toLowerCase() + " - description: " + info.description.toLowerCase()] = 1;
+                } else if (("subscribers: " + info.subscriber.toLowerCase()).includes(phrase)) {
+                    headers[name.toLowerCase() + " - subscribers: " + info.subscriber.toLowerCase()] = 1;
+                } else if (("total views: " + info.view.toLowerCase()).includes(phrase)) {
+                    headers[name.toLowerCase() + " - total views: " + info.view.toLowerCase()] = 1;
+                } else if (("videos: " + info.video.toLowerCase()).includes(phrase)) {
+                    headers[name.toLowerCase() + " - videos: " + info.video.toLowerCase()] = 1;
+                }
+            }
+
+            for (i = 0; i < items.length; i++) {
+                if (items[i].innerHTML.replace("<b>", "").replace("</b>", "").toLowerCase() in headers) {
+                    $(items[i]).show();
+                } else {
+                    $(items[i]).hide()
+                    hidden++
+                }
+            }
+
+            //If no items match, show the empty view
+            if (hidden === items.length) {
+                $('#empty').show()
+            }
+            else {
+                $('#empty').hide()
+            }
+        }
+
+        $(document).ready(function() {
+            $("#searchBar").on("keyup", function() {
+                if ($(this).val().length > 0) {
+                    $("#menu").show();
+                    filter($(this).val().trim().toLowerCase());
+                } else {
+                    $("#menu").hide();
+                }
+            })
+        });
+
+        $('#menuItems').on('click', '.dropdown-item', function(){
+            var tempStr = $(this)[0].innerHTML.split("</b>")[0].replace("<b>", "");
+            console.log(typeof tempStr);
+            var arrIdx = `dataArr[${tempStr}].idx`;
+            console.log(arrIdx);
+            document.write(`<script src="{{ url_for('channel_instance', arrayIndex=0) }}">\x3C/script>`);
+        });
+
+        function processData(str) {
+            var strToArr = str.replace("[{", "").replace("}]", "").split("}, {");
+            var finalObj = {};
+
+            var tempStr = [];
+            for (i = 0; i < strToArr.length; i++) {
+                if (strToArr[i].includes("\", \'description\': \"")) tempStr = strToArr[i].split("\", \'description\': \"");
+                else if (strToArr[i].includes("\', \'description\': \"")) tempStr = strToArr[i].split("\', \'description\': \"");
+                else if (strToArr[i].includes("\", \'description\': \'")) tempStr = strToArr[i].split("\", \'description\': \'");
+                else tempStr = strToArr[i].split("\', \'description\': \'");
+                
+                var nameStr = "";
+                if (tempStr[0].includes("\'name\': \"", "")) nameStr = tempStr[0].replace("\'name\': \"", "");
+                else nameStr = tempStr[0].replace("\'name\': \'", "");
+
+                if (tempStr[1].includes("\', \'subscriber\': ")) tempStr = tempStr[1].split("\', \'subscriber\': ");
+                else tempStr = tempStr[1].split("\", \'subscriber\': ");
+                var descripStr = tempStr[0];
+
+                tempStr = tempStr[1].split(", \'view\': ");
+                var subscriberStr = tempStr[0];
+
+                tempStr = tempStr[1].split(", \'video\': ");
+                var viewStr = tempStr[0];
+                var videoStr = tempStr[1];
+
+                finalObj[nameStr] = {"description": descripStr, "subscriber": subscriberStr, "view": viewStr, "video": videoStr, "idx": i};
+            }
+
+            return finalObj;
+        }
+    </script>
 {% endblock %}
