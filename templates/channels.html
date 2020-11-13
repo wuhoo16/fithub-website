@@ -96,9 +96,10 @@
         <meta id="channelArrayData" data-arr='{{dataArr}}'/>
         <div class="dropdown">
             <input class="form-control ml-3 w-75 dropdown-toggle" id = "searchBar" type="text" placeholder="Search"/>
-            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins">
-                <div id="menuItems"></div>
+            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
+                <div id="menuItems" style="width: 1500px;"></div>
                 <div id="empty" class="dropdown-header">No items found</div>
+                <div id="menuLinks"></div>
             </div>
         </div>
         <div class="grid-div container-fluid" id="modelGrid">
@@ -199,7 +200,6 @@
                 contents.push('<button class="dropdown-item"><b>' + name + '</b> - Total Views: ' + info.view + '</button>');
                 contents.push('<button class="dropdown-item"><b>' + name + '</b> - Videos: ' + info.video + '</button>');
             }
-            console.log(contents);
             $('#menuItems').append(contents.join(""));
 
             //Hide the row that shows no items were found
@@ -257,9 +257,10 @@
         $('#menuItems').on('click', '.dropdown-item', function(){
             var tempStr = $(this)[0].innerHTML.split("</b>")[0].replace("<b>", "");
             console.log(typeof tempStr);
-            var arrIdx = `dataArr[${tempStr}].idx`;
+            var arrIdx = dataArr[tempStr].idx;
             console.log(arrIdx);
-            document.write(`<script src="{{ url_for('channel_instance', arrayIndex=0) }}">\x3C/script>`);
+
+            window.location.href = "/channelinstance/" + arrIdx;
         });
 
         function processData(str) {
