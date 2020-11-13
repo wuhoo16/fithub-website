@@ -1388,7 +1388,7 @@ def channels(page_number):
         if request.form.get('resetHiddenField') == 'resetClicked':
             channelsFilterIsActive = False
             start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
-            return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end,
+            return render_template('channels.html', channelArray=CHANNEL_ARRAY, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         else:
             channelsFilterIsActive = True
@@ -1398,16 +1398,16 @@ def channels(page_number):
             # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
             filteredChannelsArray = filter_channels(selectedSubscriberRange, selectedTotalViewsRange, selectedVideosRange, DATABASE)
             start, end, num_pages = paginate(page_number, filteredChannelsArray)
-            return render_template('channels.html', channelArray=filteredChannelsArray, start=start, end=end,
+            return render_template('channels.html', channelArray=filteredChannelsArray, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
     elif request.method == 'GET':
         if channelsFilterIsActive:
             start, end, num_pages = paginate(page_number, filteredChannelsArray)
-            return render_template('channels.html', channelArray=filteredChannelsArray, start=start, end=end,
+            return render_template('channels.html', channelArray=filteredChannelsArray, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         else:  # render template using the global array with every Equipment object
             start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
-            return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end,
+            return render_template('channels.html', channelArray=CHANNEL_ARRAY, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
 
 
