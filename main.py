@@ -952,6 +952,38 @@ def filter_channels(selectedSubscriberRange, selectedTotalViewsRange, selectedVi
     # Return all of filtered Exercise objects
     return filteredChannels
 
+# Sorts array_to_sort based on sort_method and model, specified in app.route defs for each model page.
+def sort_model_array(array_to_sort, model, sort_method):
+    sort_dict = {}
+    if model == "Equipment":
+        sort_dict = {
+            "Name, A to Z": "name",  # lambda x: x[2],
+            "Price, low to high": "price",  # lambda x: x[3],
+            "Category, A to Z": "category",  # lambda x: x[4],
+            "Seller location, A to Z": "location",  # lambda x: x[5]
+        }
+    elif model == "Exercise":
+        sort_dict = {
+            ""
+        }
+    elif model == "Channels":
+        sort_dict = {
+
+        }
+    else:
+        return array_to_sort
+    try:
+        sort_param = sort_dict[sort_method]
+    except:
+        return array_to_sort
+    else:
+        fullList = DATABASE.equipments.find().sort(sort_param, 1)
+        returnList = []
+        for item in fullList:
+            if item in array_to_sort:
+                returnList.append(item)
+        return returnList
+
 
 # All helper methods for creating HTTP requests, cleaning, filtering, or executing APIs defined below
 # ======================================================================================================================
@@ -1346,18 +1378,33 @@ def exercises(page_number):
                                    page_number=page_number, num_pages=num_pages)
 
 
-# equipments model page
+# equipments model page, updated with sort
 @app.route("/equipment/<int:page_number>", methods=['GET', 'POST'])
 def equipments(page_number):
     global equipmentFilterIsActive
     global filteredEquipmentsArray
+    global sortedEquipmentsArray
 
     if request.method == 'POST':
+        print(request.form)  # delet this
         if request.form.get('resetHiddenField') == 'resetClicked':
             equipmentFilterIsActive = False
             start, end, num_pages = paginate(page_number, EQUIPMENT_ARRAY)
             return render_template('equipments.html', equipmentArray=EQUIPMENT_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
+
+        # segment for sorting (TODO: customize for each model page)
+        elif request.form.get('resetHiddenField') == "Sort Results":
+            sortMethod = request.form.get('sortMethod')
+            if equipmentFilterIsActive:
+                sortedEquipmentsArray = sort_model_array(filteredEquipmentsArray, "Equipment", sortMethod)
+            else:
+                sortedEquipmentsArray = sort_model_array(EQUIPMENT_ARRAY, "Equipment", sortMethod)
+            start, end, num_pages = paginate(page_number, sortedEquipmentsArray)
+            return render_template('equipments.html', equipmentArray=sortedEquipmentsArray, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+
+
         else:
             equipmentFilterIsActive = True
             selectedPriceRanges = request.form.getlist('checkedPriceRange')

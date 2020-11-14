@@ -14,6 +14,34 @@
     </div>
     <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+
+        <!-- form for sorting (TODO: MUST CUSTOMIZE FOR EACH MODEL PAGE) -->
+        <form id="sortFilterForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
+            <!-- form inputs -->
+            <input type="hidden" name="resetHiddenField" value="Sort Results">
+            <input type="hidden" id="sortMethod" name="sortMethod" value="PLACEHOLDERVALUE">
+            <!-- dropdown -->
+            <div class="dropdown">
+                <button class="filter-button btn btn-outline-light btn-primary dropdown-toggle" type="button"
+                        name="sortSelectionButton"
+                        data-toggle="dropdown" id="sortSelectionButton">
+                    Sort by
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#" onclick="submitSortForm('No Sorting')">
+                        No Sorting</a>
+                    <a class="dropdown-item" href="#" onclick="submitSortForm('Name, A to Z')">
+                        Name, A to Z</a>
+                    <a class="dropdown-item" href="#" onclick="submitSortForm('Category, A to Z')">
+                        Category, A to Z</a>
+                    <a class="dropdown-item" href="#" onclick="submitSortForm('Price, low to high')">
+                        Price, low to high</a>
+                    <a class="dropdown-item" href="#" onclick="submitSortForm('Seller location, A to Z')">
+                        Seller location, A to Z</a>
+                </div>
+            </div>
+        </form>
+
         <form id="equipmentsFilterForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
             <ul class="checkbox-menu">
                 <li class="dropdown-header">Price</li>

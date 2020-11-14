@@ -35,3 +35,9 @@ function sortDescending() {
 
 }
 
+function submitSortForm(sortParam)
+{
+    document.getElementById("sortMethod").setAttribute("value", sortParam);
+    form = document.getElementById("sortFilterForm");
+    form.submit();
+}
