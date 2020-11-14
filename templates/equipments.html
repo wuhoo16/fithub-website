@@ -69,7 +69,7 @@
         {% endfor %}
         <meta id="equipmentArrayData" data-arr='{{dataArr}}'/>
         <div class="dropdown">
-            <input class="form-control ml-3 w-75 dropdown-toggle" id = "searchBar" type="text" placeholder="Search"/>
+            <input class="input form-control ml-3 w-75 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
             <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
                 <div id="menuItems" style="width: 1500px;"></div>
                 <div id="empty" class="dropdown-header">No items found</div>
@@ -224,7 +224,12 @@
             } else {
                 $("#menu").hide();
             }
-        })
+        });
+        $("#searchBar").on("search", function() {
+            if($(this).val().length == 0) {
+                $("#menu").hide();
+            }
+        });
     });
 
     $('#menuItems').on('click', '.dropdown-item', function(){
