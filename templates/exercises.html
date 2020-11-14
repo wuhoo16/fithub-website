@@ -74,6 +74,19 @@
     
     <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
     <div id="main">
+        {% set dataArr = [] %}
+        {% for i in range(exercisesArrayLength) %}
+            {% set dataArr = dataArr.append({"name": exercisesArray[i].name, "category": exercisesArray[i].category, "equipment": exercisesArray[i].equipment|join(', '), "description": exercisesArray[i].description}) %}
+        {% endfor %}
+        <meta id="exercisesArrayData" data-arr='{{dataArr}}'/>
+        <div class="dropdown">
+            <input class="form-control ml-3 w-75 dropdown-toggle" id = "searchBar" type="text" placeholder="Search"/>
+            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
+                <div id="menuItems" style="width: 1500px;"></div>
+                <div id="empty" class="dropdown-header">No items found</div>
+                <div id="menuLinks"></div>
+            </div>
+        </div>
         <div class="grid-div container-fluid" id="modelGrid">
         {% set numFullRows = ((end + 1) - start) // 3 %}
         {% set numLeftOverChannels = ((end + 1) - start) % 3 %}
@@ -150,4 +163,106 @@
         </ul>
     </div>
 </div>
+<script>
+    let items = document.getElementsByClassName("dropdown-item");
+    var data = $('#exercisesArrayData').data().arr;
+    var dataArr = processData(data);
+
+    function buildDropDown() {
+        let contents = [];
+        for (const [name, info] of Object.entries(dataArr) ) {
+            contents.push('<button class="dropdown-item"><b>' + name + '</b></button>');
+            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Category: ' + info.category + '</button>');
+            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Equipment: ' + info.equipment + '</button>');
+            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Description: ' + info.description + '</button>');
+        }
+        $('#menuItems').append(contents.join(""));
+
+        //Hide the row that shows no items were found
+        $('#empty').hide()
+    }
+    buildDropDown();
+
+    function filter(phrase) {
+        var headers = {};
+        var hidden = 0;
+
+        for (const [name, info] of Object.entries(dataArr)) {
+            if (name.toLowerCase().includes(phrase)) {
+                headers[name.toLowerCase()] = 1;
+            } else if (("category: " + info.category.toLowerCase()).includes(phrase)) {
+                headers[name.toLowerCase() + " - category: " + info.category.toLowerCase()] = 1;
+            } else if (("equipment: " + info.equipment.toLowerCase()).includes(phrase)) {
+                headers[name.toLowerCase() + " - equipment: " + info.equipment.toLowerCase()] = 1;
+            } else if (("description: " + info.description.toLowerCase()).includes(phrase)) {
+                headers[name.toLowerCase() + " - description: " + info.description.toLowerCase()] = 1;
+            }
+        }
+
+        for (i = 0; i < items.length; i++) {
+            if (items[i].innerHTML.replace("<b>", "").replace("</b>", "").toLowerCase() in headers) {
+                $(items[i]).show();
+            } else {
+                $(items[i]).hide()
+                hidden++
+            }
+        }
+
+        //If no items match, show the empty view
+        if (hidden === items.length) {
+            $('#empty').show()
+        }
+        else {
+            $('#empty').hide()
+        }
+    }
+
+    $(document).ready(function() {
+        $("#searchBar").on("keyup", function() {
+            if ($(this).val().length > 0) {
+                $("#menu").show();
+                filter($(this).val().trim().toLowerCase());
+            } else {
+                $("#menu").hide();
+            }
+        })
+    });
+
+    $('#menuItems').on('click', '.dropdown-item', function(){
+        var tempStr = $(this)[0].innerHTML.split("</b>")[0].replace("<b>", "");
+        var arrIdx = dataArr[tempStr].idx;
+        $("#searchBar").val("");
+
+        window.location.href = "/exerciseinstance/" + arrIdx;
+    });
+
+    function processData(str) {
+        var strToArr = str.replace("[{", "").replace("}]", "").split("}, {");
+        var finalObj = {};
+
+        var tempStr = [];
+        for (i = 0; i < strToArr.length; i++) {
+            tempStr = strToArr[i].split("\', \'category\': \'");
+            
+            var nameStr = "";
+            nameStr = tempStr[0].replace("\'name\': \'", "");
+
+            tempStr = tempStr[1].split("\', \'equipment\': \'");
+            var categoryStr = tempStr[0];
+
+            if (tempStr[1].includes("\', \'description\': \"")) {
+                tempStr = tempStr[1].split("\', \'description\': \"");
+            } else {
+                tempStr = tempStr[1].split("\', \'description\': \'");
+            }
+            
+            var equipmentStr = tempStr[0];
+            var descriptionStr = tempStr[1];
+
+            finalObj[nameStr] = {"category": categoryStr, "equipment": equipmentStr, "description": descriptionStr, "idx": i};
+        }
+
+        return finalObj;
+    }
+</script>
 {% endblock %}

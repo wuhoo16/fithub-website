@@ -256,9 +256,8 @@
 
         $('#menuItems').on('click', '.dropdown-item', function(){
             var tempStr = $(this)[0].innerHTML.split("</b>")[0].replace("<b>", "");
-            console.log(typeof tempStr);
             var arrIdx = dataArr[tempStr].idx;
-            console.log(arrIdx);
+            $("#searchBar").val("");
 
             window.location.href = "/channelinstance/" + arrIdx;
         });
