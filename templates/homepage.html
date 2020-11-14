@@ -1,7 +1,11 @@
-{% extends 'base.html' %} {% block head %}
-<title>Fithub Homepage</title>
+{% extends 'base.html' %}
 
-{% endblock %} {% block body %}
+{% block head %}
+<title>Fithub Homepage</title>
+<script type="text/javascript" src="/static/homepage.js"></script>
+{% endblock %}
+
+{% block body %}
 <div id="homepageCarousel" class="carousel slide" data-ride="carousel">
   <ol class="carousel-indicators">
     <li data-target="#homepageCarousel" data-slide-to="0" class="active"></li>
@@ -53,19 +57,34 @@
     </div>
   </div>
   <a
-    class="carousel-control-prev homepage-controls"
+    class="carousel-control-prev"
     href="#homepageCarousel"
+    role="button"
     data-slide="prev"
   >
     <span class="carousel-control-prev-icon"></span>
   </a>
 
   <a
-    class="carousel-control-next homepage-controls"
+    class="carousel-control-next"
     href="#homepageCarousel"
+    role="button"
     data-slide="next"
   >
     <span class="carousel-control-next-icon"></span>
   </a>
 </div>
+
+<hr id='homepageHorizontalDivider'>
+
+<video controls preload playsinline autoplay muted loop id="hypeVideo" width="100vw" height="100vh">
+  <source src="/../static/FithubHypeVideoEdited.mp4" type="video/mp4">
+  <source src="/../static/FithubHypeVideoEdited.webm" type="video/webm">
+</video>
+
+<!-- Invoke the javascript function to clear the local storage and sync up with the current flag states-->
+<!-- This ensures that when the server restarts, all checkbox states match up with the original unfiltered arrays-->
+<script>
+  clearLocalStorage({{ exerciseFilterIsActive }}, {{ equipmentFilterIsActive }}, {{ channelsFilterIsActive }});
+</script>
 {% endblock %}

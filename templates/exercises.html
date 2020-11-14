@@ -2,6 +2,7 @@
 
 {% block head %}
     <title>Exercises Model Page</title>
+    <script type="text/javascript" src="/static/exercises_filter_verification.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -16,48 +17,49 @@
             <ul class="checkbox-menu">
                 <li class="dropdown-header">Category</li>
                 <li>
-                    <label><input type="checkbox" name='checkedExerciseCategories' value="Abs">   Abs </label>
+                    <label><input type="checkbox" id='exercisesOption1' name='checkedExerciseCategories' value="Abs">   Abs </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedExerciseCategories' value="Arms"> Arms </label>
+                    <label><input type="checkbox" id='exercisesOption2' name='checkedExerciseCategories' value="Arms"> Arms </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedExerciseCategories' value="Back"> Back </label>
+                    <label><input type="checkbox" id='exercisesOption3' name='checkedExerciseCategories' value="Back"> Back </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedExerciseCategories' value="Calves"> Calves </label>
+                    <label><input type="checkbox" id='exercisesOption4' name='checkedExerciseCategories' value="Calves"> Calves </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedExerciseCategories' value="Chest"> Chest </label>
+                    <label><input type="checkbox" id='exercisesOption5' name='checkedExerciseCategories' value="Chest"> Chest </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedExerciseCategories' value="Legs"> Legs </label>
+                    <label><input type="checkbox" id='exercisesOption6' name='checkedExerciseCategories' value="Legs"> Legs </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedExerciseCategories' value="Shoulders"> Shoulders </label>
+                    <label><input type="checkbox" id='exercisesOption7' name='checkedExerciseCategories' value="Shoulders"> Shoulders </label>
                 </li>
                 <li class="dropdown-header">Equipment</li>
                 <li>
-                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Barbell"> Barbell </label>
+                    <label><input type="checkbox"id='exercisesOption8' name='checkedEquipmentCategories' value="Barbell"> Barbell </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Bench"> Bench </label>
+                    <label><input type="checkbox" id='exercisesOption9' name='checkedEquipmentCategories' value="Bench"> Bench </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Dumbbell"> Dumbbell </label>
+                    <label><input type="checkbox" id='exercisesOption10' name='checkedEquipmentCategories' value="Dumbbell"> Dumbbell </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Exercise mat"> Exercise Mat </label>
+                    <label><input type="checkbox" id='exercisesOption11' name='checkedEquipmentCategories' value="Exercise mat"> Exercise Mat </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedEquipmentCategories' value="EZ-Bar"> EZ-Bar </label>
+                    <label><input type="checkbox" id='exercisesOption12' name='checkedEquipmentCategories' value="EZ-Bar"> EZ-Bar </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
+                    <label><input type="checkbox" id='exercisesOption13' name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
                 </li>
                 <li style="text-align: center; margin-top: 1rem;">
-                    <button class="reset-button btn btn-outline-light" type="submit" name="Reset" value="clicked">Reset</button>
-                    <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxesAndSubmit('exercisesFilterForm')">Filter</button>
+                    <input type="hidden" id='exercisesResetHiddenField' name='resetHiddenField' value="">
+                    <button class="reset-button btn btn-outline-light" type="button" name="Reset" onclick="resetCheckboxState('exercisesFilterForm', 'exercisesResetHiddenField')">Reset</button>
+                    <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxes('exercisesFilterForm')">Filter</button>
                 </li>
             </ul>
         </form>

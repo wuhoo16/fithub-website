@@ -117,10 +117,19 @@ body {
   height: 100%;
   width: 100%;
   object-fit: cover;
+
+.carousel-inner > .item {
+  width: 100%;
 }
-.homepage-controls {
-  margin-top: auto;
+
+#homepageWelcomeMessage {
+  text-align: center;
 }
+
+.carousel-control-next, .carousel-control-prev {
+  z-index: 10;
+}
+
 .carousel-caption {
   position: absolute;
   top: 38%;
@@ -146,7 +155,28 @@ body {
   border-width: medium;
   border-radius: 0;
   font-size: 1.1rem;
-} 
+}
+
+/* HOMEPAGE HYPE VIDEO */
+#homepageHorizontalDivider {
+    width: 90%;
+    color: #A8A8A8;
+    margin-top: 90px;
+    border-top: 1px solid #A8A8A8;
+}
+
+#hypeVideo {
+    width: 90vw;
+    height: 100vh;
+    object-fit: cover;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+#hypeVideo:focus {
+    outline: none;
+}
 
 /* INSTANCE PAGES */
 .exercise-instance-div {
@@ -414,4 +444,13 @@ body {
 @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
+}
+
+.dropdown {
+  margin: 20px;
+}
+
+.dropdown-menu {
+  max-height: 20rem;
+  overflow-y: auto;
 }

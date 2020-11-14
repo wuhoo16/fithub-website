@@ -23,6 +23,25 @@ EXERCISE_DESCRIPTION = {
     'Lateral Raises': "Stand or sit with a dumbbell in each hand at your sides. Keep your back straight, brace your core, and then slowly lift the weights out to the side until your arms are parallel with the floor, with the elbow slightly bent. Then lower them back down, again in measured fashion.",
     'Front Squats': "Begin with the barbell across the front side of your shoulders. Place your fingertips under the barbell just outside of your shoulders and drive your elbows up. Keeping your chest up and core tight, bend at your hips and knees to lower into a squat until your thighs are parallel to the ground. Straighten your hips and knees to drive up to the starting position."
 }
+EXERCISE_GIF_MAPPER = {
+    '2 Handed Kettlebell Swing': '/../static/kettlebell_gif.gif',
+    'Bench Press': '/../static/bench_press_gif.gif',
+    'Barbell Ab Rollout': '/../static/barbell_ab_rollout_gif.gif',
+    'Barbell Lunges': '/../static/barbell_lunges_gif.gif',
+    'Biceps Curls With Barbell': '/../static/biceps_curls_with_barbell_gif.gif',
+    'Biceps Curls With Dumbbell': '/../static/biceps_curls_with_dumbbell_gif.gif',
+    'Bench Press Narrow Grip': '/../static/bench_press_narrow_grip_gif.gif',
+    'Benchpress Dumbbells': '/../static/benchpress_dumbbells_gif.gif',
+    'Bent High Pulls': '/../static/bent_high_pulls_gif.gif',
+    'Bentover Dumbbell Rows': '/../static/bentover_dumbbell_rows_gif.gif',
+    'Bent Over Rowing': '/../static/bent_over_rowing_gif.gif',
+    'Bent Over Rowing Reverse': '/../static/bent_over_rowing_reverse_gif.gif',
+    'Squats': '/../static/squats_gif.gif',
+    'Standing Bicep Curl': '/../static/standing_bicep_curl_gif.gif',
+    'Stiff-Legged Deadlift': '/../static/stiff_legged_deadlift_gif.gif',
+    'Turkish Get-Up': '/../static/turkish_getup_gif.gif',
+    'Weighted Step': '/../static/weighted_step_gif.gif'
+}
 PLANK_REMOVED_FLAG = False
 
 EQUIPMENT_BLACKLIST = {'NEW CAP Barbell Standard Barbell Weight Lifting Exercise Bar 5 foot ft - NEW',
@@ -149,10 +168,10 @@ class Equipment:
                  equipmentCategory):
         self.id = itemId
         self.arrayIndex = arrayIndex
-        self.name = title  # x[2]
-        self.price = value  # x[3]
-        self.category = categoryName  # x[4]
-        self.location = location  # x[5]
+        self.name = title
+        self.price = value
+        self.category = categoryName
+        self.location = location
         self.replacePictureFlag = replacePictureFlag
         self.picture = galleryURL
         self.linkToItem = viewItemURL
@@ -337,8 +356,7 @@ def initialize_mongoDB_exercises_collection(db):
                     if result["id"] == e:
                         equipmentName = result["name"]
                         equipment_list.append(equipmentName)
-            if len(
-                    equipment_list) == 0:  # default equipment is Exercise mat if there is no equipment attribute returned by API
+            if len(equipment_list) == 0:  # default equipment is Exercise mat if there is no equipment attribute returned by API
                 equipment_list.append(DEFAULT_EXERCISE_MAT_STRING)
 
             # get image URL using exercise
@@ -349,6 +367,10 @@ def initialize_mongoDB_exercises_collection(db):
                 if result["exercise"] == exerciseID:
                     images.append(result["image"])
             images.extend(get_google_images(query_template.format(x["name"])))
+            # Replace some images with gifs
+            if len(images) > 0:
+                if x['name'] in EXERCISE_GIF_MAPPER:
+                    images[0] = EXERCISE_GIF_MAPPER[x['name']]
 
             # get exercise comment using exercise
             comments = []
@@ -814,9 +836,9 @@ def get_related_objects_for_channel_instance(id, db):
     # Use the first related exercise object to determine what equipmentCategory to use when querying equipments collection
     topExerciseDoc = db.exercises.find_one({'_id': relatedExercises[0].id})
     if topExerciseDoc:
-        equipmentCategory = topExerciseDoc['equipment']
+        equipmentCategory = topExerciseDoc['equipment'][0]  # Select the first equipment term in the equipment array attribute to use
 
-    # Query the equipment collection for all instances with the same indirect equipmentCategory
+    # Query the equipment collection for all instances with the same indirect equipmentCategory term
     relatedEquipmentsCursor = db.equipments.find({'equipmentCategory': equipmentCategory})
     for relatedEquipmentDoc in relatedEquipmentsCursor:
         relatedEquipments.append(EQUIPMENT_ARRAY[relatedEquipmentDoc['arrayIndex']])
@@ -866,28 +888,6 @@ def filter_exercises(selectedExerciseCategories, selectedEquipmentCategories, db
     return filteredExercises
 
 
-def sort_array(arrayToSort, typeOfArray, sortBy):
-    sortDict = {}
-    if typeOfArray == 'Equipment':
-        sortDict = {
-            'Name, A to Z': lambda x: x[2],
-            'Price, low to high': lambda x: x[3],
-            'Category, A to Z': lambda x: x[4],
-            'Seller location, A to Z': lambda x: x[5]
-        }
-
-    elif typeOfArray == 'Exercise':
-        sortDict = {}
-
-    elif typeOfArray == 'Channel':
-        sortDict = {}
-
-    if sortBy in sortDict:
-        arrayToSort = sorted(arrayToSort, key=sortDict.get(sortBy))
-
-    return arrayToSort
-
-
 def filter_equipments(selectedPriceRanges, selectedEquipmentCategories, db):
     """
     Pass in the selected price ranges and categories to filter on and return all of the filtered Exercise objects in a Python list.
@@ -903,8 +903,7 @@ def filter_equipments(selectedPriceRanges, selectedEquipmentCategories, db):
         priceRangeList = priceString.split(" ")
         # print(priceRangeList[0])
         # print(priceRangeList[1])
-        equipmentCursor = db.equipments.find(
-            {'price': {'$gte': float(priceRangeList[0]), '$lt': float(priceRangeList[1])}})
+        equipmentCursor = db.equipments.find({'price': {'$gte': float(priceRangeList[0]), '$lt': float(priceRangeList[1])} })
         for equipmentDoc in equipmentCursor:
             filteredEquipments.append(EQUIPMENT_ARRAY[equipmentDoc['arrayIndex']])
 
@@ -932,24 +931,21 @@ def filter_channels(selectedSubscriberRange, selectedTotalViewsRange, selectedVi
     # Query the entire exercises collection on all selected ranges and append matching Exercise objects
     for subscriberRangeString in selectedSubscriberRange:
         subscriberRangeList = subscriberRangeString.split(" ")
-        channelsCursor = db.channels.find(
-            {'subscriberCount': {'$gte': int(subscriberRangeList[0]), '$lt': int(subscriberRangeList[1])}})
+        channelsCursor = db.channels.find({'subscriberCount': {'$gte': int(subscriberRangeList[0]), '$lt': int(subscriberRangeList[1])} })
         for channelDoc in channelsCursor:
             filteredChannels.append(CHANNEL_ARRAY[channelDoc['arrayIndex']])
 
     # Query the entire exercises collection on selected ranges and append matching Exercise objects
     for totalViewsString in selectedTotalViewsRange:
         totalViewsList = totalViewsString.split(" ")
-        channelsCursor = db.channels.find(
-            {'viewCount': {'$gte': int(totalViewsList[0]), '$lt': int(totalViewsList[1])}})
+        channelsCursor = db.channels.find({'viewCount': {'$gte': int(totalViewsList[0]), '$lt': int(totalViewsList[1])} })
         for channelDoc in channelsCursor:
             filteredChannels.append(CHANNEL_ARRAY[channelDoc['arrayIndex']])
 
     # Query the entire exercises collection on each of the selected ranges and append matching Exercise objects
     for videoRangeString in selectedVideosRange:
         videoRangeList = videoRangeString.split(" ")
-        channelsCursor = db.channels.find(
-            {'videoCount': {'$gte': int(videoRangeList[0]), '$lt': int(videoRangeList[1])}})
+        channelsCursor = db.channels.find({'videoCount': {'$gte': int(videoRangeList[0]), '$lt': int(videoRangeList[1])} })
         for channelDoc in channelsCursor:
             filteredChannels.append(CHANNEL_ARRAY[channelDoc['arrayIndex']])
 
@@ -1302,13 +1298,19 @@ app = Flask("__name__")
 def index():
     # Initialize all 3 global arrays from database
     global EXERCISES_ARRAY, EQUIPMENT_ARRAY, CHANNEL_ARRAY
+    global exerciseFilterIsActive, equipmentFilterIsActive, channelsFilterIsActive
     if len(EXERCISES_ARRAY) == 0:
         EXERCISES_ARRAY = load_exercises_from_db(DATABASE)
+        exerciseFilterIsActive = False
     if len(EQUIPMENT_ARRAY) == 0:
         EQUIPMENT_ARRAY = load_equipments_from_db(DATABASE)
+        equipmentFilterIsActive = False
     if len(CHANNEL_ARRAY) == 0:
         CHANNEL_ARRAY = load_channels_from_db(DATABASE)
-    return render_template('homepage.html')
+        channelsFilterIsActive = False
+    return render_template('homepage.html', exerciseFilterIsActive=str.lower(str(exerciseFilterIsActive)),
+                           equipmentFilterIsActive=str.lower(str(equipmentFilterIsActive)),
+                           channelsFilterIsActive=str.lower(str(channelsFilterIsActive)))
 
 
 # exercises model page
@@ -1318,7 +1320,8 @@ def exercises(page_number):
     global filteredExercisesArray
 
     if request.method == 'POST':
-        if request.form.get('Reset') == 'clicked':
+        # print(f'The filter form value posted for hidden field is: {request.form.get("resetHiddenField")}')
+        if request.form.get('resetHiddenField') == 'resetClicked':
             exerciseFilterIsActive = False
             start, end, num_pages = paginate(page_number, EXERCISES_ARRAY)
             return render_template('exercises.html', exercisesArray=EXERCISES_ARRAY, start=start, end=end,
@@ -1350,7 +1353,7 @@ def equipments(page_number):
     global filteredEquipmentsArray
 
     if request.method == 'POST':
-        if request.form.get('Reset') == 'clicked':
+        if request.form.get('resetHiddenField') == 'resetClicked':
             equipmentFilterIsActive = False
             start, end, num_pages = paginate(page_number, EQUIPMENT_ARRAY)
             return render_template('equipments.html', equipmentArray=EQUIPMENT_ARRAY, start=start, end=end,
@@ -1362,11 +1365,6 @@ def equipments(page_number):
             # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
             filteredEquipmentsArray = filter_equipments(selectedPriceRanges, selectedEquipmentCategories, DATABASE)
             start, end, num_pages = paginate(page_number, filteredEquipmentsArray)
-
-            # sorting filtered equipment array based on sortSelectionButton's value
-            filteredEquipmentsArray = sort_array(filteredEquipmentsArray, 'Equipment',
-                                                 request.form.get('sortSelectionButton').text)
-
             return render_template('equipments.html', equipmentArray=filteredEquipmentsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
     elif request.method == 'GET':
@@ -1387,10 +1385,10 @@ def channels(page_number):
     global filteredChannelsArray
 
     if request.method == 'POST':
-        if request.form.get('Reset') == 'clicked':
+        if request.form.get('resetHiddenField') == 'resetClicked':
             channelsFilterIsActive = False
             start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
-            return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end,
+            return render_template('channels.html', channelArray=CHANNEL_ARRAY, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         else:
             channelsFilterIsActive = True
@@ -1398,19 +1396,18 @@ def channels(page_number):
             selectedTotalViewsRange = request.form.getlist('checkedTotalViewsRange')
             selectedVideosRange = request.form.getlist('checkedVideosRange')
             # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
-            filteredChannelsArray = filter_channels(selectedSubscriberRange, selectedTotalViewsRange,
-                                                    selectedVideosRange, DATABASE)
+            filteredChannelsArray = filter_channels(selectedSubscriberRange, selectedTotalViewsRange, selectedVideosRange, DATABASE)
             start, end, num_pages = paginate(page_number, filteredChannelsArray)
-            return render_template('channels.html', channelArray=filteredChannelsArray, start=start, end=end,
+            return render_template('channels.html', channelArray=filteredChannelsArray, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
     elif request.method == 'GET':
         if channelsFilterIsActive:
             start, end, num_pages = paginate(page_number, filteredChannelsArray)
-            return render_template('channels.html', channelArray=filteredChannelsArray, start=start, end=end,
+            return render_template('channels.html', channelArray=filteredChannelsArray, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         else:  # render template using the global array with every Equipment object
             start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
-            return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end,
+            return render_template('channels.html', channelArray=CHANNEL_ARRAY, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
 
 
