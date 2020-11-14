@@ -343,7 +343,7 @@ body {
   width: 0; /* 0 width - change this with JavaScript */
   position: fixed; 
   z-index: 1; /* Stay on top */
-  top: 4.75rem; /* Stay at the top */
+  top: 75px;
   left: 0;
   /* margin-left: 0; */
   background-color: #111; /* Black*/
@@ -441,10 +441,10 @@ body {
 }
 
 /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
-@media screen and (max-height: 450px) {
+/* @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
   .sidenav a {font-size: 18px;}
-}
+} */
 
 .dropdown {
   margin: 20px;
