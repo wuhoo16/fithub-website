@@ -117,6 +117,13 @@ body {
   height: 100%;
   width: 100%;
   object-fit: cover;
+
+.carousel-inner > .item {
+  width: 100%;
+}
+
+#homepageWelcomeMessage {
+  text-align: center;
 }
 
 .carousel-control-next, .carousel-control-prev {
@@ -436,5 +443,14 @@ body {
 /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
 /* @media screen and (max-height: 450px) {
   .sidenav {padding-top: 15px;}
-  .sidenav label {font-size: 18px;}
+  .sidenav a {font-size: 18px;}
 } */
+
+.dropdown {
+  margin: 20px;
+}
+
+.dropdown-menu {
+  max-height: 20rem;
+  overflow-y: auto;
+}
