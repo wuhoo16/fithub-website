@@ -77,14 +77,11 @@
     </div>
 
     <!-- Use any element to open the sidenav -->
-    <div>
+    <div class="filtering-section">
         <button class="filter-open-button" onclick="openNav()">Filter ></button>
         <a href="#"><img class="ascending-button" src="/static/arrow.png" alt="Ascending" onclick="sortAscending();"></a>
         <a href="#"><img class="descending-button" src="/static/arrow.png" alt="Descending" onclick="sortDescending();"></a>
-    </div>
-
-    <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
-    <div id="main">
+        <!-- Search Bar -->
         {% set dataArr = [] %}
         {% for i in range(channelArrayLength) %}
             {% if channelArray[i].description|length == 0 %}
@@ -94,13 +91,17 @@
             {% endif %}
         {% endfor %}
         <meta id="channelArrayData" data-arr='{{dataArr}}'/>
-        <div class="dropdown">
-            <input class="form-control ml-3 w-75 dropdown-toggle" id = "searchBar" type="text" placeholder="Search"/>
+        <div class="dropdown d-inline-block">
+            <input class="form-control ml-3 dropdown-toggle" id = "searchBar" type="text" placeholder="Search"/>
             <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins">
                 <div id="menuItems"></div>
                 <div id="empty" class="dropdown-header">No items found</div>
             </div>
         </div>
+    </div>
+
+    <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
+    <div id="main">
         <div class="grid-div container-fluid" id="modelGrid">
         {% set numFullRows = ((end + 1) - start) // 3 %}
         {% set numLeftOverChannels = ((end + 1) - start) % 3 %}
