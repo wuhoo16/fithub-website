@@ -2,7 +2,7 @@
 
 {% block head %}
     <title>Youtube Channel Model Page</title>
-    <script type="text/javascript" src="/static/channels_filter_verification.js"></script>
+    <script type="text/javascript" src="/static/channels.js"></script>
 {% endblock %}
 
 
@@ -79,8 +79,19 @@
     <!-- Use any element to open the sidenav -->
     <div class="filtering-section">
         <button class="filter-open-button" onclick="openNav()">Filter ></button>
-        <a href="#"><img class="ascending-button" src="/static/arrow.png" alt="Ascending" onclick="sortAscending();"></a>
-        <a href="#"><img class="descending-button" src="/static/arrow.png" alt="Descending" onclick="sortDescending();"></a>
+        <form id="channelsSortForm" action="{{ url_for('channels', page_number=1) }}" method="post">
+            <label for="channelsSortCriteriaMenu" id="channelsSortMenuLabel">Sort by: </label>
+            <select id="channelsSortCriteriaMenu" name="channelsSortCriteriaMenu">
+                <option value="name">Name (default)</option>
+                <option value="subscriberCount">Subscriber Count</option>
+                <option value="viewCount">View Count</option>
+                <option value="videoCount">Video Count</option>
+
+            </select>
+            <input type="hidden" id='channelsSortingHiddenField' name='channelsSortingHiddenField' value="">
+            <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'ascending');">
+            <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'descending');">
+        </form>
         <!-- Search Bar -->
         {% set dataArr = [] %}
         {% for i in range(channelArrayLength) %}

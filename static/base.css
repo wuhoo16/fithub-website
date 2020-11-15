@@ -35,6 +35,11 @@ body {
 }
 
 /* MODEL PAGES */
+#exercisesSortMenuLabel {
+    color: whitesmoke;
+    font-weight: normal;
+}
+
 .exercise-div {
   padding-top: 6rem;
   background: linear-gradient(0deg, rgb(255 255 255 / 23%), rgb(255 255 255 / 23%)), url(jumbotron2.png);
@@ -423,17 +428,30 @@ body {
   margin-top: 1rem;
 }
 
+
 .ascending-button {
-  transform: scaleY(-1);
   max-width: 2rem;
+  max-height: 2rem;
   margin-left: 2rem;
-  filter: invert(95%);
+  outline: 1px solid black;
+  transition: 0.5s;
+}
+.ascending-button:hover {
+    box-shadow: 0px 5px 5px black;
+    transform:scale(1.2,1.2);
 }
 .descending-button {
   max-width: 2rem;
+  max-height: 2rem;
   margin-left: 1.25rem;
-  filter: invert(95%);
+  outline: 1px solid black;
+  transition: 0.5s;
 }
+.descending-button:hover {
+    box-shadow: 0px 5px 5px black;
+    transform:scale(1.2,1.2);
+}
+
 /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
 #main {
   transition: margin-left .5s;

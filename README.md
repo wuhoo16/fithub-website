@@ -52,6 +52,10 @@ Website Link: https://imbdproject.wn.r.appspot.com/
         - Adding javascript code to prevent bad form submission and persist checkbox states: Actual Completion Hours: 8
         - Checking images on the exercises model page for mismatch on equipment usage + replacing with relevant GIFs: Estimated Completion Hours: 3
         - Checking images on the exercises model page for mismatch on equipment usage + replacing with relevant GIFs: Actual Completion Hours: 4
+        - Using Adobe Premier to edit hype video, formatting video on HTML page, adding Javascript to handle autoplay/looping logic: Estimated Completion Hours: 2
+        - Using Adobe Premier to edit hype video, formatting video on HTML page, adding Javascript to handle autoplay/looping logic: Actual Completion Hours: 4
+        - Sorting Implementation for all 3 model pages: Estimated Completion Hours: 3
+        - Sorting Implementation for all 3 model pages: Actual Completion Hours: 3
   
   Kaylee N Trevino
    - EID: knt658
