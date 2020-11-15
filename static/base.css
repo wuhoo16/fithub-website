@@ -119,6 +119,13 @@ body {
   width: 100%;
   object-fit: cover;
 }
+
+.carousel-inner > .item {
+  width: 100%;
+}
+#homepageWelcomeMessage {
+  text-align: center;
+}
 .carousel-control-next,
 .carousel-control-prev {
   z-index: 10;
@@ -149,7 +156,6 @@ body {
   border-radius: 0;
   font-size: 1.1rem;
 }
-
 /* HOMEPAGE HYPE VIDEO */
 #homepageHorizontalDivider {
   width: 90%;
@@ -157,7 +163,6 @@ body {
   margin-top: 90px;
   border-top: 1px solid #a8a8a8;
 }
-
 #hypeVideo {
   width: 90vw;
   height: 100vh;
@@ -166,11 +171,9 @@ body {
   margin-right: auto;
   display: block;
 }
-
 #hypeVideo:focus {
   outline: none;
 }
-
 /* INSTANCE PAGES */
 .exercise-instance-div {
   padding-top: 6rem;
@@ -338,7 +341,7 @@ body {
   width: 0; /* 0 width - change this with JavaScript */
   position: fixed;
   z-index: 1; /* Stay on top */
-  top: 4.75rem; /* Stay at the top */
+  top: 75px;
   left: 0;
   /* margin-left: 0; */
   background-color: #111; /* Black*/
@@ -428,20 +431,26 @@ body {
   padding-top: 0px;
 }
 /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
-@media screen and (max-height: 450px) {
-  .sidenav {
-    padding-top: 15px;
-  }
-  .sidenav a {
-    font-size: 18px;
-  }
-}
-
+/* @media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+} */
 .dropdown {
-  margin: 10px;
+  margin: 20px;
 }
 
 .dropdown-menu {
-  max-height: 20rem;
+  max-height: 15rem;
   overflow-y: auto;
+}
+
+#searchBar {
+  width: 15rem;
+  -webkit-transition: width 0.25s ease-in-out;
+  transition: width 0.25s ease-in-out;
+}
+
+/* When the input field gets focus, change its width to 100% */
+#searchBar:focus {
+  width: 35rem;
 }
