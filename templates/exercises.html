@@ -2,7 +2,7 @@
 
 {% block head %}
     <title>Exercises Model Page</title>
-    <script type="text/javascript" src="/static/exercises_filter_verification.js"></script>
+    <script type="text/javascript" src="/static/exercises.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -11,65 +11,75 @@
         <h1>Achieve your fitness goals</h1>
         <p class=modelDescription>Try out 100+ different exercises. </p>
     </div>
-    <div id="mySidenav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <form id="exercisesFilterForm" action="{{ url_for('exercises', page_number=1) }}" method="post">
-            <ul class="checkbox-menu">
-                <li class="dropdown-header">Category</li>
-                <li>
-                    <label><input type="checkbox" id='exercisesOption1' name='checkedExerciseCategories' value="Abs">   Abs </label>
-                </li>
-                <li>
-                    <label><input type="checkbox" id='exercisesOption2' name='checkedExerciseCategories' value="Arms"> Arms </label>
-                </li>
-                <li>
-                    <label><input type="checkbox" id='exercisesOption3' name='checkedExerciseCategories' value="Back"> Back </label>
-                </li>
-                <li>
-                    <label><input type="checkbox" id='exercisesOption4' name='checkedExerciseCategories' value="Calves"> Calves </label>
-                </li>
-                <li>
-                    <label><input type="checkbox" id='exercisesOption5' name='checkedExerciseCategories' value="Chest"> Chest </label>
-                </li>
-                <li>
-                    <label><input type="checkbox" id='exercisesOption6' name='checkedExerciseCategories' value="Legs"> Legs </label>
-                </li>
-                <li>
-                    <label><input type="checkbox" id='exercisesOption7' name='checkedExerciseCategories' value="Shoulders"> Shoulders </label>
-                </li>
-                <li class="dropdown-header">Equipment</li>
-                <li>
-                    <label><input type="checkbox"id='exercisesOption8' name='checkedEquipmentCategories' value="Barbell"> Barbell </label>
-                </li>
-                <li>
-                    <label><input type="checkbox" id='exercisesOption9' name='checkedEquipmentCategories' value="Bench"> Bench </label>
-                </li>
-                <li>
-                    <label><input type="checkbox" id='exercisesOption10' name='checkedEquipmentCategories' value="Dumbbell"> Dumbbell </label>
-                </li>
-                <li>
-                    <label><input type="checkbox" id='exercisesOption11' name='checkedEquipmentCategories' value="Exercise mat"> Exercise Mat </label>
-                </li>
-                <li>
-                    <label><input type="checkbox" id='exercisesOption12' name='checkedEquipmentCategories' value="EZ-Bar"> EZ-Bar </label>
-                </li>
-                <li>
-                    <label><input type="checkbox" id='exercisesOption13' name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
-                </li>
-                <li style="text-align: center; margin-top: 1rem;">
-                    <input type="hidden" id='exercisesResetHiddenField' name='resetHiddenField' value="">
-                    <button class="reset-button btn btn-outline-light" type="button" name="Reset" onclick="resetCheckboxState('exercisesFilterForm', 'exercisesResetHiddenField')">Reset</button>
-                    <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxes('exercisesFilterForm')">Filter</button>
-                </li>
-            </ul>
-        </form>
+    <div id="sidebar-container">
+        <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <form id="exercisesFilterForm" action="{{ url_for('exercises', page_number=1) }}" method="post">
+                <ul class="checkbox-menu">
+                    <li class="dropdown-header">Category</li>
+                    <li>
+                        <label><input type="checkbox" id='exercisesOption1' name='checkedExerciseCategories' value="Abs">   Abs </label>
+                    </li>
+                    <li>
+                        <label><input type="checkbox" id='exercisesOption2' name='checkedExerciseCategories' value="Arms"> Arms </label>
+                    </li>
+                    <li>
+                        <label><input type="checkbox" id='exercisesOption3' name='checkedExerciseCategories' value="Back"> Back </label>
+                    </li>
+                    <li>
+                        <label><input type="checkbox" id='exercisesOption4' name='checkedExerciseCategories' value="Calves"> Calves </label>
+                    </li>
+                    <li>
+                        <label><input type="checkbox" id='exercisesOption5' name='checkedExerciseCategories' value="Chest"> Chest </label>
+                    </li>
+                    <li>
+                        <label><input type="checkbox" id='exercisesOption6' name='checkedExerciseCategories' value="Legs"> Legs </label>
+                    </li>
+                    <li>
+                        <label><input type="checkbox" id='exercisesOption7' name='checkedExerciseCategories' value="Shoulders"> Shoulders </label>
+                    </li>
+                    <li class="dropdown-header">Equipment</li>
+                    <li>
+                        <label><input type="checkbox"id='exercisesOption8' name='checkedEquipmentCategories' value="Barbell"> Barbell </label>
+                    </li>
+                    <li>
+                        <label><input type="checkbox" id='exercisesOption9' name='checkedEquipmentCategories' value="Bench"> Bench </label>
+                    </li>
+                    <li>
+                        <label><input type="checkbox" id='exercisesOption10' name='checkedEquipmentCategories' value="Dumbbell"> Dumbbell </label>
+                    </li>
+                    <li>
+                        <label><input type="checkbox" id='exercisesOption11' name='checkedEquipmentCategories' value="Exercise mat"> Exercise Mat </label>
+                    </li>
+                    <li>
+                        <label><input type="checkbox" id='exercisesOption12' name='checkedEquipmentCategories' value="EZ-Bar"> EZ-Bar </label>
+                    </li>
+                    <li>
+                        <label><input type="checkbox" id='exercisesOption13' name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
+                    </li>
+                    <li style="text-align: center; margin-top: 1rem; margin-bottom: 110px;">
+                        <input type="hidden" id='exercisesResetHiddenField' name='resetHiddenField' value="">
+                        <button class="reset-button btn btn-outline-light" type="button" name="Reset" onclick="resetCheckboxState('exercisesFilterForm', 'exercisesResetHiddenField')">Reset</button>
+                        <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxes('exercisesFilterForm')">Filter</button>
+                    </li>
+                </ul>
+            </form>
+        </div>
     </div>
-    
     <!-- Use any element to open the sidenav -->
     <div class="filtering-section">
         <button class="filter-open-button" onclick="openNav()">Filter ></button>
-        <a href="#"><img class="ascending-button" src="/static/arrow.png" alt="Ascending" onclick="sortAscending();"></a>
-        <a href="#"><img class="descending-button" src="/static/arrow.png" alt="Descending" onclick="sortDescending();"></a>
+        <form id="exercisesSortForm" action="{{ url_for('exercises', page_number=1) }}" method="post">
+            <label for="exercisesSortCriteriaMenu" id="exercisesSortMenuLabel">Sort by: </label>
+            <select id="exercisesSortCriteriaMenu" name="exercisesSortCriteriaMenu">
+                <option value="name">Name (default)</option>
+                <option value="category">Category</option>
+                <option value="equipment">Equipment</option>
+            </select>
+            <input type="hidden" id='exercisesSortingHiddenField' name='exercisesSortingHiddenField' value="">
+            <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" onclick="submitSortForm('exercisesSortForm', 'exercisesSortingHiddenField', 'ascending');">
+            <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" onclick="submitSortForm('exercisesSortForm', 'exercisesSortingHiddenField', 'descending');">
+        </form>
     </div>
     
     <div id="main">
