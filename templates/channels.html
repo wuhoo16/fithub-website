@@ -86,12 +86,14 @@
                 <option value="subscriberCount">Subscriber Count</option>
                 <option value="viewCount">View Count</option>
                 <option value="videoCount">Video Count</option>
-
-            </select>
+              </select>
             <input type="hidden" id='channelsSortingHiddenField' name='channelsSortingHiddenField' value="">
             <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'ascending');">
             <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'descending');">
         </form>
+    </div>
+
+    <div id="main">
         <!-- Search Bar -->
         {% set dataArr = [] %}
         {% for i in range(channelArrayLength) %}
@@ -103,10 +105,11 @@
         {% endfor %}
         <meta id="channelArrayData" data-arr='{{dataArr}}'/>
         <div class="dropdown d-inline-block">
-            <input class="form-control ml-3 dropdown-toggle" id = "searchBar" type="text" placeholder="Search"/>
-            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins">
+            <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
+            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
                 <div id="menuItems"></div>
                 <div id="empty" class="dropdown-header">No items found</div>
+                <div id="menuLinks"></div>
             </div>
         </div>
     </div>
@@ -211,7 +214,6 @@
                 contents.push('<button class="dropdown-item"><b>' + name + '</b> - Total Views: ' + info.view + '</button>');
                 contents.push('<button class="dropdown-item"><b>' + name + '</b> - Videos: ' + info.video + '</button>');
             }
-            console.log(contents);
             $('#menuItems').append(contents.join(""));
 
             //Hide the row that shows no items were found
@@ -263,15 +265,20 @@
                 } else {
                     $("#menu").hide();
                 }
-            })
+            });
+            $("#searchBar").on("search", function() {
+                if($(this).val().length == 0) {
+                    $("#menu").hide();
+                }
+            });
         });
 
         $('#menuItems').on('click', '.dropdown-item', function(){
             var tempStr = $(this)[0].innerHTML.split("</b>")[0].replace("<b>", "");
-            console.log(typeof tempStr);
-            var arrIdx = `dataArr[${tempStr}].idx`;
-            console.log(arrIdx);
-            document.write(`<script src="{{ url_for('channel_instance', arrayIndex=0) }}">\x3C/script>`);
+            var arrIdx = dataArr[tempStr].idx;
+            $("#searchBar").val("");
+
+            window.location.href = "/channelinstance/" + arrIdx;
         });
 
         function processData(str) {
