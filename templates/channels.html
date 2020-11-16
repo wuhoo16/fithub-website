@@ -96,11 +96,11 @@
     <div id="main">
         <!-- Search Bar -->
         {% set dataArr = [] %}
-        {% for i in range(channelArrayLength) %}
-            {% if channelArray[i].description|length == 0 %}
-                {% set dataArr = dataArr.append({"name": channelArray[i].name, "description": "|No description provided.", "subscriber": channelArray[i].subscriberCount, "view": channelArray[i].viewCount, "video": channelArray[i].videoCount}) %}
+        {% for obj in channelArray %}
+            {% if obj.description|length == 0 %}
+                {% set dataArr = dataArr.append({"name": obj.name, "description": "|No description provided.", "subscriber": obj.subscriberCount, "view": obj.viewCount, "video": obj.videoCount}) %}
             {% else %}
-            {% set dataArr = dataArr.append({"name": channelArray[i].name, "description": channelArray[i].description, "subscriber": channelArray[i].subscriberCount, "view": channelArray[i].viewCount, "video": channelArray[i].videoCount}) %}
+                {% set dataArr = dataArr.append({"name": obj.name, "description": obj.description, "subscriber": obj.subscriberCount, "view": obj.viewCount, "video": obj.videoCount}) %}
             {% endif %}
         {% endfor %}
         <meta id="channelArrayData" data-arr='{{dataArr}}'/>

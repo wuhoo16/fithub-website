@@ -85,8 +85,8 @@
     <div id="main">
         <!--Search Bar-->
         {% set dataArr = [] %}
-        {% for i in range(exercisesArrayLength) %}
-            {% set dataArr = dataArr.append({"name": exercisesArray[i].name, "category": exercisesArray[i].category, "equipment": exercisesArray[i].equipment|join(', '), "description": exercisesArray[i].description}) %}
+        {% for obj in exercisesArray %}
+            {% set dataArr = dataArr.append({"name": obj.name, "category": obj.category, "equipment": obj.equipment|join(', '), "description": obj.description}) %}
         {% endfor %}
         <meta id="exercisesArrayData" data-arr='{{dataArr}}'/>
         <div class="dropdown d-inline-block">
