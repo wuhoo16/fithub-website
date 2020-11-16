@@ -3,7 +3,7 @@
 {% block head %}
     <!-- Vars: equipmentArray, start, end, page_number, num_pages-->
     <title>Equipment Model Page</title>
-    <script type="text/javascript" src="/static/equipments_filter_verification.js"></script>
+    <script type="text/javascript" src="/static/equipments.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -14,34 +14,6 @@
     </div>
     <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-
-        <!-- form for sorting (TODO: MUST CUSTOMIZE FOR EACH MODEL PAGE) -->
-        <form id="sortFilterForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
-            <!-- form inputs -->
-            <input type="hidden" name="resetHiddenField" value="Sort Results">
-            <input type="hidden" id="sortMethod" name="sortMethod" value="PLACEHOLDERVALUE">
-            <!-- dropdown -->
-            <div class="dropdown">
-                <button class="filter-button btn btn-outline-light btn-primary dropdown-toggle" type="button"
-                        name="sortSelectionButton"
-                        data-toggle="dropdown" id="sortSelectionButton">
-                    Sort by
-                </button>
-                <div class="dropdown-menu">
-                    <a class="dropdown-item" href="#" onclick="submitSortForm('No Sorting')">
-                        No Sorting</a>
-                    <a class="dropdown-item" href="#" onclick="submitSortForm('Name, A to Z')">
-                        Name, A to Z</a>
-                    <a class="dropdown-item" href="#" onclick="submitSortForm('Category, A to Z')">
-                        Category, A to Z</a>
-                    <a class="dropdown-item" href="#" onclick="submitSortForm('Price, low to high')">
-                        Price, low to high</a>
-                    <a class="dropdown-item" href="#" onclick="submitSortForm('Seller location, A to Z')">
-                        Seller location, A to Z</a>
-                </div>
-            </div>
-        </form>
-
         <form id="equipmentsFilterForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
             <ul class="checkbox-menu">
                 <li class="dropdown-header">Price</li>
@@ -73,7 +45,7 @@
                 <li>
                     <label><input type="checkbox" id='equipmentsOption9' name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
                 </li>
-                <li style="text-align: center; margin-top: 1rem;">
+                <li style="text-align: center; margin-top: 1rem; margin-bottom: 110px;">
                     <input type="hidden" id='equipmentsResetHiddenField' name='resetHiddenField' value="">
                     <button class="reset-button btn btn-outline-light" type="button" name="Reset" onclick="resetCheckboxState('equipmentsFilterForm', 'equipmentsResetHiddenField')">Reset</button>
                     <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxes('equipmentsFilterForm')">Filter</button>
@@ -83,12 +55,39 @@
     </div>
 
     <!-- Use any element to open the sidenav -->
-    <div>
+    <div class="filtering-section">
         <button class="filter-open-button" onclick="openNav()">Filter ></button>
-        <a href="#"><img class="ascending-button" src="/static/arrow.png" alt="Ascending" onclick="sortAscending();"></a>
-        <a href="#"><img class="descending-button" src="/static/arrow.png" alt="Descending" onclick="sortDescending();"></a>
+        <form id="equipmentsSortForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
+            <label for="equipmentsSortCriteriaMenu" id="equipmentsSortMenuLabel">Sort by: </label>
+            <select id="equipmentsSortCriteriaMenu" name="equipmentsSortCriteriaMenu">
+                <option value="name">Name (default)</option>
+                <option value="price">Price</option>
+                <option value="category">Category</option>
+
+            </select>
+            <input type="hidden" id='equipmentsSortingHiddenField' name='equipmentsSortingHiddenField' value="">
+            <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" onclick="submitSortForm('equipmentsSortForm', 'equipmentsSortingHiddenField', 'ascending');">
+            <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" onclick="submitSortForm('equipmentsSortForm', 'equipmentsSortingHiddenField', 'descending');">
+        </form>
     </div>
 
+    <div id="main">
+    <!--Search Bar-->
+        {% set dataArr = [] %}
+        {% for obj in equipmentArray %} 
+            {% set dataArr = dataArr.append({"name": obj.name, "price": obj.price, "category": obj.equipmentCategory, "location": obj.location}) %}
+        {% endfor %}
+        <meta id="equipmentArrayData" data-arr='{{dataArr}}'/>
+        <div class="dropdown d-inline-block">
+            <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
+            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
+                <div id="menuItems"></div>
+                <div id="empty" class="dropdown-header">No items found</div>
+                <div id="menuLinks"></div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
     <div id="main">
         <div class="grid-div container-fluid" id="modelGrid">
@@ -176,4 +175,122 @@
         </ul>
     </div>
 </div>
+<script>
+    let items = document.getElementsByClassName("dropdown-item");
+    var data = $('#equipmentArrayData').data().arr;
+    var dataArr = processData(data);
+
+    function buildDropDown() {
+        let contents = [];
+        for (const [name, info] of Object.entries(dataArr) ) {
+            contents.push('<button class="dropdown-item"><b>' + name + '</b></button>');
+            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Price: ' + info.price + '</button>');
+            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Category: ' + info.category + '</button>');
+            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Seller Location: ' + info.location + '</button>');
+        }
+        $('#menuItems').append(contents.join(""));
+
+        //Hide the row that shows no items were found
+        $('#empty').hide()
+    }
+    buildDropDown();
+
+    function filter(phrase) {
+        var headers = {};
+        var hidden = 0;
+
+        for (const [name, info] of Object.entries(dataArr)) {
+            if (("price: " + info.price.toLowerCase()).includes(phrase)) {
+                headers[name.toLowerCase() + " - price: " + info.price.toLowerCase()] = 1;
+            }
+            else if (name.toLowerCase().includes(phrase)) {
+                headers[name.toLowerCase()] = 1;
+            } else if (("category: " + info.category.toLowerCase()).includes(phrase)) {
+                headers[name.toLowerCase() + " - category: " + info.category.toLowerCase()] = 1;
+            } else if (("seller location: " + info.location.toLowerCase()).includes(phrase)) {
+                headers[name.toLowerCase() + " - seller location: " + info.location.toLowerCase()] = 1;
+            }
+        }
+
+        for (i = 0; i < items.length; i++) {
+            if (items[i].innerHTML.replace("<b>", "").replace("</b>", "").toLowerCase() in headers) {
+                $(items[i]).show();
+            } else {
+                $(items[i]).hide()
+                hidden++
+            }
+        }
+
+        //If no items match, show the empty view
+        if (hidden === items.length) {
+            $('#empty').show()
+        }
+        else {
+            $('#empty').hide()
+        }
+    }
+
+    $(document).ready(function() {
+        $("#searchBar").on("keyup", function() {
+            if ($(this).val().length > 0) {
+                $("#menu").show();
+                filter($(this).val().trim().toLowerCase());
+            } else {
+                $("#menu").hide();
+            }
+        });
+        $("#searchBar").on("search", function() {
+            if($(this).val().length == 0) {
+                $("#menu").hide();
+            }
+        });
+    });
+
+    $("#searchBar").on("blur", function() {
+        console.log("Blurring");
+        $("#menu").hide();
+    });
+
+    $('#menuItems').on('click', '.dropdown-item', function(){
+        var tempStr = $(this)[0].innerHTML.split("</b>")[0].replace("<b>", "");      
+        var arrIdx = dataArr[tempStr].idx;
+        $("#searchBar").val("");
+
+        window.location.href = "/equipmentinstance/" + arrIdx;
+    });
+
+    function processData(str) {
+        var strToArr = str.replace("[{", "").replace("}]", "").split("}, {");
+        var finalObj = {};
+
+        var tempStr = [];
+        for (i = 0; i < strToArr.length; i++) {
+            if (strToArr[i].includes("\", \'price\': ")) tempStr = strToArr[i].split("\", \'price\': ");
+            else tempStr = strToArr[i].split("\', \'price\': ");
+            
+            var nameStr = "";
+            if (tempStr[0].includes("\'name\': \"", "")) nameStr = tempStr[0].replace("\'name\': \"", "");
+            else nameStr = tempStr[0].replace("\'name\': \'", "");
+
+            tempStr = tempStr[1].split(", \'category\': \'");
+            var priceStr = tempStr[0];
+
+            tempStr = tempStr[1].split("\', \'location\': ");
+            var categoryStr = tempStr[0];
+            var locationStr = tempStr[1];
+
+            if (nameStr in finalObj) {
+                var oldObj = finalObj[nameStr];
+                finalObj[nameStr + " (" + oldObj.price + ")"] = {"price": oldObj.price, "category": oldObj.category, "location": oldObj.location, "idx": oldObj.idx};
+                delete finalObj[nameStr];
+
+                finalObj[nameStr + " (" + priceStr + ")"] = {"price": priceStr, "category": categoryStr, "location": locationStr, "idx": i};
+            } else {
+                finalObj[nameStr] = {"price": priceStr, "category": categoryStr, "location": locationStr, "idx": i};
+            }
+        }
+
+        return finalObj;
+    }
+</script>
 {% endblock %}

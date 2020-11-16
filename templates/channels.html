@@ -2,7 +2,7 @@
 
 {% block head %}
     <title>Youtube Channel Model Page</title>
-    <script type="text/javascript" src="/static/channels_filter_verification.js"></script>
+    <script type="text/javascript" src="/static/channels.js"></script>
 {% endblock %}
 
 
@@ -24,13 +24,13 @@
                     <label><input type="checkbox" id='channelsOption2' name='checkedSubscriberRange' value="1000 100000"> 1K- 100K </label>
                 </li>
                 <li>
-                    <label><input type="checkbox" id='channelsOption3' name='checkedSubscriberRange' value="100000 1000000">100K - 1M</label>
+                    <label><input type="checkbox" id='channelsOption3' name='checkedSubscriberRange' value="100000 1000000"> 100K - 1M</label>
                 </li>
                 <li>
-                    <label><input type="checkbox" id='channelsOption4' name='checkedSubscriberRange' value="1000000 10000000">1M - 10M</label>
+                    <label><input type="checkbox" id='channelsOption4' name='checkedSubscriberRange' value="1000000 10000000"> 1M - 10M</label>
                 </li>
                 <li>
-                    <label><input type="checkbox" id='channelsOption5' name='checkedSubscriberRange' value="10000000 999000000">10M+</label>
+                    <label><input type="checkbox" id='channelsOption5' name='checkedSubscriberRange' value="10000000 999000000"> 10M+</label>
                 </li>
                 <li class="dropdown-header">Total Views</li>
                 <li>
@@ -67,7 +67,7 @@
                 <li>
                     <label> <input type="checkbox" id='channelsOption16' name='checkedVideosRange' value="1000 9999"> 1K+ </label>
                 </li>
-                <li style="text-align: center; margin-top: 1rem;">
+                <li style="text-align: center; margin-top: 1rem;  margin-bottom: 110px;">
                     <input type="hidden" id='channelsResetHiddenField' name='resetHiddenField' value="">
                     <button class="reset-button btn btn-outline-light" type="button" name="Reset" onclick="resetCheckboxState('channelsFilterForm', 'channelsResetHiddenField')">Reset</button>
                     <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxes('channelsFilterForm')">Filter</button>
@@ -77,30 +77,45 @@
     </div>
 
     <!-- Use any element to open the sidenav -->
-    <div>
+    <div class="filtering-section">
         <button class="filter-open-button" onclick="openNav()">Filter ></button>
-        <a href="#"><img class="ascending-button" src="/static/arrow.png" alt="Ascending" onclick="sortAscending();"></a>
-        <a href="#"><img class="descending-button" src="/static/arrow.png" alt="Descending" onclick="sortDescending();"></a>
+        <form id="channelsSortForm" action="{{ url_for('channels', page_number=1) }}" method="post">
+            <label for="channelsSortCriteriaMenu" id="channelsSortMenuLabel">Sort by: </label>
+            <select id="channelsSortCriteriaMenu" name="channelsSortCriteriaMenu">
+                <option value="name">Name (default)</option>
+                <option value="subscriberCount">Subscriber Count</option>
+                <option value="viewCount">View Count</option>
+                <option value="videoCount">Video Count</option>
+              </select>
+            <input type="hidden" id='channelsSortingHiddenField' name='channelsSortingHiddenField' value="">
+            <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'ascending');">
+            <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'descending');">
+        </form>
+    </div>
+
+    <div id="main">
+        <!-- Search Bar -->
+        {% set dataArr = [] %}
+        {% for obj in channelArray %}
+            {% if obj.description|length == 0 %}
+                {% set dataArr = dataArr.append({"name": obj.name, "description": "|No description provided.", "subscriber": obj.subscriberCount, "view": obj.viewCount, "video": obj.videoCount}) %}
+            {% else %}
+                {% set dataArr = dataArr.append({"name": obj.name, "description": obj.description, "subscriber": obj.subscriberCount, "view": obj.viewCount, "video": obj.videoCount}) %}
+            {% endif %}
+        {% endfor %}
+        <meta id="channelArrayData" data-arr='{{dataArr}}'/>
+        <div class="dropdown d-inline-block">
+            <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
+            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
+                <div id="menuItems"></div>
+                <div id="empty" class="dropdown-header">No items found</div>
+                <div id="menuLinks"></div>
+            </div>
+        </div>
     </div>
 
     <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
     <div id="main">
-        {% set dataArr = [] %}
-        {% for i in range(channelArrayLength) %}
-            {% if channelArray[i].description|length == 0 %}
-                {% set dataArr = dataArr.append({"name": channelArray[i].name, "description": "|No description provided.", "subscriber": channelArray[i].subscriberCount, "view": channelArray[i].viewCount, "video": channelArray[i].videoCount}) %}
-            {% else %}
-            {% set dataArr = dataArr.append({"name": channelArray[i].name, "description": channelArray[i].description, "subscriber": channelArray[i].subscriberCount, "view": channelArray[i].viewCount, "video": channelArray[i].videoCount}) %}
-            {% endif %}
-        {% endfor %}
-        <meta id="channelArrayData" data-arr='{{dataArr}}'/>
-        <div class="dropdown">
-            <input class="form-control ml-3 w-75 dropdown-toggle" id = "searchBar" type="text" placeholder="Search"/>
-            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins">
-                <div id="menuItems"></div>
-                <div id="empty" class="dropdown-header">No items found</div>
-            </div>
-        </div>
         <div class="grid-div container-fluid" id="modelGrid">
         {% set numFullRows = ((end + 1) - start) // 3 %}
         {% set numLeftOverChannels = ((end + 1) - start) % 3 %}
@@ -199,7 +214,6 @@
                 contents.push('<button class="dropdown-item"><b>' + name + '</b> - Total Views: ' + info.view + '</button>');
                 contents.push('<button class="dropdown-item"><b>' + name + '</b> - Videos: ' + info.video + '</button>');
             }
-            console.log(contents);
             $('#menuItems').append(contents.join(""));
 
             //Hide the row that shows no items were found
@@ -251,15 +265,20 @@
                 } else {
                     $("#menu").hide();
                 }
-            })
+            });
+            $("#searchBar").on("search", function() {
+                if($(this).val().length == 0) {
+                    $("#menu").hide();
+                }
+            });
         });
 
         $('#menuItems').on('click', '.dropdown-item', function(){
             var tempStr = $(this)[0].innerHTML.split("</b>")[0].replace("<b>", "");
-            console.log(typeof tempStr);
-            var arrIdx = `dataArr[${tempStr}].idx`;
-            console.log(arrIdx);
-            document.write(`<script src="{{ url_for('channel_instance', arrayIndex=0) }}">\x3C/script>`);
+            var arrIdx = dataArr[tempStr].idx;
+            $("#searchBar").val("");
+
+            window.location.href = "/channelinstance/" + arrIdx;
         });
 
         function processData(str) {

@@ -101,8 +101,15 @@ exerciseFilterIsActive = False
 filteredExercisesArray = []
 equipmentFilterIsActive = False
 filteredEquipmentsArray = []
-channelsFilterIsActive = False
+channelFilterIsActive = False
 filteredChannelsArray = []
+
+exerciseSortIsActive = False
+sortedExercisesArray = []
+equipmentSortIsActive = False
+sortedEquipmentsArray = []
+channelSortIsActive = False
+sortedChannelsArray = []
 
 
 # All classes defined below to help store data attributes
@@ -952,38 +959,6 @@ def filter_channels(selectedSubscriberRange, selectedTotalViewsRange, selectedVi
     # Return all of filtered Exercise objects
     return filteredChannels
 
-# Sorts array_to_sort based on sort_method and model, specified in app.route defs for each model page.
-def sort_model_array(array_to_sort, model, sort_method):
-    sort_dict = {}
-    if model == "Equipment":
-        sort_dict = {
-            "Name, A to Z": "name",  # lambda x: x[2],
-            "Price, low to high": "price",  # lambda x: x[3],
-            "Category, A to Z": "category",  # lambda x: x[4],
-            "Seller location, A to Z": "location",  # lambda x: x[5]
-        }
-    elif model == "Exercise":
-        sort_dict = {
-            ""
-        }
-    elif model == "Channels":
-        sort_dict = {
-
-        }
-    else:
-        return array_to_sort
-    try:
-        sort_param = sort_dict[sort_method]
-    except:
-        return array_to_sort
-    else:
-        fullList = DATABASE.equipments.find().sort(sort_param, 1)
-        returnList = []
-        for item in fullList:
-            if item in array_to_sort:
-                returnList.append(item)
-        return returnList
-
 
 # All helper methods for creating HTTP requests, cleaning, filtering, or executing APIs defined below
 # ======================================================================================================================
@@ -1330,7 +1305,7 @@ app = Flask("__name__")
 def index():
     # Initialize all 3 global arrays from database
     global EXERCISES_ARRAY, EQUIPMENT_ARRAY, CHANNEL_ARRAY
-    global exerciseFilterIsActive, equipmentFilterIsActive, channelsFilterIsActive
+    global exerciseFilterIsActive, equipmentFilterIsActive, channelFilterIsActive
     if len(EXERCISES_ARRAY) == 0:
         EXERCISES_ARRAY = load_exercises_from_db(DATABASE)
         exerciseFilterIsActive = False
@@ -1339,10 +1314,10 @@ def index():
         equipmentFilterIsActive = False
     if len(CHANNEL_ARRAY) == 0:
         CHANNEL_ARRAY = load_channels_from_db(DATABASE)
-        channelsFilterIsActive = False
+        channelFilterIsActive = False
     return render_template('homepage.html', exerciseFilterIsActive=str.lower(str(exerciseFilterIsActive)),
                            equipmentFilterIsActive=str.lower(str(equipmentFilterIsActive)),
-                           channelsFilterIsActive=str.lower(str(channelsFilterIsActive)))
+                           channelsFilterIsActive=str.lower(str(channelFilterIsActive)))
 
 
 # exercises model page
@@ -1350,15 +1325,28 @@ def index():
 def exercises(page_number):
     global exerciseFilterIsActive
     global filteredExercisesArray
+    global exerciseSortIsActive
+    global sortedExercisesArray
 
     if request.method == 'POST':
-        # print(f'The filter form value posted for hidden field is: {request.form.get("resetHiddenField")}')
-        if request.form.get('resetHiddenField') == 'resetClicked':
+        if request.form.get('exercisesSortingHiddenField'):  # If this field in the posted form is set, then the user has clicked one of the sorting buttons
+            # print(f'The sort form value posted for the sorting hidden field is: {request.form.get("exercisesSortingHiddenField")}')
+            # print(f'The sort form value posted for the sorting criteria select menu is: {request.form.get("exercisesSortCriteriaMenu")}')
+            sortingAttribute = request.form.get("exercisesSortCriteriaMenu")
+            if request.form.get('exercisesSortingHiddenField') == 'ascending':
+                sortedExercisesArray = sorted(EXERCISES_ARRAY, key=lambda exerciseObj: getattr(exerciseObj, sortingAttribute), reverse=False)
+            elif request.form.get('exercisesSortingHiddenField') == 'descending':
+                sortedExercisesArray = sorted(EXERCISES_ARRAY, key=lambda exerciseObj: getattr(exerciseObj, sortingAttribute), reverse=True)
+            exerciseSortIsActive = True
+            start, end, num_pages = paginate(page_number, sortedExercisesArray)
+            return render_template('exercises.html', exercisesArray=sortedExercisesArray, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+        elif request.form.get('resetHiddenField') == 'resetClicked':  # If this field is set, then the user has clicked the Reset button
             exerciseFilterIsActive = False
             start, end, num_pages = paginate(page_number, EXERCISES_ARRAY)
             return render_template('exercises.html', exercisesArray=EXERCISES_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
-        else:
+        else:  # filter form was submitted using the Filter button
             exerciseFilterIsActive = True
             selectedExerciseCategories = request.form.getlist('checkedExerciseCategories')
             selectedEquipmentCategories = request.form.getlist('checkedEquipmentCategories')
@@ -1372,39 +1360,40 @@ def exercises(page_number):
             start, end, num_pages = paginate(page_number, filteredExercisesArray)
             return render_template('exercises.html', exercisesArray=filteredExercisesArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
-        else:  # render template using the global array with every Exercise object
+        elif exerciseSortIsActive:
+            start, end, num_pages = paginate(page_number, sortedExercisesArray)
+            return render_template('exercises.html', exercisesArray=sortedExercisesArray, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+        else:  # else, render template using the original global array with every Exercise object
             start, end, num_pages = paginate(page_number, EXERCISES_ARRAY)
             return render_template('exercises.html', exercisesArray=EXERCISES_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
 
 
-# equipments model page, updated with sort
+# equipments model page
 @app.route("/equipment/<int:page_number>", methods=['GET', 'POST'])
 def equipments(page_number):
     global equipmentFilterIsActive
     global filteredEquipmentsArray
+    global equipmentSortIsActive
     global sortedEquipmentsArray
 
     if request.method == 'POST':
-        print(request.form)  # delet this
-        if request.form.get('resetHiddenField') == 'resetClicked':
+        if request.form.get('equipmentsSortingHiddenField'):  # If this field in the posted form is set, then the user has clicked one of the sorting buttons
+            sortingAttribute = request.form.get("equipmentsSortCriteriaMenu")
+            if request.form.get('equipmentsSortingHiddenField') == 'ascending':
+                sortedEquipmentsArray = sorted(EQUIPMENT_ARRAY, key=lambda equipmentObj: getattr(equipmentObj, sortingAttribute), reverse=False)
+            elif request.form.get('equipmentsSortingHiddenField') == 'descending':
+                sortedEquipmentsArray = sorted(EQUIPMENT_ARRAY, key=lambda equipmentObj: getattr(equipmentObj, sortingAttribute), reverse=True)
+            equipmentSortIsActive = True
+            start, end, num_pages = paginate(page_number, sortedEquipmentsArray)
+            return render_template('equipments.html', equipmentArray=sortedEquipmentsArray, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+        elif request.form.get('resetHiddenField') == 'resetClicked':
             equipmentFilterIsActive = False
             start, end, num_pages = paginate(page_number, EQUIPMENT_ARRAY)
             return render_template('equipments.html', equipmentArray=EQUIPMENT_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
-
-        # segment for sorting (TODO: customize for each model page)
-        elif request.form.get('resetHiddenField') == "Sort Results":
-            sortMethod = request.form.get('sortMethod')
-            if equipmentFilterIsActive:
-                sortedEquipmentsArray = sort_model_array(filteredEquipmentsArray, "Equipment", sortMethod)
-            else:
-                sortedEquipmentsArray = sort_model_array(EQUIPMENT_ARRAY, "Equipment", sortMethod)
-            start, end, num_pages = paginate(page_number, sortedEquipmentsArray)
-            return render_template('equipments.html', equipmentArray=sortedEquipmentsArray, start=start, end=end,
-                                   page_number=page_number, num_pages=num_pages)
-
-
         else:
             equipmentFilterIsActive = True
             selectedPriceRanges = request.form.getlist('checkedPriceRange')
@@ -1419,6 +1408,10 @@ def equipments(page_number):
             start, end, num_pages = paginate(page_number, filteredEquipmentsArray)
             return render_template('equipments.html', equipmentArray=filteredEquipmentsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
+        elif equipmentSortIsActive:
+            start, end, num_pages = paginate(page_number, sortedEquipmentsArray)
+            return render_template('equipments.html', equipmentArray=sortedEquipmentsArray, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
         else:  # render template using the global array with every Equipment object
             start, end, num_pages = paginate(page_number, EQUIPMENT_ARRAY)
             return render_template('equipments.html', equipmentArray=EQUIPMENT_ARRAY, start=start, end=end,
@@ -1428,33 +1421,49 @@ def equipments(page_number):
 # channels model page
 @app.route("/channels/<int:page_number>", methods=['GET', 'POST'])
 def channels(page_number):
-    global channelsFilterIsActive
+    global channelFilterIsActive
     global filteredChannelsArray
+    global channelSortIsActive
+    global sortedChannelsArray
 
     if request.method == 'POST':
-        if request.form.get('resetHiddenField') == 'resetClicked':
-            channelsFilterIsActive = False
+        if request.form.get('channelsSortingHiddenField'):  # If this field in the posted form is set, then the user has clicked one of the sorting buttons
+            sortingAttribute = request.form.get("channelsSortCriteriaMenu")
+            if request.form.get('channelsSortingHiddenField') == 'ascending':
+                sortedChannelsArray = sorted(CHANNEL_ARRAY, key=lambda channelObj: getattr(channelObj, sortingAttribute), reverse=False)
+            elif request.form.get('channelsSortingHiddenField') == 'descending':
+                sortedChannelsArray = sorted(CHANNEL_ARRAY, key=lambda channelObj: getattr(channelObj, sortingAttribute), reverse=True)
+            channelSortIsActive = True
+            start, end, num_pages = paginate(page_number, sortedChannelsArray)
+            return render_template('channels.html', channelArray=sortedChannelsArray, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+        elif request.form.get('resetHiddenField') == 'resetClicked':
+            channelFilterIsActive = False
             start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
-            return render_template('channels.html', channelArray=CHANNEL_ARRAY, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
+            return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         else:
-            channelsFilterIsActive = True
+            channelFilterIsActive = True
             selectedSubscriberRange = request.form.getlist('checkedSubscriberRange')
             selectedTotalViewsRange = request.form.getlist('checkedTotalViewsRange')
             selectedVideosRange = request.form.getlist('checkedVideosRange')
             # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
             filteredChannelsArray = filter_channels(selectedSubscriberRange, selectedTotalViewsRange, selectedVideosRange, DATABASE)
             start, end, num_pages = paginate(page_number, filteredChannelsArray)
-            return render_template('channels.html', channelArray=filteredChannelsArray, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
+            return render_template('channels.html', channelArray=filteredChannelsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
     elif request.method == 'GET':
-        if channelsFilterIsActive:
+        if channelFilterIsActive:
             start, end, num_pages = paginate(page_number, filteredChannelsArray)
-            return render_template('channels.html', channelArray=filteredChannelsArray, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
+            return render_template('channels.html', channelArray=filteredChannelsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
-        else:  # render template using the global array with every Equipment object
+        elif channelSortIsActive:
+            start, end, num_pages = paginate(page_number, sortedChannelsArray)
+            return render_template('channels.html', channelArray=sortedChannelsArray, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+        else:  # render template using the global array with every Channel object
             start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
-            return render_template('channels.html', channelArray=CHANNEL_ARRAY, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
+            return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
 
 

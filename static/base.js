@@ -1,3 +1,12 @@
+// Submit the sort form given the formID, hiddenFieldID, and 'ascending'/'descending' value
+function submitSortForm(sortFormID, hiddenFieldID, value) {
+    let form = document.getElementById(sortFormID);
+    let hiddenField = document.getElementById(hiddenFieldID);
+
+    hiddenField.value = value
+    form.submit();
+}
+
 // Ensure looping works for the homepage hype video for browsers that don't support the loop attribute
 document.addEventListener('DOMContentLoaded', ensureVideoLoop)
 
@@ -35,9 +44,3 @@ function sortDescending() {
 
 }
 
-function submitSortForm(sortParam)
-{
-    document.getElementById("sortMethod").setAttribute("value", sortParam);
-    form = document.getElementById("sortFilterForm");
-    form.submit();
-}
