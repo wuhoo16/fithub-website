@@ -1344,7 +1344,7 @@ def exercises(page_number):
         elif request.form.get('resetHiddenField') == 'resetClicked':  # If this field is set, then the user has clicked the Reset button
             exerciseFilterIsActive = False
             start, end, num_pages = paginate(page_number, EXERCISES_ARRAY)
-            return render_template('exercises.html', exercisesArray=EXERCISES_ARRAY, exercisesArrayLength=len(EXERCISES_ARRAY), start=start, end=end,
+            return render_template('exercises.html', exercisesArray=EXERCISES_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         else:  # filter form was submitted using the Filter button
             exerciseFilterIsActive = True
@@ -1353,12 +1353,12 @@ def exercises(page_number):
             # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
             filteredExercisesArray = filter_exercises(selectedExerciseCategories, selectedEquipmentCategories, DATABASE)
             start, end, num_pages = paginate(page_number, filteredExercisesArray)
-            return render_template('exercises.html', exercisesArray=filteredExercisesArray, exercisesArrayLength=len(EXERCISES_ARRAY), start=start, end=end,
+            return render_template('exercises.html', exercisesArray=filteredExercisesArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
     elif request.method == 'GET':
         if exerciseFilterIsActive:
             start, end, num_pages = paginate(page_number, filteredExercisesArray)
-            return render_template('exercises.html', exercisesArray=filteredExercisesArray, exercisesArrayLength=len(EXERCISES_ARRAY), start=start, end=end,
+            return render_template('exercises.html', exercisesArray=filteredExercisesArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         elif exerciseSortIsActive:
             start, end, num_pages = paginate(page_number, sortedExercisesArray)
@@ -1366,7 +1366,7 @@ def exercises(page_number):
                                    page_number=page_number, num_pages=num_pages)
         else:  # else, render template using the original global array with every Exercise object
             start, end, num_pages = paginate(page_number, EXERCISES_ARRAY)
-            return render_template('exercises.html', exercisesArray=EXERCISES_ARRAY, exercisesArrayLength=len(EXERCISES_ARRAY), start=start, end=end,
+            return render_template('exercises.html', exercisesArray=EXERCISES_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
 
 
@@ -1392,7 +1392,7 @@ def equipments(page_number):
         elif request.form.get('resetHiddenField') == 'resetClicked':
             equipmentFilterIsActive = False
             start, end, num_pages = paginate(page_number, EQUIPMENT_ARRAY)
-            return render_template('equipments.html', equipmentArray=EQUIPMENT_ARRAY, equipmentArrayLength=len(EQUIPMENT_ARRAY), start=start, end=end,
+            return render_template('equipments.html', equipmentArray=EQUIPMENT_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         else:
             equipmentFilterIsActive = True
@@ -1401,12 +1401,12 @@ def equipments(page_number):
             # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
             filteredEquipmentsArray = filter_equipments(selectedPriceRanges, selectedEquipmentCategories, DATABASE)
             start, end, num_pages = paginate(page_number, filteredEquipmentsArray)
-            return render_template('equipments.html', equipmentArray=filteredEquipmentsArray, equipmentArrayLength=len(EQUIPMENT_ARRAY), start=start, end=end,
+            return render_template('equipments.html', equipmentArray=filteredEquipmentsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
     elif request.method == 'GET':
         if equipmentFilterIsActive:
             start, end, num_pages = paginate(page_number, filteredEquipmentsArray)
-            return render_template('equipments.html', equipmentArray=filteredEquipmentsArray, equipmentArrayLength=len(EQUIPMENT_ARRAY), start=start, end=end,
+            return render_template('equipments.html', equipmentArray=filteredEquipmentsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         elif equipmentSortIsActive:
             start, end, num_pages = paginate(page_number, sortedEquipmentsArray)
@@ -1414,7 +1414,7 @@ def equipments(page_number):
                                    page_number=page_number, num_pages=num_pages)
         else:  # render template using the global array with every Equipment object
             start, end, num_pages = paginate(page_number, EQUIPMENT_ARRAY)
-            return render_template('equipments.html', equipmentArray=EQUIPMENT_ARRAY, equipmentArrayLength=len(EQUIPMENT_ARRAY), start=start, end=end,
+            return render_template('equipments.html', equipmentArray=EQUIPMENT_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
 
 
@@ -1435,12 +1435,12 @@ def channels(page_number):
                 sortedChannelsArray = sorted(CHANNEL_ARRAY, key=lambda channelObj: getattr(channelObj, sortingAttribute), reverse=True)
             channelSortIsActive = True
             start, end, num_pages = paginate(page_number, sortedChannelsArray)
-            return render_template('channels.html', channelArray=sortedChannelsArray, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
+            return render_template('channels.html', channelArray=sortedChannelsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         elif request.form.get('resetHiddenField') == 'resetClicked':
             channelFilterIsActive = False
             start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
-            return render_template('channels.html', channelArray=CHANNEL_ARRAY, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
+            return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         else:
             channelFilterIsActive = True
@@ -1450,20 +1450,20 @@ def channels(page_number):
             # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
             filteredChannelsArray = filter_channels(selectedSubscriberRange, selectedTotalViewsRange, selectedVideosRange, DATABASE)
             start, end, num_pages = paginate(page_number, filteredChannelsArray)
-            return render_template('channels.html', channelArray=filteredChannelsArray, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
+            return render_template('channels.html', channelArray=filteredChannelsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
     elif request.method == 'GET':
         if channelFilterIsActive:
             start, end, num_pages = paginate(page_number, filteredChannelsArray)
-            return render_template('channels.html', channelArray=filteredChannelsArray, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
+            return render_template('channels.html', channelArray=filteredChannelsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         elif channelSortIsActive:
             start, end, num_pages = paginate(page_number, sortedChannelsArray)
-            return render_template('channels.html', channelArray=sortedChannelsArray, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
+            return render_template('channels.html', channelArray=sortedChannelsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         else:  # render template using the global array with every Channel object
             start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
-            return render_template('channels.html', channelArray=CHANNEL_ARRAY, channelArrayLength=len(CHANNEL_ARRAY), start=start, end=end,
+            return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
 
 
