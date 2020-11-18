@@ -15,28 +15,12 @@
   </div>
       <!-- There's no rating returned by the API -->
 <!--            <img id="equipmentInstanceRating" class="img-fluid w-50 h-auto" src="{{ url_for('static', filename='{{ equipmentObject.rating }}stars.png') }}" alt="Rating: {{ equipmentObject.rating }}/5 stars">-->
-  <!-- Carousel -->
-  <div id="equipmentCarousel"class="carousel slide centered" data-ride="carousel">
-        <div class="carousel-inner">
-            <div class="carousel-item active" style="height: 400px;">
-                <!-- TODO: test these image resizing lines -->
-                  {% if equipmentObject.replacePictureFlag %}
-                      <img class="card-img-top img-fluid mx-auto" style="width: auto; max-height: 400px; background-color: whitesmoke;" src="/../static/{{ equipmentObject.picture }}" alt="{{ equipmentObject.name }}'s image">
-                  {% else %}
-                      <img class="card-img-top img-fluid mx-auto" style="width: auto; max-height: 400px; background-color: whitesmoke;" src="{{ equipmentObject.picture }}" onerror="this.onerror=null; this.src='{{ equipmentObject.picture }}'"; alt="{{ equipmentObject.name }}'s image">
-                  {% endif %}
-            </div>
-<!--                  <div class="carousel-item">-->
-<!--                      <img src="{{ equipmentObject.picture }}" onerror="this.onerror=null; this.src='{{ equipmentObject.picture }}'"; alt=" {{ equipmentObject.name }}'s carousel image"/>-->
-<!--                  </div>-->
-        </div>
-        <a class="carousel-control-prev" href="#equipmentCarousel" data-slide="prev">
-          <span class="carousel-control-prev-icon"></span>
-        </a>
-        <a class="carousel-control-next" href="#equipmentCarousel" data-slide="next">
-          <span class="carousel-control-next-icon"></span>
-        </a>
-  </div>
+    <!-- Image -->
+  {% if equipmentObject.replacePictureFlag %}-->
+      <center><img class="card-img-top img-fluid mx-auto" style="width: auto; min-height: 300px; max-height: 400px; background-color: whitesmoke;" src="/../static/{{ equipmentObject.picture }}" alt="{{ equipmentObject.name }}'s image"></center>
+  {% else %}
+      <center><img class="card-img-top img-fluid mx-auto" style="width: auto; min-height: 300px; max-height: 400px; background-color: whitesmoke;" src="{{ equipmentObject.picture }}" onerror="this.onerror=null; this.src='{{ equipmentObject.picture }}'"; alt="{{ equipmentObject.name }}'s image"></center>
+  {% endif %}
   <br>
   <!-- Information -->
 <!--        <div id="equipmentInstanceDescriptionRow" class="row justify-content-center align-items-center">-->
