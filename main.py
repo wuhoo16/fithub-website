@@ -98,30 +98,23 @@ client = MongoClient(
 DATABASE = client.phase2Database
 
 exerciseFilterIsActive = False
-# filteredExercisesArray = []
 equipmentFilterIsActive = False
-
-# filteredEquipmentsArray = []
 channelFilterIsActive = False
-# filteredChannelsArray = []
 
 exerciseSortIsActive = False
-# sortedExercisesArray = []
 equipmentSortIsActive = False
-# sortedEquipmentsArray = []
 channelSortIsActive = False
-# sortedChannelsArray = []
+
+exerciseSearchIsActive = False
+equipmentSearchIsActive = False
+channelSearchIsActive = False
 
 modifiedExercisesArray = []
 modifiedEquipmentsArray = []
 modifiedChannelsArray = []
 
-
-exerciseSortIsActive = False
 sortedExercisesArray = []
-equipmentSortIsActive = False
 sortedEquipmentsArray = []
-channelSortIsActive = False
 sortedChannelsArray = []
 
 
@@ -1337,9 +1330,8 @@ def index():
 @app.route("/exercises/<int:page_number>", methods=['GET', 'POST'])
 def exercises(page_number):
     global exerciseFilterIsActive
-    # global filteredExercisesArray
     global exerciseSortIsActive
-    # global sortedExercisesArray
+    global exerciseSearchIsActive
     global modifiedExercisesArray
 
     if request.method == 'POST':
@@ -1370,6 +1362,18 @@ def exercises(page_number):
             start, end, num_pages = paginate(page_number, EXERCISES_ARRAY)
             return render_template('exercises.html', exercisesArray=EXERCISES_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
+        elif request.form.get('exercisesSearchItems'):
+            NEW_ARR = []
+            if request.form.get('exercisesSearchItems') == "RESET":
+                exerciseSearchIsActive = False
+                NEW_ARR = EXERCISES_ARRAY
+            else:
+                exerciseSearchIsActive = True
+                NEW_ARR = getSearch(request.form.get('exercisesSearchItems'), EXERCISES_ARRAY)
+                modifiedExercisesArray = NEW_ARR
+            
+            start, end, num_pages = paginate(page_number, NEW_ARR)
+            return render_template('exercises.html', exercisesArray=NEW_ARR, start=start, end=end, page_number=page_number, num_pages=num_pages)
         else:  # filter form was submitted using the Filter button
             exerciseFilterIsActive = True
             selectedExerciseCategories = request.form.getlist('checkedExerciseCategories')
@@ -1383,7 +1387,7 @@ def exercises(page_number):
             return render_template('exercises.html', exercisesArray=modifiedExercisesArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
     elif request.method == 'GET':
-        if exerciseFilterIsActive or equipmentSortIsActive:
+        if exerciseFilterIsActive or exerciseSortIsActive or exerciseSearchIsActive:
             start, end, num_pages = paginate(page_number, modifiedExercisesArray)
             return render_template('exercises.html', exercisesArray=modifiedExercisesArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
@@ -1398,9 +1402,8 @@ def exercises(page_number):
 @app.route("/equipment/<int:page_number>", methods=['GET', 'POST'])
 def equipments(page_number):
     global equipmentFilterIsActive
-    # global filteredEquipmentsArray
     global equipmentSortIsActive
-    # global sortedEquipmentsArray
+    global equipmentSearchIsActive
     global modifiedEquipmentsArray
 
     if request.method == 'POST':
@@ -1429,6 +1432,18 @@ def equipments(page_number):
             start, end, num_pages = paginate(page_number, EQUIPMENT_ARRAY)
             return render_template('equipments.html', equipmentArray=EQUIPMENT_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
+        elif request.form.get('equipmentsSearchItems'):
+            NEW_ARR = []
+            if request.form.get('equipmentsSearchItems') == "RESET":
+                equipmentSearchIsActive = False
+                NEW_ARR = EQUIPMENT_ARRAY
+            else:
+                equipmentSearchIsActive = True
+                NEW_ARR = getSearch(request.form.get('equipmentsSearchItems'), EQUIPMENT_ARRAY)
+                modifiedEquipmentsArray = NEW_ARR
+            
+            start, end, num_pages = paginate(page_number, NEW_ARR)
+            return render_template('equipments.html', equipmentArray=NEW_ARR, start=start, end=end, page_number=page_number, num_pages=num_pages)
         else:  # if filter was pressed
             equipmentFilterIsActive = True
             selectedPriceRanges = request.form.getlist('checkedPriceRange')
@@ -1442,7 +1457,7 @@ def equipments(page_number):
             return render_template('equipments.html', equipmentArray=modifiedEquipmentsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
     elif request.method == 'GET':
-        if equipmentFilterIsActive or equipmentSortIsActive:
+        if equipmentFilterIsActive or equipmentSortIsActive or equipmentSearchIsActive:
             start, end, num_pages = paginate(page_number, modifiedEquipmentsArray)
             return render_template('equipments.html', equipmentArray=modifiedEquipmentsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
@@ -1460,9 +1475,8 @@ def equipments(page_number):
 @app.route("/channels/<int:page_number>", methods=['GET', 'POST'])
 def channels(page_number):
     global channelFilterIsActive
-    # global filteredChannelsArray
     global channelSortIsActive
-    # global sortedChannelsArray
+    global channelSearchIsActive
     global modifiedChannelsArray
 
     if request.method == 'POST':
@@ -1489,12 +1503,14 @@ def channels(page_number):
             return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         elif request.form.get('channelsSearchItems'):
-            print("in search barr")
             NEW_ARR = []
             if request.form.get('channelsSearchItems') == "RESET":
+                channelSearchIsActive = False
                 NEW_ARR = CHANNEL_ARRAY
             else:
+                channelSearchIsActive = True
                 NEW_ARR = getSearch(request.form.get('channelsSearchItems'), CHANNEL_ARRAY)
+                modifiedChannelsArray = NEW_ARR
             
             start, end, num_pages = paginate(page_number, NEW_ARR)
             return render_template('channels.html', channelArray=NEW_ARR, start=start, end=end, page_number=page_number, num_pages=num_pages)
@@ -1513,14 +1529,9 @@ def channels(page_number):
             return render_template('channels.html', channelArray=modifiedChannelsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
     elif request.method == 'GET':
-        if channelFilterIsActive:
+        if channelFilterIsActive or channelSortIsActive or channelSearchIsActive:
             start, end, num_pages = paginate(page_number, modifiedChannelsArray)
             return render_template('channels.html', channelArray=modifiedChannelsArray, start=start, end=end,
-                                   page_number=page_number, num_pages=num_pages)
-        elif channelSortIsActive:
-            start, end, num_pages = paginate(page_number, modifiedChannelsArray)
-            return render_template('channels.html', channelArray=modifiedChannelsArray, start=start, end=end,
-
                                    page_number=page_number, num_pages=num_pages)
         else:  # render template using the global array with every Channel object
             start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)

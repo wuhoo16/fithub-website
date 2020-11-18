@@ -90,6 +90,9 @@
         {% endfor %}
         <meta id="exercisesArrayData" data-arr='{{dataArr}}'/>
         <div class="dropdown d-inline-block">
+            <form id="exercisesSearchForm" action="{{ url_for('exercises', page_number=1) }}" method="post" style="display: none;">
+                <input id="exercisesSearchItems" name="exercisesSearchItems">
+            </form>
             <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
             <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
                 <div id="menuItems">
@@ -185,11 +188,14 @@
     </div>
 </div>
 <script>
+    $("#searchBar").val(localStorage.getItem("searchPhrase"));
+
     let items = document.getElementsByClassName("dropdown-item");
     var data = $('#exercisesArrayData').data().arr;
     var dataArr = processData(data);
 
     function filter(phrase) {
+        $("#menu").show()
         var headers = {};
         var hidden = 0;
 
@@ -226,24 +232,41 @@
 
     $(document).ready(function() {
         $("#searchBar").on("keyup", function() {
-            if ($(this).val().length > 0) {
-                $("#menu").show();
-                filter($(this).val().trim().toLowerCase());
-            } else {
-                $("#menu").hide();
-            }
-        });
-        $("#searchBar").on("search", function() {
-            if($(this).val().length == 0) {
-                $("#menu").hide();
-            }
-        });
-        $("#searchBar").on("blur", function() {
-            $("#menu").hide();
-        });
-        $("#searchBar").on("focus", function() {
-            if ($(this).val().length != 0) $("#menu").show();
-        });
+                if ($(this).val().length > 0) {
+                    filter($(this).val().trim().toLowerCase());
+                } else {
+                    $("#menu").hide();
+                }
+            });
+            $("#searchBar").on("search", function() {
+                searchPhrase = $(this).val();
+                if(searchPhrase.length == 0) {
+                    localStorage.setItem("searchPhrase", "");
+                    $("#menu").hide();
+                    $("#exercisesSearchItems").val("RESET");
+                    $("#exercisesSearchForm").submit();
+                    $("#exercisesSearchItems").val("");
+                } else {
+                    localStorage.setItem("searchPhrase", searchPhrase);
+                    $("#exercisesSearchItems").val("");
+                    for (i = 0; i < items.length; i++) {
+                        if ($(items[i]).is(":visible")) {
+                            currVal = $("#exercisesSearchItems").val();
+                            if (currVal.length != 0) currVal = currVal + "|";
+                            $("#exercisesSearchItems").val(currVal + (items[i].innerHTML.split("</b>")[0]).replace("<b>", ""));
+                        }
+                    }
+                    $("#exercisesSearchForm").submit();
+                    $("#exercisesSearchItems").val("");
+                }
+                
+            });
+            $("#searchBar").on("blur", function() {
+                if (!($("#menu").is(":hover"))) $("#menu").hide();
+            });
+            $("#searchBar").on("focus", function() {
+                if ($(this).val().length != 0) filter($(this).val());
+            });
     });
 
     function processData(str) {

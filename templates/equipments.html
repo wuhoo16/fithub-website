@@ -79,6 +79,9 @@
         {% endfor %}
         <meta id="equipmentArrayData" data-arr='{{dataArr}}'/>
         <div class="dropdown d-inline-block">
+            <form id="equipmentsSearchForm" action="{{ url_for('equipments', page_number=1) }}" method="post" style="display: none;">
+                <input id="equipmentsSearchItems" name="equipmentsSearchItems">
+            </form>
             <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
             <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
                 <div id="menuItems">
@@ -183,11 +186,14 @@
     </div>
 </div>
 <script>
+    $("#searchBar").val(localStorage.getItem("searchPhrase"));
+
     let items = document.getElementsByClassName("dropdown-item");
     var data = $('#equipmentArrayData').data().arr;
     var dataArr = processData(data);
 
     function filter(phrase) {
+        $("#menu").show()
         var headers = {};
         var hidden = 0;
 
@@ -224,24 +230,41 @@
 
     $(document).ready(function() {
         $("#searchBar").on("keyup", function() {
-            if ($(this).val().length > 0) {
-                $("#menu").show();
-                filter($(this).val().trim().toLowerCase());
-            } else {
-                $("#menu").hide();
-            }
-        });
-        $("#searchBar").on("search", function() {
-            if($(this).val().length == 0) {
-                $("#menu").hide();
-            }
-        });
-        $("#searchBar").on("blur", function() {
-            $("#menu").hide();
-        });
-        $("#searchBar").on("focus", function() {
-            if ($(this).val().length != 0) $("#menu").show();
-        });
+                if ($(this).val().length > 0) {
+                    filter($(this).val().trim().toLowerCase());
+                } else {
+                    $("#menu").hide();
+                }
+            });
+            $("#searchBar").on("search", function() {
+                searchPhrase = $(this).val();
+                if(searchPhrase.length == 0) {
+                    localStorage.setItem("searchPhrase", "");
+                    $("#menu").hide();
+                    $("#equipmentsSearchItems").val("RESET");
+                    $("#equipmentsSearchForm").submit();
+                    $("#equipmentsSearchItems").val("");
+                } else {
+                    localStorage.setItem("searchPhrase", searchPhrase);
+                    $("#equipmentsSearchItems").val("");
+                    for (i = 0; i < items.length; i++) {
+                        if ($(items[i]).is(":visible")) {
+                            currVal = $("#equipmentsSearchItems").val();
+                            if (currVal.length != 0) currVal = currVal + "|";
+                            $("#equipmentsSearchItems").val(currVal + (items[i].innerHTML.split("</b>")[0]).replace("<b>", ""));
+                        }
+                    }
+                    $("#equipmentsSearchForm").submit();
+                    $("#equipmentsSearchItems").val("");
+                }
+                
+            });
+            $("#searchBar").on("blur", function() {
+                if (!($("#menu").is(":hover"))) $("#menu").hide();
+            });
+            $("#searchBar").on("focus", function() {
+                if ($(this).val().length != 0) filter($(this).val());
+            });
     });
 
     function processData(str) {
