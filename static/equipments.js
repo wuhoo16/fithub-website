@@ -11,12 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+//  Draft of storing sort in localStorage - may not even need to implement, we'll see
 //var sortValue = JSON.parse(localStorage.getItem("equipmentsSortForm"));
 //document.addEventListener("DOMContentLoaded", () => {
 //    $("#equipmentsSortCriteriaMenu")
 //});
 //});
-
 
 // Before form submission, save all checkbox's state to local storage
 function saveCheckBoxStateToLocalStorage() {

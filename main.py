@@ -100,6 +100,7 @@ DATABASE = client.phase2Database
 exerciseFilterIsActive = False
 # filteredExercisesArray = []
 equipmentFilterIsActive = False
+
 # filteredEquipmentsArray = []
 channelFilterIsActive = False
 # filteredChannelsArray = []
@@ -114,6 +115,14 @@ channelSortIsActive = False
 modifiedExercisesArray = []
 modifiedEquipmentsArray = []
 modifiedChannelsArray = []
+
+
+exerciseSortIsActive = False
+sortedExercisesArray = []
+equipmentSortIsActive = False
+sortedEquipmentsArray = []
+channelSortIsActive = False
+sortedChannelsArray = []
 
 
 # All classes defined below to help store data attributes
@@ -1338,6 +1347,7 @@ def exercises(page_number):
             # print(f'The sort form value posted for the sorting hidden field is: {request.form.get("exercisesSortingHiddenField")}')
             # print(f'The sort form value posted for the sorting criteria select menu is: {request.form.get("exercisesSortCriteriaMenu")}')
             sortingAttribute = request.form.get("exercisesSortCriteriaMenu")
+
             if exerciseFilterIsActive:
                 sortThisArray = modifiedExercisesArray
             else:
@@ -1377,6 +1387,7 @@ def exercises(page_number):
             start, end, num_pages = paginate(page_number, modifiedExercisesArray)
             return render_template('exercises.html', exercisesArray=modifiedExercisesArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
+
         else:  # else, render template using the original global array with every Exercise object
             start, end, num_pages = paginate(page_number, EXERCISES_ARRAY)
             return render_template('exercises.html', exercisesArray=EXERCISES_ARRAY, start=start, end=end,
@@ -1395,6 +1406,7 @@ def equipments(page_number):
     if request.method == 'POST':
         if request.form.get('equipmentsSortingHiddenField'):  # If this field in the posted form is set, then the user has clicked one of the sorting buttons
             sortingAttribute = request.form.get("equipmentsSortCriteriaMenu")
+
             if equipmentFilterIsActive:
                 sortThisArray = modifiedEquipmentsArray
             else:
@@ -1433,6 +1445,10 @@ def equipments(page_number):
         if equipmentFilterIsActive or equipmentSortIsActive:
             start, end, num_pages = paginate(page_number, modifiedEquipmentsArray)
             return render_template('equipments.html', equipmentArray=modifiedEquipmentsArray, start=start, end=end,
+                                   page_number=page_number, num_pages=num_pages)
+        elif equipmentSortIsActive:
+            start, end, num_pages = paginate(page_number, sortedEquipmentsArray)
+            return render_template('equipments.html', equipmentArray=sortedEquipmentsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         else:  # render template using the global array with every Equipment object
             start, end, num_pages = paginate(page_number, EQUIPMENT_ARRAY)
@@ -1494,6 +1510,7 @@ def channels(page_number):
         elif channelSortIsActive:
             start, end, num_pages = paginate(page_number, modifiedChannelsArray)
             return render_template('channels.html', channelArray=modifiedChannelsArray, start=start, end=end,
+
                                    page_number=page_number, num_pages=num_pages)
         else:  # render template using the global array with every Channel object
             start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
