@@ -1442,6 +1442,16 @@ def channels(page_number):
             start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
             return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
+        elif request.form.get('channelsSearchItems'):
+            print("in search barr")
+            NEW_ARR = []
+            if request.form.get('channelsSearchItems') == "RESET":
+                NEW_ARR = CHANNEL_ARRAY
+            else:
+                NEW_ARR = getSearch(request.form.get('channelsSearchItems'), CHANNEL_ARRAY)
+            
+            start, end, num_pages = paginate(page_number, NEW_ARR)
+            return render_template('channels.html', channelArray=NEW_ARR, start=start, end=end, page_number=page_number, num_pages=num_pages)
         else:
             channelFilterIsActive = True
             selectedSubscriberRange = request.form.getlist('checkedSubscriberRange')
@@ -1484,6 +1494,17 @@ def paginate(page_number, array):
     num_pages = math.ceil(len(array) / 9)
     return startIndex, endIndex, num_pages
 
+def getSearch(tempArr, mainArr):
+    totalArray = []
+    arr = tempArr.split('|')
+
+    for item in arr:
+        for obj in mainArr:
+            if obj.name == item:
+                totalArray.append(obj)
+                break
+    return totalArray
+
 
 # All view methods for INSTANCE pages are defined below:
 # ==================================================================================================================
@@ -1517,7 +1538,6 @@ def channel_instance(arrayIndex):
     # Call method to retrieve 2D List of related indices
     relatedObjects = get_related_objects_for_channel_instance(channelObj.id, DATABASE)
     return render_template('channelInstance.html', channelObj=channelObj, relatedObjects=relatedObjects)
-
 
 # Start the Flask web-application when main.py file is run
 if __name__ == "__main__":

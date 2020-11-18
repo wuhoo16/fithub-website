@@ -81,7 +81,14 @@
         <div class="dropdown d-inline-block">
             <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
             <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
-                <div id="menuItems"></div>
+                <div id="menuItems">
+                    {% for obj in equipmentArray %}
+                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
+                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Price: {{ obj.price }}</a>
+                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Category: {{ obj.equipmentCategory }}</a>
+                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Seller Location: {{ obj.location }}</a>
+                    {% endfor %}
+                </div>
                 <div id="empty" class="dropdown-header">No items found</div>
                 <div id="menuLinks"></div>
             </div>
@@ -180,40 +187,25 @@
     var data = $('#equipmentArrayData').data().arr;
     var dataArr = processData(data);
 
-    function buildDropDown() {
-        let contents = [];
-        for (const [name, info] of Object.entries(dataArr) ) {
-            contents.push('<button class="dropdown-item"><b>' + name + '</b></button>');
-            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Price: ' + info.price + '</button>');
-            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Category: ' + info.category + '</button>');
-            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Seller Location: ' + info.location + '</button>');
-        }
-        $('#menuItems').append(contents.join(""));
-
-        //Hide the row that shows no items were found
-        $('#empty').hide()
-    }
-    buildDropDown();
-
     function filter(phrase) {
         var headers = {};
         var hidden = 0;
 
         for (const [name, info] of Object.entries(dataArr)) {
             if (("price: " + info.price.toLowerCase()).includes(phrase)) {
-                headers[name.toLowerCase() + " - price: " + info.price.toLowerCase()] = 1;
+                headers[(name.toLowerCase() + " - price: " + info.price.toLowerCase()).replace(/'/g, "")] = 1;
             }
             else if (name.toLowerCase().includes(phrase)) {
-                headers[name.toLowerCase()] = 1;
+                headers[name.toLowerCase().replace(/'/g, "")] = 1;
             } else if (("category: " + info.category.toLowerCase()).includes(phrase)) {
-                headers[name.toLowerCase() + " - category: " + info.category.toLowerCase()] = 1;
+                headers[(name.toLowerCase() + " - category: " + info.category.toLowerCase()).replace(/'/g, "")] = 1;
             } else if (("seller location: " + info.location.toLowerCase()).includes(phrase)) {
-                headers[name.toLowerCase() + " - seller location: " + info.location.toLowerCase()] = 1;
+                headers[(name.toLowerCase() + " - seller location: " + info.location.toLowerCase()).replace(/'/g, "")] = 1;
             }
         }
 
         for (i = 0; i < items.length; i++) {
-            if (items[i].innerHTML.replace("<b>", "").replace("</b>", "").toLowerCase() in headers) {
+            if ((items[i].innerHTML.replace("<b>", "").replace("</b>", "").toLowerCase()).replace(/'/g, "") in headers) {
                 $(items[i]).show();
             } else {
                 $(items[i]).hide()
@@ -244,19 +236,12 @@
                 $("#menu").hide();
             }
         });
-    });
-
-    $("#searchBar").on("blur", function() {
-        console.log("Blurring");
-        $("#menu").hide();
-    });
-
-    $('#menuItems').on('click', '.dropdown-item', function(){
-        var tempStr = $(this)[0].innerHTML.split("</b>")[0].replace("<b>", "");      
-        var arrIdx = dataArr[tempStr].idx;
-        $("#searchBar").val("");
-
-        window.location.href = "/equipmentinstance/" + arrIdx;
+        $("#searchBar").on("blur", function() {
+            $("#menu").hide();
+        });
+        $("#searchBar").on("focus", function() {
+            if ($(this).val().length != 0) $("#menu").show();
+        });
     });
 
     function processData(str) {
