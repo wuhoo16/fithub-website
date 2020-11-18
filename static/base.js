@@ -4,6 +4,7 @@ function submitSortForm(sortFormID, hiddenFieldID, value) {
     let hiddenField = document.getElementById(hiddenFieldID);
 
     hiddenField.value = value
+//    localStorage.setItem(sortFormID, value);
     form.submit();
 }
 
