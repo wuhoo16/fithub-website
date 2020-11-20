@@ -275,12 +275,6 @@
             $("#searchBar").on("focus", function() {
                 if ($(this).val().length != 0) filter();
             });
-            $("#resetBtn1").on("click", function() {
-                reset();
-            });
-            $("#resetBtn2").on("click", function() {
-                reset();
-            });
             $("#ascendBtn").on("click", function() {
                 if (!($("#exercisesSortCriteriaMenu").val() == null || $("#exercisesSortCriteriaMenu").val() == localStorage.getItem("exercisesSortPhrase"))) localStorage.setItem("exercisesSortPhrase", $("#exercisesSortCriteriaMenu").val());
             });
@@ -288,15 +282,6 @@
                 if (!($("#exercisesSortCriteriaMenu").val() == null || $("#exercisesSortCriteriaMenu").val() == localStorage.getItem("exercisesSortPhrase"))) localStorage.setItem("exercisesSortPhrase", $("#exercisesSortCriteriaMenu").val());
             });
     });
-
-    function reset() {
-        localStorage.setItem("exercisesSearchPhrase", "");
-        localStorage.setItem("exercisesSortPhrase", "select");
-        $("#menu").hide();
-        $("#exercisesSearchItems").val("");
-
-        resetCheckboxState('exercisesFilterForm', 'exercisesResetHiddenField');
-    }
 
     function processData() {
         str = data;

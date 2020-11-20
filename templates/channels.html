@@ -304,12 +304,6 @@
             $("#searchBar").on("focus", function() {
                 if ($(this).val().length != 0) filter();
             });
-            $("#resetBtn1").on("click", function() {
-                reset();
-            });
-            $("#resetBtn2").on("click", function() {
-                reset();
-            });
             $("#ascendBtn").on("click", function() {
                 if (!($("#channelsSortCriteriaMenu").val() == null || $("#channelsSortCriteriaMenu").val() == localStorage.getItem("channelsSortPhrase"))) localStorage.setItem("channelsSortPhrase", $("#channelsSortCriteriaMenu").val());
             });
@@ -317,15 +311,6 @@
                 if (!($("#channelsSortCriteriaMenu").val() == null || $("#channelsSortCriteriaMenu").val() == localStorage.getItem("channelsSortPhrase"))) localStorage.setItem("channelsSortPhrase", $("#channelsSortCriteriaMenu").val());
             });
         });
-
-        function reset() {
-            localStorage.setItem("channelsSearchPhrase", "");
-            localStorage.setItem("channelsSortPhrase", "select");
-            $("#menu").hide();
-            $("#channelsSearchItems").val("");
-
-            resetCheckboxState('channelsFilterForm', 'channelsResetHiddenField');
-        }
 
         function processData() {
             str = data;

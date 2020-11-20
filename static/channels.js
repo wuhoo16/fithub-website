@@ -25,6 +25,8 @@ function saveCheckBoxStateToLocalStorage() {
 
 // If Reset button used for submission, reset all the checkboxes' checked attributes to false
 function resetCheckboxState(formID, resetHiddenFieldID) {
+  resetSearchSort();
+
   let checkboxes = $(":checkbox");
   let form = document.getElementById(formID);
 
@@ -58,4 +60,11 @@ function verifyCheckBoxes(formID) {
     saveCheckBoxStateToLocalStorage();
     form.submit();
   }
+}
+
+function resetSearchSort() {
+  localStorage.setItem("channelsSearchPhrase", "");
+  localStorage.setItem("channelsSortPhrase", "select");
+  $("#menu").hide();
+  $("#channelsSearchItems").val("");
 }

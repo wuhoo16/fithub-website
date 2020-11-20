@@ -273,12 +273,6 @@
             $("#searchBar").on("focus", function() {
                 if ($(this).val().length != 0) filter();
             });
-            $("#resetBtn1").on("click", function() {
-                reset();
-            });
-            $("#resetBtn2").on("click", function() {
-                reset();
-            });
             $("#ascendBtn").on("click", function() {
                 if (!($("#equipmentsSortCriteriaMenu").val() == null || $("#equipmentsSortCriteriaMenu").val() == localStorage.getItem("equipmentsSortPhrase"))) localStorage.setItem("equipmentsSortPhrase", $("#equipmentsSortCriteriaMenu").val());
             });
@@ -286,15 +280,6 @@
                 if (!($("#equipmentsSortCriteriaMenu").val() == null || $("#equipmentsSortCriteriaMenu").val() == localStorage.getItem("equipmentsSortPhrase"))) localStorage.setItem("equipmentsSortPhrase", $("#equipmentsSortCriteriaMenu").val());
             });
     });
-    
-    function reset() {
-        localStorage.setItem("equipmentsSearchPhrase", "");
-        localStorage.setItem("equipmentsSortPhrase", "select");
-        $("#menu").hide();
-        $("#equipmentsSearchItems").val("");
-
-        resetCheckboxState('equipmentsFilterForm', 'equipmentsResetHiddenField');
-    }
 
     function processData() {
         str = data;
