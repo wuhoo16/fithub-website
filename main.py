@@ -101,21 +101,22 @@ exerciseFilterIsActive = False
 equipmentFilterIsActive = False
 channelFilterIsActive = False
 
-exerciseSortIsActive = False
-equipmentSortIsActive = False
-channelSortIsActive = False
-
 exerciseSearchIsActive = False
+exerciseSortIsActive = False
+exerciseSortingAttribute = ""
+exerciseSortingDirection = ""
 equipmentSearchIsActive = False
+equipmentSortIsActive = False
+equipmentSortingAttribute = ""
+equipmentSortingDirection = ""
 channelSearchIsActive = False
+channelSortIsActive = False
+channelSortingAttribute = ""
+channelSortingDirection = ""
 
 modifiedExercisesArray = []
 modifiedEquipmentsArray = []
 modifiedChannelsArray = []
-
-sortedExercisesArray = []
-sortedEquipmentsArray = []
-sortedChannelsArray = []
 
 
 # All classes defined below to help store data attributes
@@ -1332,25 +1333,27 @@ def exercises(page_number):
     global exerciseFilterIsActive
     global exerciseSortIsActive
     global exerciseSearchIsActive
+    global exerciseSortingAttribute
+    global exerciseSortingDirection
     global modifiedExercisesArray
 
     if request.method == 'POST':
         if request.form.get('exercisesSortingHiddenField'):  # If this field in the posted form is set, then the user has clicked one of the sorting buttons
-            # print(f'The sort form value posted for the sorting hidden field is: {request.form.get("exercisesSortingHiddenField")}')
-            # print(f'The sort form value posted for the sorting criteria select menu is: {request.form.get("exercisesSortCriteriaMenu")}')
-            sortingAttribute = request.form.get("exercisesSortCriteriaMenu")
+            exerciseSortingAttribute = request.form.get("exercisesSortCriteriaMenu")
 
             if exerciseFilterIsActive:
                 sortThisArray = modifiedExercisesArray
             else:
                 sortThisArray = EXERCISES_ARRAY
             if request.form.get('exercisesSortingHiddenField') == 'ascending':
+                exerciseSortingDirection = 'ascending'
                 modifiedExercisesArray = sorted(sortThisArray,
-                                              key=lambda exerciseObj: getattr(exerciseObj, sortingAttribute),
+                                              key=lambda exerciseObj: getattr(exerciseObj, exerciseSortingAttribute),
                                               reverse=False)
             elif request.form.get('exercisesSortingHiddenField') == 'descending':
+                exerciseSortingDirection = 'descending'
                 modifiedExercisesArray = sorted(sortThisArray,
-                                              key=lambda exerciseObj: getattr(exerciseObj, sortingAttribute),
+                                              key=lambda exerciseObj: getattr(exerciseObj, exerciseSortingAttribute),
                                               reverse=True)
             exerciseSortIsActive = True
             start, end, num_pages = paginate(page_number, modifiedExercisesArray)
@@ -1382,6 +1385,15 @@ def exercises(page_number):
             modifiedExercisesArray = filter_exercises(selectedExerciseCategories, selectedEquipmentCategories, DATABASE)
 
             # If we sorted before, sort by the same sort method again
+            if exerciseSortIsActive:
+                if exerciseSortingDirection == 'ascending':
+                    modifiedExercisesArray = sorted(modifiedExercisesArray,
+                                                    key=lambda exerciseObj: getattr(exerciseObj, exerciseSortingAttribute),
+                                                    reverse=False)
+                elif exerciseSortingDirection == 'descending':
+                    modifiedExercisesArray = sorted(modifiedExercisesArray,
+                                                    key=lambda exerciseObj: getattr(exerciseObj, exerciseSortingAttribute),
+                                                    reverse=True)
 
             start, end, num_pages = paginate(page_number, modifiedExercisesArray)
             return render_template('exercises.html', exercisesArray=modifiedExercisesArray, start=start, end=end,
@@ -1391,7 +1403,6 @@ def exercises(page_number):
             start, end, num_pages = paginate(page_number, modifiedExercisesArray)
             return render_template('exercises.html', exercisesArray=modifiedExercisesArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
-
         else:  # else, render template using the original global array with every Exercise object
             start, end, num_pages = paginate(page_number, EXERCISES_ARRAY)
             return render_template('exercises.html', exercisesArray=EXERCISES_ARRAY, start=start, end=end,
@@ -1404,23 +1415,27 @@ def equipments(page_number):
     global equipmentFilterIsActive
     global equipmentSortIsActive
     global equipmentSearchIsActive
+    global equipmentSortingAttribute
+    global equipmentSortingDirection
     global modifiedEquipmentsArray
 
     if request.method == 'POST':
         if request.form.get('equipmentsSortingHiddenField'):  # If this field in the posted form is set, then the user has clicked one of the sorting buttons
-            sortingAttribute = request.form.get("equipmentsSortCriteriaMenu")
+            equipmentSortingAttribute = request.form.get("equipmentsSortCriteriaMenu")
 
             if equipmentFilterIsActive:
                 sortThisArray = modifiedEquipmentsArray
             else:
                 sortThisArray = EQUIPMENT_ARRAY
             if request.form.get('equipmentsSortingHiddenField') == 'ascending':
+                equipmentSortingDirection = 'ascending'
                 modifiedEquipmentsArray = sorted(sortThisArray,
-                                                 key=lambda equipmentObj: getattr(equipmentObj, sortingAttribute),
+                                                 key=lambda equipmentObj: getattr(equipmentObj, equipmentSortingAttribute),
                                                  reverse=False)
             elif request.form.get('equipmentsSortingHiddenField') == 'descending':
+                equipmentSortingDirection = 'descending'
                 modifiedEquipmentsArray = sorted(sortThisArray,
-                                                 key=lambda equipmentObj: getattr(equipmentObj, sortingAttribute),
+                                                 key=lambda equipmentObj: getattr(equipmentObj, equipmentSortingAttribute),
                                                  reverse=True)
             equipmentSortIsActive = True
             start, end, num_pages = paginate(page_number, modifiedEquipmentsArray)
@@ -1452,6 +1467,15 @@ def equipments(page_number):
             modifiedEquipmentsArray = filter_equipments(selectedPriceRanges, selectedEquipmentCategories, DATABASE)
 
             # if we sorted before, sort by the same sort method again
+            if equipmentSortIsActive:
+                if equipmentSortingDirection == 'ascending':
+                    modifiedEquipmentsArray = sorted(modifiedEquipmentsArray,
+                                                     key=lambda equipmentObj: getattr(equipmentObj, equipmentSortingAttribute),
+                                                     reverse=False)
+                elif equipmentSortingDirection == 'descending':
+                    modifiedEquipmentsArray = sorted(modifiedEquipmentsArray,
+                                                     key=lambda equipmentObj: getattr(equipmentObj, equipmentSortingAttribute),
+                                                     reverse=True)
 
             start, end, num_pages = paginate(page_number, modifiedEquipmentsArray)
             return render_template('equipments.html', equipmentArray=modifiedEquipmentsArray, start=start, end=end,
@@ -1460,10 +1484,6 @@ def equipments(page_number):
         if equipmentFilterIsActive or equipmentSortIsActive or equipmentSearchIsActive:
             start, end, num_pages = paginate(page_number, modifiedEquipmentsArray)
             return render_template('equipments.html', equipmentArray=modifiedEquipmentsArray, start=start, end=end,
-                                   page_number=page_number, num_pages=num_pages)
-        elif equipmentSortIsActive:
-            start, end, num_pages = paginate(page_number, sortedEquipmentsArray)
-            return render_template('equipments.html', equipmentArray=sortedEquipmentsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         else:  # render template using the global array with every Equipment object
             start, end, num_pages = paginate(page_number, EQUIPMENT_ARRAY)
@@ -1477,28 +1497,35 @@ def channels(page_number):
     global channelFilterIsActive
     global channelSortIsActive
     global channelSearchIsActive
+    global channelSortingAttribute
+    global channelSortingDirection
     global modifiedChannelsArray
 
     if request.method == 'POST':
         if request.form.get('channelsSortingHiddenField'):  # If this field in the posted form is set, then the user has clicked one of the sorting buttons
-            sortingAttribute = request.form.get("channelsSortCriteriaMenu")
+            channelSortingAttribute = request.form.get("channelsSortCriteriaMenu")
+
             if channelFilterIsActive:
                 sortThisArray = modifiedChannelsArray
             else:
                 sortThisArray = CHANNEL_ARRAY
             if request.form.get('channelsSortingHiddenField') == 'ascending':
-                modifiedChannelsArray = sorted(CHANNEL_ARRAY,
-                                             key=lambda channelObj: getattr(channelObj, sortingAttribute),
+                channelSortingDirection = 'ascending'
+                modifiedChannelsArray = sorted(sortThisArray,
+                                             key=lambda channelObj: getattr(channelObj, channelSortingAttribute),
                                              reverse=False)
             elif request.form.get('channelsSortingHiddenField') == 'descending':
-                modifiedChannelsArray = sorted(CHANNEL_ARRAY,
-                                             key=lambda channelObj: getattr(channelObj, sortingAttribute), reverse=True)
+                channelSortingDirection = 'descending'
+                modifiedChannelsArray = sorted(sortThisArray,
+                                             key=lambda channelObj: getattr(channelObj, channelSortingAttribute),
+                                             reverse=True)
             channelSortIsActive = True
             start, end, num_pages = paginate(page_number, modifiedChannelsArray)
             return render_template('channels.html', channelArray=modifiedChannelsArray, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
         elif request.form.get('resetHiddenField') == 'resetClicked':
             channelFilterIsActive = False
+            channelSortIsActive = False
             start, end, num_pages = paginate(page_number, CHANNEL_ARRAY)
             return render_template('channels.html', channelArray=CHANNEL_ARRAY, start=start, end=end,
                                    page_number=page_number, num_pages=num_pages)
@@ -1524,6 +1551,15 @@ def channels(page_number):
                                                     selectedVideosRange, DATABASE)
 
             # if we sorted before, sort by the same method again
+            if channelSortIsActive:
+                if channelSortingDirection == 'ascending':
+                    modifiedChannelsArray = sorted(modifiedChannelsArray,
+                                             key=lambda channelObj: getattr(channelObj, channelSortingAttribute),
+                                             reverse=False)
+                elif channelSortingDirection == 'descending':
+                    modifiedChannelsArray = sorted(modifiedChannelsArray,
+                                             key=lambda channelObj: getattr(channelObj, channelSortingAttribute),
+                                             reverse=False)
 
             start, end, num_pages = paginate(page_number, modifiedChannelsArray)
             return render_template('channels.html', channelArray=modifiedChannelsArray, start=start, end=end,
