@@ -206,7 +206,8 @@
     var data = $('#exercisesArrayData').data().arr;
     var dataArr = processData(data);
 
-    function filter(phrase) {
+    function filter() {
+        phrase = $("#searchBar").val().trim().toLowerCase();
         $("#menu").show()
         var headers = {};
         var hidden = 0;
@@ -246,7 +247,7 @@
     $(document).ready(function() {
         $("#searchBar").on("keyup", function() {
                 if ($(this).val().length > 0) {
-                    filter($(this).val().trim().toLowerCase());
+                    filter();
                 } else {
                     $("#menu").hide();
                 }
@@ -272,7 +273,7 @@
                 if (!($("#menu").is(":hover"))) $("#menu").hide();
             });
             $("#searchBar").on("focus", function() {
-                if ($(this).val().length != 0) filter($(this).val());
+                if ($(this).val().length != 0) filter();
             });
             $("#resetBtn1").on("click", function() {
                 reset();
@@ -297,7 +298,8 @@
         resetCheckboxState('exercisesFilterForm', 'exercisesResetHiddenField');
     }
 
-    function processData(str) {
+    function processData() {
+        str = data;
         var strToArr = str.replace("[{", "").replace("}]", "").split("}, {");
         var finalObj = {};
 

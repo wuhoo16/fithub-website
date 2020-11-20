@@ -76,6 +76,11 @@ class TestHome(unittest.TestCase):
         no_item_visibility = self.driver.find_element_by_id("empty").is_displayed()
         self.assertEqual(no_item_visibility, True)
 
+    def test_search_bar_keeps_value_after_searching(self):
+        searchEl = self.driver.find_element_by_id("searchBar")
+        searchEl.send_keys('at')
+        searchEl.click()
+        self.assertEqual("at", searchEl.get_attribute('value'))
 
 if __name__ == '__main__':
     unittest.main()
