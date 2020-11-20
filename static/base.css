@@ -482,3 +482,7 @@ body {
   width: 35rem;
   color: black;
 }
+
+#searchBar::placeholder {
+  color: white;
+}
