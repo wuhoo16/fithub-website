@@ -16,7 +16,7 @@ body {
   padding-right: 1.5rem;
   padding-top: 0.25rem;
 }
-.navbar-dark .navbar-nav .navbar-link .navbar-link:active {
+.navbar-dark .navbar-nav .navbar-link {
   color: white;
 }
 #fithubLogo {
@@ -469,12 +469,11 @@ body {
   transition: width 0.25s ease-in-out;
 }
 
-#searchBar::placeholder:not(:focus) {
+/* #searchBar::placeholder:not(:focus) {
   color: white;
-}
+} */
 
 /* When the input field gets focus, change its width to 100% */
 #searchBar:focus {
   width: 35rem;
-  color: black;
 }
