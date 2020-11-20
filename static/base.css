@@ -469,11 +469,16 @@ body {
   transition: width 0.25s ease-in-out;
 }
 
-/* #searchBar::placeholder:not(:focus) {
+#searchBar::placeholder {
   color: white;
-} */
+}
+
+#searchBar:not(:focus) {
+  color: white;
+}
 
 /* When the input field gets focus, change its width to 100% */
 #searchBar:focus {
   width: 35rem;
+  color: black;
 }
