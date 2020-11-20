@@ -69,8 +69,8 @@
                 </li>
                 <li style="text-align: center; margin-top: 1rem;  margin-bottom: 110px;">
                     <input type="hidden" id='channelsResetHiddenField' name='resetHiddenField' value="">
-                    <button class="reset-button btn btn-outline-light" type="button" name="Reset" onclick="resetCheckboxState('channelsFilterForm', 'channelsResetHiddenField')">Reset</button>
                     <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxes('channelsFilterForm')">Filter</button>
+                    <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn2" onclick="resetCheckboxState('channelsFilterForm', 'channelsResetHiddenField')">Reset Filters</button>
                 </li>  
             </ul>
         </form>    
@@ -79,18 +79,21 @@
     <!-- Use any element to open the sidenav -->
     <div class="filtering-section">
         <button class="filter-open-button" onclick="openNav()">Filter ></button>
-        <form id="channelsSortForm" action="{{ url_for('channels', page_number=1) }}" method="post">
-            <label for="channelsSortCriteriaMenu" id="channelsSortMenuLabel">Sort by: </label>
-            <select id="channelsSortCriteriaMenu" name="channelsSortCriteriaMenu">
-                <option value="name">Name (default)</option>
-                <option value="subscriberCount">Subscriber Count</option>
-                <option value="viewCount">View Count</option>
-                <option value="videoCount">Video Count</option>
-              </select>
-            <input type="hidden" id='channelsSortingHiddenField' name='channelsSortingHiddenField' value="">
-            <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'ascending');">
-            <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'descending');">
-        </form>
+        {% if channelArray|length != 0 %}
+            <form id="channelsSortForm" action="{{ url_for('channels', page_number=1) }}" method="post">
+                <label for="channelsSortCriteriaMenu" id="channelsSortMenuLabel" style="color: white; margin-top: 1rem;">Sort by: </label>
+                <select id="channelsSortCriteriaMenu" name="channelsSortCriteriaMenu">
+                    <option value="select" id="select" selected disabled>Select</option>
+                    <option value="name">Name</option>
+                    <option value="subscriberCount">Subscriber Count</option>
+                    <option value="viewCount">View Count</option>
+                    <option value="videoCount">Video Count</option>
+                </select>
+                <input type="hidden" id='channelsSortingHiddenField' name='channelsSortingHiddenField' value="">
+                <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'ascending');">
+                <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending"id="descendBtn" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'descending');">
+            </form>
+        {% endif %}
     </div>
 
     <div id="main">
@@ -104,27 +107,30 @@
             {% endif %}
         {% endfor %}
         <meta id="channelArrayData" data-arr='{{dataArr}}'/>
-        <div id="searchBarContainer" class="dropdown d-inline-block" tabindex="-1">
-            <form id="channelsSearchForm" action="{{ url_for('channels', page_number=1) }}" method="post" style="display: none;">
-                <input id="channelsSearchItems" name="channelsSearchItems">
-            </form>
-            <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" name="searchBar" type="search" placeholder="Search"/>
-            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
-                <div id="menuItems">
-                    {% for obj in channelArray %}
-                        <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
-                        {% if obj.description|length == 0 %}
-                            <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: No description provided.</a>
-                        {% else %}
-                            <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: {{ obj.description }}</a>
-                        {% endif %}
-                        <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Subscribers: {{ obj.subscriberCount }}</a>
-                        <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Total Views: {{ obj.viewCount }}</a>
-                        <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Videos: {{ obj.videoCount }}</a>
-                    {% endfor %}
+        <div style="display: inline-block;">
+            <div id="searchBarContainer" class="dropdown d-inline-block" tabindex="-1">
+                <form id="channelsSearchForm" action="{{ url_for('channels', page_number=1) }}" method="post" style="display: none;">
+                    <input id="channelsSearchItems" name="channelsSearchItems">
+                </form>
+                <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" name="searchBar" type="search" placeholder="Search"/>
+                <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
+                    <div id="menuItems">
+                        {% for obj in channelArray %}
+                            <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
+                            {% if obj.description|length == 0 %}
+                                <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: No description provided.</a>
+                            {% else %}
+                                <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: {{ obj.description }}</a>
+                            {% endif %}
+                            <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Subscribers: {{ obj.subscriberCount }}</a>
+                            <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Total Views: {{ obj.viewCount }}</a>
+                            <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Videos: {{ obj.videoCount }}</a>
+                        {% endfor %}
+                    </div>
+                    <div id="empty" class="dropdown-header">No items found</div>
                 </div>
-                <div id="empty" class="dropdown-header">No items found</div>
             </div>
+            <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn1" onclick="resetCheckboxState('channelsFilterForm', 'channelsResetHiddenField')">Reset Filters</button>
         </div>
     </div>
 
@@ -187,35 +193,41 @@
         {% endif %}
         </div>
 
-        <ul class="pagination justify-content-center" style="margin:20px 0">
-            <!--Previous Page Button-->
-            {% if page_number == 1 %}
-                <li class="page-item disabled"><a class="page-link" href="">Previous</a></li>
-            {% else %}
-                <li class="page-item"><a class="page-link" href="{{ url_for('channels', page_number=page_number-1) }}">Previous</a></li>
-            {% endif %}  
-
-            <!--All Pages Buttons-->
-            {% for i in range(1, num_pages+1) %}
-                {% if i == page_number %}
-                    <li class="page-item active"><a class="page-link" href="{{ url_for('channels', page_number=i) }}">{{i}}</a></li>
+        {% if channelArray|length == 0 %}
+            <h4 id="noInstances" style="color: white;">Sorry! No instances meet your set requirements. Please reset the filters to see channels.</h4>
+        {% else %}
+            <ul class="pagination justify-content-center" style="margin:20px 0">
+                <!--Previous Page Button-->
+                {% if page_number == 1 %}
+                    <li class="page-item disabled"><a class="page-link" href="">Previous</a></li>
                 {% else %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('channels', page_number=i) }}">{{i}}</a></li>
-                {% endif %}    
-            {% endfor %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('channels', page_number=page_number-1) }}">Previous</a></li>
+                {% endif %}  
 
-            <!--Next Page Button-->
-            {% if page_number == num_pages %}
-                <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
-            {% else %}
-                <li class="page-item"><a class="page-link" href="{{ url_for('channels', page_number=page_number+1) }}">Next</a></li>
-            {% endif %}
-        </ul>
+                <!--All Pages Buttons-->
+                {% for i in range(1, num_pages+1) %}
+                    {% if i == page_number %}
+                        <li class="page-item active"><a class="page-link" href="{{ url_for('channels', page_number=i) }}">{{i}}</a></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('channels', page_number=i) }}">{{i}}</a></li>
+                    {% endif %}    
+                {% endfor %}
+
+                <!--Next Page Button-->
+                {% if page_number == num_pages %}
+                    <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('channels', page_number=page_number+1) }}">Next</a></li>
+                {% endif %}
+            </ul>
+        {% endif %}
     </div>
 </div>
 
     <script>
-        $("#searchBar").val(localStorage.getItem("searchPhrase"));
+        $("#searchBar").val(localStorage.getItem("channelsSearchPhrase"));
+        if (localStorage.getItem("channelsSortPhrase") == null || localStorage.getItem("channelsSortPhrase") == "null") $("#channelsSortCriteriaMenu").val("select");
+        else $("#channelsSortCriteriaMenu").val(localStorage.getItem("channelsSortPhrase"));
 
         let items = document.getElementsByClassName("dropdown-item");
         var data = $('#channelArrayData').data().arr;
@@ -245,18 +257,17 @@
                 if (items[i].innerHTML.replace("<b>", "").replace("</b>", "").toLowerCase().trim().replace(/'/g, "") in headers) {
                     $(items[i]).show();
                 } else {
-
-                    $(items[i]).hide()
-                    hidden++
+                    $(items[i]).hide();
+                    hidden++;
                 }
             }
 
             //If no items match, show the empty view
             if (hidden === items.length) {
-                $('#empty').show()
+                $('#empty').show();
             }
             else {
-                $('#empty').hide()
+                $('#empty').hide();
             }
         }
 
@@ -269,15 +280,9 @@
                 }
             });
             $("#searchBar").on("search", function() {
-                searchPhrase = $(this).val();
-                if(searchPhrase.length == 0) {
-                    localStorage.setItem("searchPhrase", "");
-                    $("#menu").hide();
-                    $("#channelsSearchItems").val("RESET");
-                    $("#channelsSearchForm").submit();
-                    $("#channelsSearchItems").val("");
-                } else {
-                    localStorage.setItem("searchPhrase", searchPhrase);
+                channelsSearchPhrase = $(this).val();
+                if(channelsSearchPhrase.length != 0) {
+                    localStorage.setItem("channelsSearchPhrase", channelsSearchPhrase);
                     $("#channelsSearchItems").val("");
                     for (i = 0; i < items.length; i++) {
                         if ($(items[i]).is(":visible")) {
@@ -297,7 +302,28 @@
             $("#searchBar").on("focus", function() {
                 if ($(this).val().length != 0) filter($(this).val());
             });
+            $("#resetBtn1").on("click", function() {
+                reset();
+            });
+            $("#resetBtn2").on("click", function() {
+                reset();
+            });
+            $("#ascendBtn").on("click", function() {
+                if (!($("#channelsSortCriteriaMenu").val() == null || $("#channelsSortCriteriaMenu").val() == localStorage.getItem("channelsSortPhrase"))) localStorage.setItem("channelsSortPhrase", $("#channelsSortCriteriaMenu").val());
+            });
+            $("#descendBtn").on("click", function() {
+                if (!($("#channelsSortCriteriaMenu").val() == null || $("#channelsSortCriteriaMenu").val() == localStorage.getItem("channelsSortPhrase"))) localStorage.setItem("channelsSortPhrase", $("#channelsSortCriteriaMenu").val());
+            });
         });
+
+        function reset() {
+            localStorage.setItem("channelsSearchPhrase", "");
+            localStorage.setItem("channelsSortPhrase", "select");
+            $("#menu").hide();
+            $("#channelsSearchItems").val("");
+
+            resetCheckboxState('channelsFilterForm', 'channelsResetHiddenField');
+        }
 
         function processData(str) {
             var strToArr = str.replace("[{", "").replace("}]", "").split("}, {");

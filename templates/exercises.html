@@ -59,8 +59,8 @@
                     </li>
                     <li style="text-align: center; margin-top: 1rem; margin-bottom: 110px;">
                         <input type="hidden" id='exercisesResetHiddenField' name='resetHiddenField' value="">
-                        <button class="reset-button btn btn-outline-light" type="button" name="Reset" onclick="resetCheckboxState('exercisesFilterForm', 'exercisesResetHiddenField')">Reset</button>
                         <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxes('exercisesFilterForm')">Filter</button>
+                        <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn1" onclick="resetCheckboxState('exercisesFilterForm', 'exercisesResetHiddenField')">Reset Filters</button>
                     </li>
                 </ul>
             </form>
@@ -69,17 +69,20 @@
     <!-- Use any element to open the sidenav -->
     <div class="filtering-section">
         <button class="filter-open-button" onclick="openNav()">Filter ></button>
-        <form id="exercisesSortForm" action="{{ url_for('exercises', page_number=1) }}" method="post">
-            <label for="exercisesSortCriteriaMenu" id="exercisesSortMenuLabel">Sort by: </label>
-            <select id="exercisesSortCriteriaMenu" name="exercisesSortCriteriaMenu">
-                <option value="name">Name (default)</option>
-                <option value="category">Category</option>
-                <option value="equipment">Equipment</option>
-            </select>
-            <input type="hidden" id='exercisesSortingHiddenField' name='exercisesSortingHiddenField' value="">
-            <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" onclick="submitSortForm('exercisesSortForm', 'exercisesSortingHiddenField', 'ascending');">
-            <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" onclick="submitSortForm('exercisesSortForm', 'exercisesSortingHiddenField', 'descending');">
-        </form>
+        {% if exercisesArray|length != 0 %}
+            <form id="exercisesSortForm" action="{{ url_for('exercises', page_number=1) }}" method="post">
+                <label for="exercisesSortCriteriaMenu" id="exercisesSortMenuLabel" style="color: white; margin-top: 1rem;">Sort by: </label>
+                <select id="exercisesSortCriteriaMenu" name="exercisesSortCriteriaMenu">
+                    <option value="select" id="select" selected disabled>Select</option>
+                    <option value="name">Name</option>
+                    <option value="category">Category</option>
+                    <option value="equipment">Equipment</option>
+                </select>
+                <input type="hidden" id='exercisesSortingHiddenField' name='exercisesSortingHiddenField' value="">
+                <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="submitSortForm('exercisesSortForm', 'exercisesSortingHiddenField', 'ascending');">
+                <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" id="descendBtn" onclick="submitSortForm('exercisesSortForm', 'exercisesSortingHiddenField', 'descending');">
+            </form>
+        {% endif %}
     </div>
     
     <div id="main">
@@ -89,23 +92,26 @@
             {% set dataArr = dataArr.append({"name": obj.name, "category": obj.category, "equipment": obj.equipment|join(', '), "description": obj.description}) %}
         {% endfor %}
         <meta id="exercisesArrayData" data-arr='{{dataArr}}'/>
-        <div class="dropdown d-inline-block">
-            <form id="exercisesSearchForm" action="{{ url_for('exercises', page_number=1) }}" method="post" style="display: none;">
-                <input id="exercisesSearchItems" name="exercisesSearchItems">
-            </form>
-            <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
-            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
-                <div id="menuItems">
-                    {% for obj in exercisesArray %}
-                        <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
-                        <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Category: {{ obj.category }}</a>
-                        <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Equipment: {{ obj.equipment|join(', ') }}</a>
-                        <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: {{ obj.description }}</a>
-                    {% endfor %}
+        <div style="display: inline-block;">
+            <div class="dropdown d-inline-block">
+                <form id="exercisesSearchForm" action="{{ url_for('exercises', page_number=1) }}" method="post" style="display: none;">
+                    <input id="exercisesSearchItems" name="exercisesSearchItems">
+                </form>
+                <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
+                <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
+                    <div id="menuItems">
+                        {% for obj in exercisesArray %}
+                            <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
+                            <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Category: {{ obj.category }}</a>
+                            <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Equipment: {{ obj.equipment|join(', ') }}</a>
+                            <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: {{ obj.description }}</a>
+                        {% endfor %}
+                    </div>
+                    <div id="empty" class="dropdown-header">No items found</div>
+                    <div id="menuLinks"></div>
                 </div>
-                <div id="empty" class="dropdown-header">No items found</div>
-                <div id="menuLinks"></div>
             </div>
+            <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn2" onclick="resetCheckboxState('exercisesFilterForm', 'exercisesResetHiddenField')">Reset Filters</button>
         </div>
     </div>
     
@@ -161,34 +167,40 @@
         {% endif %}
         </div>
 
-        <ul class="pagination justify-content-center" style="margin: 20px;">
-            <!--Previous Page Button-->
-            {% if page_number == 1 %}
-                <li class="page-item disabled"><a class="page-link" href="">Previous</a></li>
-            {% else %}
-                <li class="page-item"><a class="page-link" href="{{ url_for('exercises', page_number=page_number-1) }}">Previous</a></li>
-            {% endif %}  
-
-            <!--All Pages Buttons-->
-            {% for i in range(1, num_pages+1) %}
-                {% if i == page_number %}
-                    <li class="page-item active"><a class="page-link" href="{{ url_for('exercises', page_number=i) }}">{{i}}</a></li>
+        {% if exercisesArray|length == 0 %}
+            <h4 style="color: white;">Sorry! No instances meet your set requirements. Please reset the filters to see exercises.</h4>
+        {% else %}
+            <ul class="pagination justify-content-center" style="margin: 20px;">
+                <!--Previous Page Button-->
+                {% if page_number == 1 %}
+                    <li class="page-item disabled"><a class="page-link" href="">Previous</a></li>
                 {% else %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('exercises', page_number=i) }}">{{i}}</a></li>
-                {% endif %}    
-            {% endfor %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('exercises', page_number=page_number-1) }}">Previous</a></li>
+                {% endif %}  
 
-            <!--Next Page Button-->
-            {% if page_number == num_pages %}
-                <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
-            {% else %}
-                <li class="page-item"><a class="page-link" href="{{ url_for('exercises', page_number=page_number+1) }}">Next</a></li>
-            {% endif %}
-        </ul>
+                <!--All Pages Buttons-->
+                {% for i in range(1, num_pages+1) %}
+                    {% if i == page_number %}
+                        <li class="page-item active"><a class="page-link" href="{{ url_for('exercises', page_number=i) }}">{{i}}</a></li>
+                    {% else %}
+                        <li class="page-item"><a class="page-link" href="{{ url_for('exercises', page_number=i) }}">{{i}}</a></li>
+                    {% endif %}    
+                {% endfor %}
+
+                <!--Next Page Button-->
+                {% if page_number == num_pages %}
+                    <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="{{ url_for('exercises', page_number=page_number+1) }}">Next</a></li>
+                {% endif %}
+            </ul>
+        {% endif %}
     </div>
 </div>
 <script>
-    $("#searchBar").val(localStorage.getItem("searchPhrase"));
+    $("#searchBar").val(localStorage.getItem("exercisesSearchPhrase"));
+    if (localStorage.getItem("exercisesSortPhrase") == null || localStorage.getItem("exercisesSortPhrase") == "null") $("#exercisesSortCriteriaMenu").val("select");
+    else $("#exercisesSortCriteriaMenu").val(localStorage.getItem("exercisesSortPhrase"));
 
     let items = document.getElementsByClassName("dropdown-item");
     var data = $('#exercisesArrayData').data().arr;
@@ -223,7 +235,8 @@
 
         //If no items match, show the empty view
         if (hidden === items.length) {
-            $('#empty').show()
+            $('#empty').show();
+            localStorage.setItem("exercisesFiltersInvalid", true);
         }
         else {
             $('#empty').hide()
@@ -239,15 +252,9 @@
                 }
             });
             $("#searchBar").on("search", function() {
-                searchPhrase = $(this).val();
-                if(searchPhrase.length == 0) {
-                    localStorage.setItem("searchPhrase", "");
-                    $("#menu").hide();
-                    $("#exercisesSearchItems").val("RESET");
-                    $("#exercisesSearchForm").submit();
-                    $("#exercisesSearchItems").val("");
-                } else {
-                    localStorage.setItem("searchPhrase", searchPhrase);
+                exercisesSearchPhrase = $(this).val();
+                if(exercisesSearchPhrase.length != 0) {
+                    localStorage.setItem("exercisesSearchPhrase", exercisesSearchPhrase);
                     $("#exercisesSearchItems").val("");
                     for (i = 0; i < items.length; i++) {
                         if ($(items[i]).is(":visible")) {
@@ -267,7 +274,28 @@
             $("#searchBar").on("focus", function() {
                 if ($(this).val().length != 0) filter($(this).val());
             });
+            $("#resetBtn1").on("click", function() {
+                reset();
+            });
+            $("#resetBtn2").on("click", function() {
+                reset();
+            });
+            $("#ascendBtn").on("click", function() {
+                if (!($("#exercisesSortCriteriaMenu").val() == null || $("#exercisesSortCriteriaMenu").val() == localStorage.getItem("exercisesSortPhrase"))) localStorage.setItem("exercisesSortPhrase", $("#exercisesSortCriteriaMenu").val());
+            });
+            $("#descendBtn").on("click", function() {
+                if (!($("#exercisesSortCriteriaMenu").val() == null || $("#exercisesSortCriteriaMenu").val() == localStorage.getItem("exercisesSortPhrase"))) localStorage.setItem("exercisesSortPhrase", $("#exercisesSortCriteriaMenu").val());
+            });
     });
+
+    function reset() {
+        localStorage.setItem("exercisesSearchPhrase", "");
+        localStorage.setItem("exercisesSortPhrase", "select");
+        $("#menu").hide();
+        $("#exercisesSearchItems").val("");
+
+        resetCheckboxState('exercisesFilterForm', 'exercisesResetHiddenField');
+    }
 
     function processData(str) {
         var strToArr = str.replace("[{", "").replace("}]", "").split("}, {");
