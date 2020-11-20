@@ -90,9 +90,19 @@
         {% endfor %}
         <meta id="exercisesArrayData" data-arr='{{dataArr}}'/>
         <div class="dropdown d-inline-block">
+            <form id="exercisesSearchForm" action="{{ url_for('exercises', page_number=1) }}" method="post" style="display: none;">
+                <input id="exercisesSearchItems" name="exercisesSearchItems">
+            </form>
             <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
             <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
-                <div id="menuItems"></div>
+                <div id="menuItems">
+                    {% for obj in exercisesArray %}
+                        <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
+                        <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Category: {{ obj.category }}</a>
+                        <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Equipment: {{ obj.equipment|join(', ') }}</a>
+                        <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: {{ obj.description }}</a>
+                    {% endfor %}
+                </div>
                 <div id="empty" class="dropdown-header">No items found</div>
                 <div id="menuLinks"></div>
             </div>
@@ -178,43 +188,32 @@
     </div>
 </div>
 <script>
+    $("#searchBar").val(localStorage.getItem("searchPhrase"));
+
     let items = document.getElementsByClassName("dropdown-item");
     var data = $('#exercisesArrayData').data().arr;
     var dataArr = processData(data);
 
-    function buildDropDown() {
-        let contents = [];
-        for (const [name, info] of Object.entries(dataArr) ) {
-            contents.push('<button class="dropdown-item"><b>' + name + '</b></button>');
-            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Category: ' + info.category + '</button>');
-            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Equipment: ' + info.equipment + '</button>');
-            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Description: ' + info.description + '</button>');
-        }
-        $('#menuItems').append(contents.join(""));
-
-        //Hide the row that shows no items were found
-        $('#empty').hide()
-    }
-    buildDropDown();
-
     function filter(phrase) {
+        $("#menu").show()
         var headers = {};
         var hidden = 0;
 
         for (const [name, info] of Object.entries(dataArr)) {
             if (name.toLowerCase().includes(phrase)) {
-                headers[name.toLowerCase()] = 1;
+                headers[name.toLowerCase().replace(/'/g, "")] = 1;
             } else if (("category: " + info.category.toLowerCase()).includes(phrase)) {
-                headers[name.toLowerCase() + " - category: " + info.category.toLowerCase()] = 1;
+                headers[(name.toLowerCase() + " - category: " + info.category.toLowerCase()).replace(/'/g, "")] = 1;
             } else if (("equipment: " + info.equipment.toLowerCase()).includes(phrase)) {
-                headers[name.toLowerCase() + " - equipment: " + info.equipment.toLowerCase()] = 1;
+                headers[(name.toLowerCase() + " - equipment: " + info.equipment.toLowerCase()).replace(/'/g, "")] = 1;
             } else if (("description: " + info.description.toLowerCase()).includes(phrase)) {
-                headers[name.toLowerCase() + " - description: " + info.description.toLowerCase()] = 1;
+                headers[(name.toLowerCase() + " - description: " + info.description.toLowerCase()).replace(/'/g, "")] = 1;
             }
         }
 
         for (i = 0; i < items.length; i++) {
-            if (items[i].innerHTML.replace("<b>", "").replace("</b>", "").toLowerCase() in headers) {
+            var item = items[i].innerHTML.replace("<b>", "").replace("</b>", "").toLowerCase().replace(/'/g, "");
+            if (item in headers) {
                 $(items[i]).show();
             } else {
                 $(items[i]).hide()
@@ -233,26 +232,41 @@
 
     $(document).ready(function() {
         $("#searchBar").on("keyup", function() {
-            if ($(this).val().length > 0) {
-                $("#menu").show();
-                filter($(this).val().trim().toLowerCase());
-            } else {
-                $("#menu").hide();
-            }
-        });
-        $("#searchBar").on("search", function() {
-            if($(this).val().length == 0) {
-                $("#menu").hide();
-            }
-        });
-    });
-
-    $('#menuItems').on('click', '.dropdown-item', function(){
-        var tempStr = $(this)[0].innerHTML.split("</b>")[0].replace("<b>", "");
-        var arrIdx = dataArr[tempStr].idx;
-        $("#searchBar").val("");
-
-        window.location.href = "/exerciseinstance/" + arrIdx;
+                if ($(this).val().length > 0) {
+                    filter($(this).val().trim().toLowerCase());
+                } else {
+                    $("#menu").hide();
+                }
+            });
+            $("#searchBar").on("search", function() {
+                searchPhrase = $(this).val();
+                if(searchPhrase.length == 0) {
+                    localStorage.setItem("searchPhrase", "");
+                    $("#menu").hide();
+                    $("#exercisesSearchItems").val("RESET");
+                    $("#exercisesSearchForm").submit();
+                    $("#exercisesSearchItems").val("");
+                } else {
+                    localStorage.setItem("searchPhrase", searchPhrase);
+                    $("#exercisesSearchItems").val("");
+                    for (i = 0; i < items.length; i++) {
+                        if ($(items[i]).is(":visible")) {
+                            currVal = $("#exercisesSearchItems").val();
+                            if (currVal.length != 0) currVal = currVal + "|";
+                            $("#exercisesSearchItems").val(currVal + (items[i].innerHTML.split("</b>")[0]).replace("<b>", ""));
+                        }
+                    }
+                    $("#exercisesSearchForm").submit();
+                    $("#exercisesSearchItems").val("");
+                }
+                
+            });
+            $("#searchBar").on("blur", function() {
+                if (!($("#menu").is(":hover"))) $("#menu").hide();
+            });
+            $("#searchBar").on("focus", function() {
+                if ($(this).val().length != 0) filter($(this).val());
+            });
     });
 
     function processData(str) {

@@ -79,9 +79,19 @@
         {% endfor %}
         <meta id="equipmentArrayData" data-arr='{{dataArr}}'/>
         <div class="dropdown d-inline-block">
+            <form id="equipmentsSearchForm" action="{{ url_for('equipments', page_number=1) }}" method="post" style="display: none;">
+                <input id="equipmentsSearchItems" name="equipmentsSearchItems">
+            </form>
             <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
             <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
-                <div id="menuItems"></div>
+                <div id="menuItems">
+                    {% for obj in equipmentArray %}
+                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
+                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Price: {{ obj.price }}</a>
+                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Category: {{ obj.equipmentCategory }}</a>
+                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Seller Location: {{ obj.location }}</a>
+                    {% endfor %}
+                </div>
                 <div id="empty" class="dropdown-header">No items found</div>
                 <div id="menuLinks"></div>
             </div>
@@ -176,44 +186,32 @@
     </div>
 </div>
 <script>
+    $("#searchBar").val(localStorage.getItem("searchPhrase"));
+
     let items = document.getElementsByClassName("dropdown-item");
     var data = $('#equipmentArrayData').data().arr;
     var dataArr = processData(data);
 
-    function buildDropDown() {
-        let contents = [];
-        for (const [name, info] of Object.entries(dataArr) ) {
-            contents.push('<button class="dropdown-item"><b>' + name + '</b></button>');
-            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Price: ' + info.price + '</button>');
-            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Category: ' + info.category + '</button>');
-            contents.push('<button class="dropdown-item"><b>' + name + '</b> - Seller Location: ' + info.location + '</button>');
-        }
-        $('#menuItems').append(contents.join(""));
-
-        //Hide the row that shows no items were found
-        $('#empty').hide()
-    }
-    buildDropDown();
-
     function filter(phrase) {
+        $("#menu").show()
         var headers = {};
         var hidden = 0;
 
         for (const [name, info] of Object.entries(dataArr)) {
             if (("price: " + info.price.toLowerCase()).includes(phrase)) {
-                headers[name.toLowerCase() + " - price: " + info.price.toLowerCase()] = 1;
+                headers[(name.toLowerCase() + " - price: " + info.price.toLowerCase()).replace(/'/g, "")] = 1;
             }
             else if (name.toLowerCase().includes(phrase)) {
-                headers[name.toLowerCase()] = 1;
+                headers[name.toLowerCase().replace(/'/g, "")] = 1;
             } else if (("category: " + info.category.toLowerCase()).includes(phrase)) {
-                headers[name.toLowerCase() + " - category: " + info.category.toLowerCase()] = 1;
+                headers[(name.toLowerCase() + " - category: " + info.category.toLowerCase()).replace(/'/g, "")] = 1;
             } else if (("seller location: " + info.location.toLowerCase()).includes(phrase)) {
-                headers[name.toLowerCase() + " - seller location: " + info.location.toLowerCase()] = 1;
+                headers[(name.toLowerCase() + " - seller location: " + info.location.toLowerCase()).replace(/'/g, "")] = 1;
             }
         }
 
         for (i = 0; i < items.length; i++) {
-            if (items[i].innerHTML.replace("<b>", "").replace("</b>", "").toLowerCase() in headers) {
+            if ((items[i].innerHTML.replace("<b>", "").replace("</b>", "").toLowerCase()).replace(/'/g, "") in headers) {
                 $(items[i]).show();
             } else {
                 $(items[i]).hide()
@@ -232,31 +230,41 @@
 
     $(document).ready(function() {
         $("#searchBar").on("keyup", function() {
-            if ($(this).val().length > 0) {
-                $("#menu").show();
-                filter($(this).val().trim().toLowerCase());
-            } else {
-                $("#menu").hide();
-            }
-        });
-        $("#searchBar").on("search", function() {
-            if($(this).val().length == 0) {
-                $("#menu").hide();
-            }
-        });
-    });
-
-    $("#searchBar").on("blur", function() {
-        console.log("Blurring");
-        $("#menu").hide();
-    });
-
-    $('#menuItems').on('click', '.dropdown-item', function(){
-        var tempStr = $(this)[0].innerHTML.split("</b>")[0].replace("<b>", "");      
-        var arrIdx = dataArr[tempStr].idx;
-        $("#searchBar").val("");
-
-        window.location.href = "/equipmentinstance/" + arrIdx;
+                if ($(this).val().length > 0) {
+                    filter($(this).val().trim().toLowerCase());
+                } else {
+                    $("#menu").hide();
+                }
+            });
+            $("#searchBar").on("search", function() {
+                searchPhrase = $(this).val();
+                if(searchPhrase.length == 0) {
+                    localStorage.setItem("searchPhrase", "");
+                    $("#menu").hide();
+                    $("#equipmentsSearchItems").val("RESET");
+                    $("#equipmentsSearchForm").submit();
+                    $("#equipmentsSearchItems").val("");
+                } else {
+                    localStorage.setItem("searchPhrase", searchPhrase);
+                    $("#equipmentsSearchItems").val("");
+                    for (i = 0; i < items.length; i++) {
+                        if ($(items[i]).is(":visible")) {
+                            currVal = $("#equipmentsSearchItems").val();
+                            if (currVal.length != 0) currVal = currVal + "|";
+                            $("#equipmentsSearchItems").val(currVal + (items[i].innerHTML.split("</b>")[0]).replace("<b>", ""));
+                        }
+                    }
+                    $("#equipmentsSearchForm").submit();
+                    $("#equipmentsSearchItems").val("");
+                }
+                
+            });
+            $("#searchBar").on("blur", function() {
+                if (!($("#menu").is(":hover"))) $("#menu").hide();
+            });
+            $("#searchBar").on("focus", function() {
+                if ($(this).val().length != 0) filter($(this).val());
+            });
     });
 
     function processData(str) {

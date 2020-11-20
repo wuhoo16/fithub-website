@@ -104,12 +104,26 @@
             {% endif %}
         {% endfor %}
         <meta id="channelArrayData" data-arr='{{dataArr}}'/>
-        <div class="dropdown d-inline-block">
-            <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
+        <div id="searchBarContainer" class="dropdown d-inline-block" tabindex="-1">
+            <form id="channelsSearchForm" action="{{ url_for('channels', page_number=1) }}" method="post" style="display: none;">
+                <input id="channelsSearchItems" name="channelsSearchItems">
+            </form>
+            <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" name="searchBar" type="search" placeholder="Search"/>
             <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
-                <div id="menuItems"></div>
+                <div id="menuItems">
+                    {% for obj in channelArray %}
+                        <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
+                        {% if obj.description|length == 0 %}
+                            <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: No description provided.</a>
+                        {% else %}
+                            <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: {{ obj.description }}</a>
+                        {% endif %}
+                        <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Subscribers: {{ obj.subscriberCount }}</a>
+                        <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Total Views: {{ obj.viewCount }}</a>
+                        <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Videos: {{ obj.videoCount }}</a>
+                    {% endfor %}
+                </div>
                 <div id="empty" class="dropdown-header">No items found</div>
-                <div id="menuLinks"></div>
             </div>
         </div>
     </div>
@@ -201,48 +215,37 @@
 </div>
 
     <script>
+        $("#searchBar").val(localStorage.getItem("searchPhrase"));
+
         let items = document.getElementsByClassName("dropdown-item");
         var data = $('#channelArrayData').data().arr;
         var dataArr = processData(data);
 
-        function buildDropDown() {
-            let contents = [];
-            for (const [name, info] of Object.entries(dataArr) ) {
-                contents.push('<button class="dropdown-item"><b>' + name + '</b></button>');
-                contents.push('<button class="dropdown-item"><b>' + name + '</b> - Description: ' + info.description + '</button>');
-                contents.push('<button class="dropdown-item"><b>' + name + '</b> - Subscribers: ' + info.subscriber + '</button>');
-                contents.push('<button class="dropdown-item"><b>' + name + '</b> - Total Views: ' + info.view + '</button>');
-                contents.push('<button class="dropdown-item"><b>' + name + '</b> - Videos: ' + info.video + '</button>');
-            }
-            $('#menuItems').append(contents.join(""));
-
-            //Hide the row that shows no items were found
-            $('#empty').hide()
-        }
-        buildDropDown();
-
         function filter(phrase) {
+            $("#menu").show()
             var headers = {};
             var hidden = 0;
 
+
             for (const [name, info] of Object.entries(dataArr)) {
                 if (name.toLowerCase().includes(phrase)) {
-                    headers[name.toLowerCase()] = 1;
+                    headers[name.toLowerCase().replace(/'/g, "")] = 1;
                 } else if (("description: " + info.description.toLowerCase()).includes(phrase)) {
-                    headers[name.toLowerCase() + " - description: " + info.description.toLowerCase()] = 1;
+                    headers[(name.toLowerCase() + " - description: " + info.description.toLowerCase()).trim().replace(/'/g, "")] = 1;
                 } else if (("subscribers: " + info.subscriber.toLowerCase()).includes(phrase)) {
-                    headers[name.toLowerCase() + " - subscribers: " + info.subscriber.toLowerCase()] = 1;
+                    headers[(name.toLowerCase() + " - subscribers: " + info.subscriber.toLowerCase()).trim().replace(/'/g, "")] = 1;
                 } else if (("total views: " + info.view.toLowerCase()).includes(phrase)) {
-                    headers[name.toLowerCase() + " - total views: " + info.view.toLowerCase()] = 1;
+                    headers[(name.toLowerCase() + " - total views: " + info.view.toLowerCase()).trim().replace(/'/g, "")] = 1;
                 } else if (("videos: " + info.video.toLowerCase()).includes(phrase)) {
-                    headers[name.toLowerCase() + " - videos: " + info.video.toLowerCase()] = 1;
+                    headers[(name.toLowerCase() + " - videos: " + info.video.toLowerCase()).trim().replace(/'/g, "")] = 1;
                 }
             }
 
             for (i = 0; i < items.length; i++) {
-                if (items[i].innerHTML.replace("<b>", "").replace("</b>", "").toLowerCase() in headers) {
+                if (items[i].innerHTML.replace("<b>", "").replace("</b>", "").toLowerCase().trim().replace(/'/g, "") in headers) {
                     $(items[i]).show();
                 } else {
+
                     $(items[i]).hide()
                     hidden++
                 }
@@ -260,25 +263,40 @@
         $(document).ready(function() {
             $("#searchBar").on("keyup", function() {
                 if ($(this).val().length > 0) {
-                    $("#menu").show();
                     filter($(this).val().trim().toLowerCase());
                 } else {
                     $("#menu").hide();
                 }
             });
             $("#searchBar").on("search", function() {
-                if($(this).val().length == 0) {
+                searchPhrase = $(this).val();
+                if(searchPhrase.length == 0) {
+                    localStorage.setItem("searchPhrase", "");
                     $("#menu").hide();
+                    $("#channelsSearchItems").val("RESET");
+                    $("#channelsSearchForm").submit();
+                    $("#channelsSearchItems").val("");
+                } else {
+                    localStorage.setItem("searchPhrase", searchPhrase);
+                    $("#channelsSearchItems").val("");
+                    for (i = 0; i < items.length; i++) {
+                        if ($(items[i]).is(":visible")) {
+                            currVal = $("#channelsSearchItems").val();
+                            if (currVal.length != 0) currVal = currVal + "|";
+                            $("#channelsSearchItems").val(currVal + (items[i].innerHTML.split("</b>")[0]).replace("<b>", ""));
+                        }
+                    }
+                    $("#channelsSearchForm").submit();
+                    $("#channelsSearchItems").val("");
                 }
+                
             });
-        });
-
-        $('#menuItems').on('click', '.dropdown-item', function(){
-            var tempStr = $(this)[0].innerHTML.split("</b>")[0].replace("<b>", "");
-            var arrIdx = dataArr[tempStr].idx;
-            $("#searchBar").val("");
-
-            window.location.href = "/channelinstance/" + arrIdx;
+            $("#searchBar").on("blur", function() {
+                if (!($("#menu").is(":hover"))) $("#menu").hide();
+            });
+            $("#searchBar").on("focus", function() {
+                if ($(this).val().length != 0) filter($(this).val());
+            });
         });
 
         function processData(str) {
