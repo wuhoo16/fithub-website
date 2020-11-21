@@ -73,6 +73,7 @@ function verifyCheckBoxes(formID) {
 
 function resetSearchSort() {
   localStorage.setItem("equipmentsSearchPhrase", "");
+  console.log('In resetSearchSort() javascript function and just reset the key "equipmentsSearchPhrase" to an empty string!')
   localStorage.setItem("equipmentsSortPhrase", "select");
   $("#menu").hide();
   $("#equipmentsSearchItems").val("");
