@@ -13,7 +13,7 @@
         <p class="modelDescription">Check out our selection of fitness equipment.</p>
     </div>
     <div id="mySidenav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="javascript:void(0)" id="closeNavButton" class="closebtn" onclick="closeNav()">&times;</a>
         <form id="equipmentsFilterForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
             <ul class="checkbox-menu">
                 <li class="dropdown-header">Price</li>
@@ -47,7 +47,7 @@
                 </li>
                 <li style="text-align: center; margin-top: 1rem; margin-bottom: 110px;">
                     <input type="hidden" id='equipmentsResetHiddenField' name='resetHiddenField' value="">
-                    <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxes('equipmentsFilterForm')">Filter</button>
+                    <button class="filter-button btn btn-outline-light" id="filterButton" type="button" name="Filter" onclick="verifyCheckBoxes('equipmentsFilterForm')">Filter</button>
                 </li>
             </ul>
         </form>    
@@ -73,8 +73,8 @@
                 <option class="select-option" value="category">Category</option>
             </select>
             <input type="hidden" id='equipmentsSortingHiddenField' name='equipmentsSortingHiddenField' value="">
-            <img class="ascending-button" id="equipmentAscending" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="submitSortForm('equipmentsSortForm', 'equipmentsSortingHiddenField', 'ascending');">
-            <img class="descending-button" id="equipmentDescending" src="/static/descendingSortIcon.png" alt="Descending" id="descendBtn" onclick="submitSortForm('equipmentsSortForm', 'equipmentsSortingHiddenField', 'descending');">
+            <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="submitSortForm('equipmentsSortForm', 'equipmentsSortingHiddenField', 'ascending');">
+            <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" id="descendBtn" onclick="submitSortForm('equipmentsSortForm', 'equipmentsSortingHiddenField', 'descending');">
         </form>
         {% endif %}
 
