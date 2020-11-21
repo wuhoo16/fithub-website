@@ -2,7 +2,7 @@
 
 This is the master branch for TeamA13's IMBD web application project for EE461L. Note that all code in this repo is production-ready and should match the current deployed, functional state. The buildfiles for this project to run on Google App Engine include requirements.txt and app.yaml. Requirements.txt lists all of the python libraries and dependencies that our web app needs to deploy.
 
-Note: Channel instance pages currently have placeholder boxes in phase 2 for videos that will be added in phase 3.
+Website Link: [FitHub](https://imbdproject.wn.r.appspot.com/)
 
 # Team Members:
   Andy Wu
@@ -41,6 +41,23 @@ Note: Channel instance pages currently have placeholder boxes in phase 2 for vid
         - Refactoring codebase to improve runtime and object reference in routing methods and HTML Templates: Actual Completion Hours: 3
         - Implementing all unittests to test the Python code/database communication: Estimated Completion Hours: 3
         - Implementing all unittests to test the Python code/database communication: Actual Completion Hours: 3
+      - Phase 3:
+        - Filtering implementation for all 3 model pages: Estimated Completion Hours: 5
+        - Filtering implementation for all 3 model pages: Actual Completion Hours: 5
+        - Updating Flask view function to support persisting filtered results across pagination pages: Estimated Completion Hours: 2
+        - Updating Flask view function to support persisting filtered results across pagination pages: Actual Completion Hours: 3
+        - Debugging and fixing frontend carousel control bug and linking issues from phase 2: Estimated Completion Hours: 1
+        - Debugging and fixing frontend carousel control bug and linking issues from phase 2: Actual Completion Hours: 2
+        - Adding javascript code to prevent bad form submission and persist checkbox states: Estimated Completion Hours: 4
+        - Adding javascript code to prevent bad form submission and persist checkbox states: Actual Completion Hours: 8
+        - Checking images on the exercises model page for mismatch on equipment usage + replacing with relevant GIFs: Estimated Completion Hours: 3
+        - Checking images on the exercises model page for mismatch on equipment usage + replacing with relevant GIFs: Actual Completion Hours: 4
+        - Using Adobe Premier to edit hype video, formatting video on HTML page, adding Javascript to handle autoplay/looping logic: Estimated Completion Hours: 2
+        - Using Adobe Premier to edit hype video, formatting video on HTML page, adding Javascript to handle autoplay/looping logic: Actual Completion Hours: 4
+        - Sorting Implementation for all 3 model pages: Estimated Completion Hours: 3
+        - Sorting Implementation for all 3 model pages: Actual Completion Hours: 3
+        - Selenium Testing for filtering functionality and final deployment: Estimated Completion Hours: 5
+        - Selenium Testing for filtering functionality and final deployment: Actual Completion Hours: 5
   
   Kaylee N Trevino
    - EID: knt658
@@ -76,6 +93,19 @@ Note: Channel instance pages currently have placeholder boxes in phase 2 for vid
         - Adding Selenium testing for channels model and channels instance pages: 3
         - Worked on reports and organization of leading team as project lead: 3 
         - Worked on reports and organization of leading team as project lead: 3 
+      - Phase 3: 
+        - Search implementation for all 3 model pages in real-time: Estimated Completion Hours: 8 
+        - Search implementation for all 3 model pages in real-time: Actual Completion Hours: 9
+        - Search implementation for all 3 model pages after entering search and updating cards: Estimated Completion Hours: 6 
+        - Search implementation for all 3 model pages after entering search and updating cards: Actual Completion Hours: 6
+        - Updating Flask view function to support persisting searching and sorting results across pagination pages: Estimated Completion Hours: 3
+        - Updating Flask view function to support persisting searching and sorting results across pagination pages: Actual Completion Hours: 3
+        - Integration of and bux fixes when integrating stacking of sorting, filtering, and searching: Estimated Completion Hours: 5
+        - Integration of and bux fixes when integrating stacking of sorting, filtering, and searching: Estimated Completion Hours: 6
+        - Worked on corner/edge cases such as stacking resulting in no more instances: Estimated Completion Hours: 3
+        - Worked on corner/edge cases such as stacking resulting in no more instances: Estimated Completion Hours: 4
+        - Added testing to test the search bar functionality: Estimated Completion Hours: 4
+        - Added testing to test the search bar functionality: Estimated Completion Hours: 3
         
 
   Christopher Saenz
@@ -106,6 +136,17 @@ Note: Channel instance pages currently have placeholder boxes in phase 2 for vid
         - Equipment Model Page Testing: Actual Completion Hours: 3
         - Equipment Instance Page Testing: Estimated Completion Hours: 1
         - Equipment Instance Page Testing: Estimated Completion Hours: 3
+      - Phase 3:
+        - Replace carousel in equipment instance pages: Estimated Completion Hours: 0
+        - Replace carousel in equipment instance pages: Estimated Completion Hours: 1
+        - Sorting for all 3 model pages: Estimated Completion Hours: 6
+        - Sorting for all 3 model pages: Actual Completion Hours: 12
+        - Modified design functions to support simultaneous filtering and sorting: Estimated Completion Time: 5
+        - Modified design functions to support simultaneous filtering and sorting: Actual Completion Time: 6
+        - Testing sorting and filtering for all 3 models: Estimated Completion Hours: 3
+        - Testing sorting and filtering for all 3 models: Actual Completion Hours: 3
+        - Testing JavaScript functions: Estimated Completion Hours: 6
+        - Testing JavaScript functions: Actual Completion Hours: 5
 
 
   Michelle Wen
@@ -144,7 +185,22 @@ Note: Channel instance pages currently have placeholder boxes in phase 2 for vid
         - Selenium Testing for Homepage Carousel and NavBar: Actual Completion Hours: 1
         - Updating AboutMe page, Github code integration, Technical Report: Estimated Completion Hours: 0.5
         - Updating AboutMe page, Github code integration, Technical Report: Actual Completion Hours: 1
-
-  
-  
-Website Link: https://imbdproject.wn.r.appspot.com/
+      - Phase 3:
+        - Setup Template and Backend Infrastructure with new JavaScript file for searching/filtering/sorting: Estimated Completion Hours: 0.25
+        - Setup Template and Backend Infrastructure with new JavaScript file for searching/filtering/sorting: Actual Completion Hours: 0.5
+        - Added Search Bar on NavBar, Dropdown Menu w/ Checkboxes for Filtering, Ascending/Descending Buttons for Sorting across all model pages: Estimated Completion Hours: 1
+        - Added Search Bar on NavBar, Dropdown Menu w/ Checkboxes for Filtering, Ascending/Descending Buttons for Sorting across all model pages: Actual Completion Hours: 3
+        - New UI/UX design for all pages (homepage, all model + instance pages, about page) on the website: Estimated Completion Hours: 5 
+        - New UI/UX design for all pages (homepage, all model + instance pages, about page) on the website: Actual Completion Hours: 13
+        - Added side navigation bar for filtering and new designs for filtering, sorting, and searching fields: Estimated Completion Hours: 1
+        - Added side navigation bar for filtering and new designs for filtering, sorting, and searching fields: Actual Completion Hours: 2.5
+        - New UI/UX design for sorting dropdown and updated styling for search menu: Estimated Completion Hours: 0.5
+        - New UI/UX design for sorting dropdown and updated styling for search menu: Actual Completion Hours: 1
+        - Fixed sidebar issue with bottom elements not showing: Estimated Completion Hours: 0.25
+        - Fixed sidebar issue with bottom elements not showing: Actual Completion Hours: 0.75
+        - Added styling to search bar: Estimated Completion Hours: 0.5
+        - Added styling to search bar: Actual Completion Hours: 1
+        - Added Selenium Tests to Exercises model and instance pages: Estimated Completion Hours: 1
+        - Added Selenium Tests to Exercises model and instance pages: Actual Completion Hours: 2
+        
+        

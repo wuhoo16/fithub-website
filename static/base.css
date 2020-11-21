@@ -1,43 +1,522 @@
+body {
+  background-color: black;
+}
+.container-fluid {
+  margin-bottom: 0;
+}
+/* NAVBAR */
+.navbar {
+  min-height: 50px;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.1rem;
+  background: rgba(0, 0, 0, 0.75) !important;
+}
+.navbar-nav li {
+  padding-right: 1.5rem;
+  padding-top: 0.25rem;
+}
+.navbar-dark .navbar-nav .navbar-link {
+  color: white;
+}
+#fithubLogo {
+  filter: invert(100%);
+  height: 50px;
+  padding-right: 0.7rem;
+  padding-left: 0.3rem;
+}
+.form-control {
+  background-color: transparent;
+}
+.form-control:focus {
+  background-color: rgba(255, 255, 255, 0.911);
+}
+/* MODEL PAGES */
+#exercisesSortMenuLabel {
+  color: whitesmoke;
+  font-weight: normal;
+}
+
+.exercise-div {
+  padding-top: 6rem;
+  background: linear-gradient(
+      0deg,
+      rgb(255 255 255 / 23%),
+      rgb(255 255 255 / 23%)
+    ),
+    url(jumbotron2.png);
+  padding-bottom: 1rem;
+}
+.jumbotron-exercise {
+  background-image: url(jumbotron2.png);
+  border: rgb(94, 94, 94);
+  border-top: whitesmoke;
+  border-left: whitesmoke;
+  border-style: solid;
+  border-width: 0.75rem;
+  padding: 1rem 5rem 1rem 5rem;
+}
+.jumbotron-exercise h1 {
+  color: white;
+  font-size: 3.8rem;
+  font-weight: 700;
+  letter-spacing: 0.3rem;
+  text-shadow: 0.1rem 0.1rem 0.8rem black;
+  text-transform: uppercase;
+}
+.jumbotron-exercise p {
+  color: white;
+  font-size: 1.5rem;
+  text-shadow: 0.1rem 0.1rem 0.5rem black;
+}
+.grid-div {
+  background-color: transparent;
+}
 #modelGrid .row .col-md-4 .card .card-img-top {
   width: 360px;
   height: 270px;
 }
-
 .centered {
   text-align: center;
   display: block;
 }
-
-.carousel-inner>.item {
-    width: 100%;
+.card-style {
+  border: whitesmoke;
+  border-style: solid;
+  border-width: 0.25rem;
+  background-image: url(jumbotron3.png);
+  box-shadow: 0 6px 10px rgba(255, 255, 255, 0.75),
+    0 0 6px rgba(255, 255, 255, 0.75);
+  transition: 0.3s transform cubic-bezier(0.155, 1.105, 0.295, 1.12),
+    0.3s box-shadow,
+    0.3s -webkit-transform cubic-bezier(0.155, 1.105, 0.295, 1.12);
+  cursor: pointer;
+}
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: none;
+}
+.card-title {
+  padding-left: 1rem;
+  padding-right: 1rem;
+  color: whitesmoke;
+  font-size: 2rem;
+  font-weight: 600;
+  padding-top: 1rem;
+  text-transform: uppercase;
+}
+.card-body {
+  color: whitesmoke;
+}
+.card-image-style {
+  background-color: whitesmoke;
+  border: whitesmoke;
+  border-style: solid;
+  border-width: 0.2rem;
+}
+/* CAROUSEL */
+.carousel-item-homepage {
+  height: 100vh;
+  max-width: 100%;
+}
+.carousel-item-homepage img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
 }
 
+.carousel-inner > .item {
+  width: 100%;
+}
 #homepageWelcomeMessage {
-    text-align: center;
+  text-align: center;
 }
-
 .carousel-control-next,
 .carousel-control-prev {
-  filter: invert(100%);
+  z-index: 10;
 }
-
+.carousel-caption {
+  position: absolute;
+  top: 38%;
+  width: 100%;
+  right: 0;
+  left: 0;
+}
+.carousel-caption h1 {
+  font-size: 4rem;
+  font-weight: 700;
+  letter-spacing: 0.3rem;
+  text-shadow: 0.1rem 0.1rem 0.8rem black;
+  padding-bottom: 0.75rem;
+  text-transform: uppercase;
+}
+.carousel-caption h3 {
+  font-size: 2rem;
+  text-shadow: 0.1rem 0.1rem 0.5rem black;
+  padding-bottom: 1.6rem;
+  text-transform: uppercase;
+}
+.btn-lg {
+  border-width: medium;
+  border-radius: 0;
+  font-size: 1.1rem;
+}
+/* HOMEPAGE HYPE VIDEO */
+#homepageHorizontalDivider {
+  width: 90%;
+  color: #a8a8a8;
+  margin-top: 90px;
+  border-top: 1px solid #a8a8a8;
+}
+#hypeVideo {
+  width: 90vw;
+  height: 100vh;
+  object-fit: cover;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+#hypeVideo:focus {
+  outline: none;
+}
+/* INSTANCE PAGES */
+.exercise-instance-div {
+  padding-top: 6rem;
+  background: linear-gradient(
+      0deg,
+      rgb(255 255 255 / 0%),
+      rgb(255 255 255 / 0%)
+    ),
+    url(jumbotron1.png);
+  padding-bottom: 1rem;
+}
+.jumbotron-exercise-instance {
+  background-image: url(jumbotron1.png);
+  border: rgb(151, 151, 151);
+  border-top: whitesmoke;
+  border-left: whitesmoke;
+  border-style: solid;
+  border-width: 0.6rem;
+  padding: 1rem 5rem 1rem 5rem;
+}
+.jumbotron-exercise-instance h1 {
+  color: white;
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: 0.2rem;
+  text-shadow: 0.1rem 0.1rem 0.8rem black;
+  text-transform: uppercase;
+}
+.exercise-instance-text {
+  color: white;
+}
+.jumbotron-exercise-instance-text {
+  margin: 1.5rem;
+  padding: 1rem;
+  background: transparent;
+  border: rgb(197, 197, 197);
+  border-style: solid;
+  border-width: 0.3rem;
+}
+.table caption {
+  color: white;
+}
+.tables {
+  padding-left: 2.25rem;
+  padding-right: 2.25rem;
+}
+.instance-text {
+  color: whitesmoke;
+  margin: 0;
+  margin-top: 3rem;
+  padding-bottom: 1rem;
+  font-size: xx-large;
+  background: transparent;
+}
+.jumbotron-channel-instance {
+  background-image: url(jumbotron1.png);
+  padding: 1rem 5rem 1rem 5rem;
+}
+.channel-instance-text {
+  color: whitesmoke;
+  padding: 1rem;
+  background: transparent;
+}
+.channel-instance-text h4 {
+  color: whitesmoke;
+}
 .header-pic {
   width: 20%;
   height: 20%;
 }
-
 .instance-pic {
   width: 30%;
   height: 40%;
 }
-
-.card {
-  box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);
-  transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);
-  cursor: pointer;
+/* ABOUT PAGE */
+.about-div {
+  padding-top: 6rem;
+  background-image: url(aboutbackground.png);
+}
+.jumbotron-about {
+  background-image: url(aboutbackground.png);
+  border: rgb(94, 94, 94);
+  border-top: whitesmoke;
+  border-left: whitesmoke;
+  border-style: solid;
+  border-width: 0.6rem;
+  padding: 1rem 5rem 1rem 5rem;
+}
+.jumbotron-about h1 {
+  color: white;
+  font-size: 3.8rem;
+  font-weight: 700;
+  letter-spacing: 0.3rem;
+  text-shadow: 0.1rem 0.1rem 0.8rem black;
+  text-transform: uppercase;
+}
+.website-description {
+  padding: 1rem;
+  margin-left: 0.75rem;
+  margin-right: 0.75rem;
+}
+.website-description p {
+  color: whitesmoke;
+  font-size: 1.25rem;
+  font-weight: 350;
+}
+#websiteDescription4 li {
+  color: whitesmoke;
+  font-size: 1.25rem;
+  font-weight: 350;
+}
+.about-header-text {
+  color: whitesmoke;
+  margin: 0;
+  margin-top: 1rem;
+  padding-bottom: 1rem;
+  font-size: 3rem;
+}
+.about-info-text {
+  color: whitesmoke;
+  font-size: 1.75rem;
+}
+#data-links li {
+  color: whitesmoke;
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+#tools li {
+  color: whitesmoke;
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+#andyCard .card-body {
+  color: black;
+}
+#andyCard .card-title {
+  color: black;
+  text-align: center;
+}
+#kayleeCard .card-body {
+  color: black;
+}
+#kayleeCard .card-title {
+  color: black;
+  text-align: center;
+}
+#michelleCard .card-body {
+  color: black;
+}
+#michelleCard .card-title {
+  color: black;
+  text-align: center;
+}
+#christopherCard .card-body {
+  color: black;
+}
+#christopherCard .card-title {
+  color: black;
+  text-align: center;
+}
+/* SIDEBAR NAV */
+/* The side navigation menu */
+.sidenav {
+  height: 100%; /* 100% Full-height */
+  width: 0; /* 0 width - change this with JavaScript */
+  position: fixed;
+  z-index: 1; /* Stay on top */
+  top: 75px;
+  left: 0;
+  /* margin-left: 0; */
+  background-color: #111; /* Black*/
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 60px; /* Place content 60px from the top */
+  transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+/* The navigation menu links */
+.checkbox-menu {
+  list-style: none;
+  padding-left: 0.5rem;
+}
+.checkbox-menu label {
+  margin-left: 3rem;
+  color: whitesmoke;
+  padding-left: 1.5rem;
+}
+.checkbox-menu .dropdown-header {
+  color: white;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3rem;
+  font-weight: 500;
+  margin-top: 1rem;
+  margin-left: 0rem;
+  text-align: center;
+}
+.checkbox-menu .reset-button {
+  margin-left: 0rem;
+  border-width: medium;
+  border-radius: 0;
+  font-size: 1.1rem;
+  margin-right: 1rem;
+}
+.checkbox-menu .filter-button {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+  border-width: medium;
+  border-radius: 0;
+  font-size: 1.1rem;
+}
+.sidenav a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+/* Position and style the close button (top right corner) */
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+.filter-open-button {
+  color: whitesmoke;
+  background-color: rgb(21, 21, 21);
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  margin-left: 0rem;
+  margin-top: 1rem;
 }
 
-.card:hover {
-  transform: scale(1.05);
-  box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+.ascending-button {
+  max-width: 2rem;
+  max-height: 2rem;
+  margin-left: 1.5rem;
+  outline: 1px solid black;
+  transition: 0.5s;
+}
+.ascending-button:hover {
+  box-shadow: 0px 5px 5px black;
+  transform: scale(1.2, 1.2);
+}
+.descending-button {
+  max-width: 2rem;
+  max-height: 2rem;
+  margin-left: 1.25rem;
+  margin-right: 4rem;
+  outline: 1px solid black;
+  transition: 0.5s;
+}
+.descending-button:hover {
+  box-shadow: 0px 5px 5px black;
+  transform: scale(1.2, 1.2);
+}
+
+/* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+#main {
+  transition: margin-left 0.5s;
+  padding: 20px;
+  padding-top: 0px;
+}
+/* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
+/* @media screen and (max-height: 450px) {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+} */
+
+.dropdown {
+  margin: 20px;
+}
+
+.dropdown-menu {
+  max-height: 15rem;
+  overflow-y: auto;
+}
+
+#searchBar {
+  width: 15rem;
+  -webkit-transition: width 0.25s ease-in-out;
+  transition: width 0.25s ease-in-out;
+}
+
+#searchBar::placeholder {
+  color: white;
+}
+
+#searchBar:not(:focus) {
+  color: white;
+}
+
+/* When the input field gets focus, change its width to 100% */
+#searchBar:focus {
+  width: 35rem;
+  color: black;
+}
+
+#searchBar:focus::placeholder {
+  color: grey;
+}
+
+#searchBar::placeholder {
+  color: white;
+}
+
+.sorting-form {
+  margin-left: 3rem;
+}
+
+.sort-form-style {
+  margin-left: 2rem;
+  color: #f8f9fa;
+  border-color: #f8f9fa;
+  text-align: center;
+  vertical-align: middle;
+  background-color: transparent;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: .25rem;
+}
+
+.select-option {
+  color: #111;
+}
+
+#resetBtn {
+  right: 1rem;
+  float: right;
+  margin-top: 1.5rem;
+  margin-right: 0.5rem;
 }
