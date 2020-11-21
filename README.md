@@ -91,6 +91,17 @@ Website Link: [FitHub](https://imbdproject.wn.r.appspot.com/)
         - Adding Selenium testing for channels model and channels instance pages: 3
         - Worked on reports and organization of leading team as project lead: 3 
         - Worked on reports and organization of leading team as project lead: 3 
+      - Phase 3: 
+        - Search implementation for all 3 model pages in real-time: Estimated Completion Hours: 8 
+        - Search implementation for all 3 model pages in real-time: Actual Completion Hours: 9
+        - Search implementation for all 3 model pages after entering search and updating cards: Estimated Completion Hours: 6 
+        - Search implementation for all 3 model pages after entering search and updating cards: Actual Completion Hours: 6
+        - Updating Flask view function to support persisting searching and sorting results across pagination pages: Estimated Completion Hours: 3
+        - Updating Flask view function to support persisting searching and sorting results across pagination pages: Actual Completion Hours: 3
+        - Integration of and bux fixes when integrating stacking of sorting, filtering, and searching: Estimated Completion Hours: 5
+        - Integration of and bux fixes when integrating stacking of sorting, filtering, and searching: Estimated Completion Hours: 6
+        - Worked on corner/edge cases such as stacking resulting in no more instances: Estimated Completion Hours: 3
+        - Worked on corner/edge cases such as stacking resulting in no more instances: Estimated Completion Hours: 4
         
 
   Christopher Saenz
