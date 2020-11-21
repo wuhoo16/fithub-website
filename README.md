@@ -133,10 +133,16 @@ Website Link: [FitHub](https://imbdproject.wn.r.appspot.com/)
         - Equipment Instance Page Testing: Estimated Completion Hours: 1
         - Equipment Instance Page Testing: Estimated Completion Hours: 3
       - Phase 3:
-        - Replace Carousel in Equipment Instance Page: Estimated Completion Hours: 0
-        - Replace Carousel in Equipment Instance Page: Estimated Completion Hours: 1
-        - Sorting for All Three Model Pages: Estimated Completion Hours: 6
-        - Sorting for ALl Three Model Pages: Actual Completion Hours: 4+ (In Progress)
+        - Replace carousel in equipment instance pages: Estimated Completion Hours: 0
+        - Replace carousel in equipment instance pages: Estimated Completion Hours: 1
+        - Sorting for all 3 model pages: Estimated Completion Hours: 6
+        - Sorting for all 3 model pages: Actual Completion Hours: 12
+        - Modified design functions to support simultaneous filtering and sorting: Estimated Completion Time: 5
+        - Modified design functions to support simultaneous filtering and sorting: Actual Completion Time: 6
+        - Testing sorting and filtering for all 3 models: Estimated Completion Hours: 3
+        - Testing sorting and filtering for all 3 models: Actual Completion Hours: 3
+        - Testing JavaScript functions: Estimated Completion Hours: 6
+        - Testing JavaScript functions: Actual Completion Hours: 5
 
 
   Michelle Wen
