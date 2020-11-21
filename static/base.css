@@ -485,6 +485,10 @@ body {
   color: black;
 }
 
+#searchBar:focus::placeholder {
+  color: grey;
+}
+
 #searchBar::placeholder {
   color: white;
 }
