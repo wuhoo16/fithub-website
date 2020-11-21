@@ -2,7 +2,7 @@
 
 This is the master branch for TeamA13's IMBD web application project for EE461L. Note that all code in this repo is production-ready and should match the current deployed, functional state. The buildfiles for this project to run on Google App Engine include requirements.txt and app.yaml. Requirements.txt lists all of the python libraries and dependencies that our web app needs to deploy.
 
-Website Link: https://imbdproject.wn.r.appspot.com/
+Website Link: [FitHub](https://imbdproject.wn.r.appspot.com/)
 
 # Team Members:
   Andy Wu
@@ -164,3 +164,22 @@ Website Link: https://imbdproject.wn.r.appspot.com/
         - Selenium Testing for Homepage Carousel and NavBar: Actual Completion Hours: 1
         - Updating AboutMe page, Github code integration, Technical Report: Estimated Completion Hours: 0.5
         - Updating AboutMe page, Github code integration, Technical Report: Actual Completion Hours: 1
+      - Phase 3:
+        - Setup Template and Backend Infrastructure with new JavaScript file for searching/filtering/sorting: Estimated Completion Hours: 0.25
+        - Setup Template and Backend Infrastructure with new JavaScript file for searching/filtering/sorting: Actual Completion Hours: 0.5
+        - Added Search Bar on NavBar, Dropdown Menu w/ Checkboxes for Filtering, Ascending/Descending Buttons for Sorting across all model pages: Estimated Completion Hours: 1
+        - Added Search Bar on NavBar, Dropdown Menu w/ Checkboxes for Filtering, Ascending/Descending Buttons for Sorting across all model pages: Actual Completion Hours: 3
+        - New UI/UX design for all pages (homepage, all model + instance pages, about page) on the website: Estimated Completion Hours: 5 
+        - New UI/UX design for all pages (homepage, all model + instance pages, about page) on the website: Actual Completion Hours: 13
+        - Added side navigation bar for filtering and new designs for filtering, sorting, and searching fields: Estimated Completion Hours: 1
+        - Added side navigation bar for filtering and new designs for filtering, sorting, and searching fields: Actual Completion Hours: 2.5
+        - New UI/UX design for sorting dropdown and updated styling for search menu: Estimated Completion Hours: 0.5
+        - New UI/UX design for sorting dropdown and updated styling for search menu: Actual Completion Hours: 1
+        - Fixed sidebar issue with bottom elements not showing: Estimated Completion Hours: 0.25
+        - Fixed sidebar issue with bottom elements not showing: Actual Completion Hours: 0.75
+        - Added styling to search bar: Estimated Completion Hours: 0.5
+        - Added styling to search bar: Actual Completion Hours: 1
+        - Added Selenium Tests to Exercises model and instance pages: Estimated Completion Hours: 1
+        - Added Selenium Tests to Exercises model and instance pages: Actual Completion Hours: 2
+        
+        
