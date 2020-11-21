@@ -102,6 +102,8 @@ Website Link: [FitHub](https://imbdproject.wn.r.appspot.com/)
         - Integration of and bux fixes when integrating stacking of sorting, filtering, and searching: Estimated Completion Hours: 6
         - Worked on corner/edge cases such as stacking resulting in no more instances: Estimated Completion Hours: 3
         - Worked on corner/edge cases such as stacking resulting in no more instances: Estimated Completion Hours: 4
+        - Added testing to test the search bar functionality: Estimated Completion Hours: 4
+        - Added testing to test the search bar functionality: Estimated Completion Hours: 3
         
 
   Christopher Saenz
