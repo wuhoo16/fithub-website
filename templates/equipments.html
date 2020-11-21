@@ -13,7 +13,7 @@
         <p class="modelDescription">Check out our selection of fitness equipment.</p>
     </div>
     <div id="mySidenav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="javascript:void(0)" id="closeNavButton" class="closebtn" onclick="closeNav()">&times;</a>
         <form id="equipmentsFilterForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
             <ul class="checkbox-menu">
                 <li class="dropdown-header">Price</li>
@@ -47,7 +47,7 @@
                 </li>
                 <li style="text-align: center; margin-top: 1rem; margin-bottom: 110px;">
                     <input type="hidden" id='equipmentsResetHiddenField' name='resetHiddenField' value="">
-                    <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxes('equipmentsFilterForm')">Filter</button>
+                    <button class="filter-button btn btn-outline-light" id="filterButton" type="button" name="Filter" onclick="verifyCheckBoxes('equipmentsFilterForm')">Filter</button>
                 </li>
             </ul>
         </form>    
@@ -60,7 +60,7 @@
     {% endfor %}
     <meta id="equipmentArrayData" data-arr='{{dataArr}}'/>
     <div class="container-fluid" style="display: inline-block;">
-        <button class="filter-open-button" onclick="openNav()">Filter ></button>
+        <button class="filter-open-button" id="openNavButton" onclick="openNav()">Filter ></button>
 
         <!-- Sorting Dropdown -->
         {% if equipmentArray|length > 0 %}
@@ -116,7 +116,7 @@
                         <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ equipmentArray[start+3*i+offset].picture }}" onerror="this.onerror=null; this.src='{{ equipmentArray[start + 3*i+offset].picture }}'"; alt="{{ equipmentArray[start + 3*i+offset].name }}">
                     {% endif %}
                         <div class="card-body">
-                            <h2 class="card-title text-center">{{ equipmentArray[start + 3*i+offset].name }}</h2>
+                            <h2 id="name_{{ start + 3*i+offset }}" class="card-title text-center">{{ equipmentArray[start + 3*i+offset].name }}</h2>
                             <p class="card-text">
                                 <ul class="equipmentData list-unstyled">
                                     <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ start + 3*i+offset }}"><b>Price: </b>{{ equipmentArray[start + 3*i+offset].price }} USD</li>
