@@ -1310,19 +1310,31 @@ app = Flask("__name__")
 def index():
     # Initialize all 3 global arrays from database
     global EXERCISES_ARRAY, EQUIPMENT_ARRAY, CHANNEL_ARRAY
-    global exerciseFilterIsActive, equipmentFilterIsActive, channelFilterIsActive
+    global exerciseFilterIsActive, equipmentFilterIsActive, channelFilterIsActive, exerciseSearchIsActive, equipmentSearchIsActive, channelSearchIsActive, exerciseSortIsActive, equipmentSortIsActive, channelSortIsActive
     if len(EXERCISES_ARRAY) == 0:
         EXERCISES_ARRAY = load_exercises_from_db(DATABASE)
         exerciseFilterIsActive = False
+        exerciseSearchIsActive = False
+        exerciseSortIsActive = False
     if len(EQUIPMENT_ARRAY) == 0:
         EQUIPMENT_ARRAY = load_equipments_from_db(DATABASE)
         equipmentFilterIsActive = False
+        equipmentSearchIsActive = False
+        equipmentSortIsActive = False
     if len(CHANNEL_ARRAY) == 0:
         CHANNEL_ARRAY = load_channels_from_db(DATABASE)
         channelFilterIsActive = False
+        channelSearchIsActive = False
+        channelSortIsActive = False
     return render_template('homepage.html', exerciseFilterIsActive=str.lower(str(exerciseFilterIsActive)),
                            equipmentFilterIsActive=str.lower(str(equipmentFilterIsActive)),
-                           channelsFilterIsActive=str.lower(str(channelFilterIsActive)))
+                           channelFilterIsActive=str.lower(str(channelFilterIsActive)), 
+                           exerciseSearchIsActive=str.lower(str(exerciseSearchIsActive)),
+                           equipmentSearchIsActive=str.lower(str(equipmentSearchIsActive)),
+                           channelSearchIsActive=str.lower(str(channelSearchIsActive)), 
+                           exerciseSortIsActive=str.lower(str(exerciseSortIsActive)),
+                           equipmentSortIsActive=str.lower(str(equipmentSortIsActive)),
+                           channelSortIsActive=str.lower(str(channelSortIsActive)))
 
 
 # exercises model page

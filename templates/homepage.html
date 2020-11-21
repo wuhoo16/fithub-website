@@ -1,11 +1,7 @@
-{% extends 'base.html' %}
-
-{% block head %}
+{% extends 'base.html' %} {% block head %}
 <title>Fithub Homepage</title>
 <script type="text/javascript" src="/static/homepage.js"></script>
-{% endblock %}
-
-{% block body %}
+{% endblock %} {% block body %}
 <div id="homepageCarousel" class="carousel slide" data-ride="carousel">
   <ol class="carousel-indicators">
     <li data-target="#homepageCarousel" data-slide-to="0" class="active"></li>
@@ -14,7 +10,7 @@
   </ol>
   <div class="carousel-inner">
     <div class="carousel-item active carousel-item-homepage">
-      <img src="static/carousel1.jpg">
+      <img src="static/carousel1.jpg" />
       <div class="carousel-caption text-center">
         <h1>Exercises</h1>
         <h3>Get fit with our 100+ exercises</h3>
@@ -28,7 +24,7 @@
       </div>
     </div>
     <div class="carousel-item carousel-item-homepage">
-      <img src="static/carousel2.jpg">
+      <img src="static/carousel2.jpg" />
       <div class="carousel-caption text-center">
         <h1>Equipment</h1>
         <h3>Find equipment that suits your training needs</h3>
@@ -42,7 +38,7 @@
       </div>
     </div>
     <div class="carousel-item carousel-item-homepage">
-      <img src="static/carousel3.jpg">
+      <img src="static/carousel3.jpg" />
       <div class="carousel-caption text-center">
         <h1>Channels</h1>
         <h3>Explore popular Youtube fitness channels</h3>
@@ -75,16 +71,26 @@
   </a>
 </div>
 
-<hr id='homepageHorizontalDivider'>
+<hr id="homepageHorizontalDivider" />
 
-<video controls preload playsinline autoplay muted loop id="hypeVideo" width="100vw" height="100vh">
-  <source src="/../static/FithubHypeVideoEdited.mp4" type="video/mp4">
-  <source src="/../static/FithubHypeVideoEdited.webm" type="video/webm">
+<video
+  controls
+  preload
+  playsinline
+  autoplay
+  muted
+  loop
+  id="hypeVideo"
+  width="100vw"
+  height="100vh"
+>
+  <source src="/../static/FithubHypeVideoEdited.mp4" type="video/mp4" />
+  <source src="/../static/FithubHypeVideoEdited.webm" type="video/webm" />
 </video>
 
 <!-- Invoke the javascript function to clear the local storage and sync up with the current flag states-->
 <!-- This ensures that when the server restarts, all checkbox states match up with the original unfiltered arrays-->
 <script>
-  clearLocalStorage({{ exerciseFilterIsActive }}, {{ equipmentFilterIsActive }}, {{ channelsFilterIsActive }});
+  clearLocalStorage({{ exerciseFilterIsActive }}, {{ equipmentFilterIsActive }}, {{ channelFilterIsActive }}, {{ exerciseSearchIsActive }}, {{ equipmentSearchIsActive }}, {{ channelSearchIsActive }}, {{ exerciseSortIsActive }}, {{ equipmentSortIsActive }}, {{ channelSortIsActive }});
 </script>
 {% endblock %}
