@@ -56,6 +56,8 @@ Website Link: [FitHub](https://imbdproject.wn.r.appspot.com/)
         - Using Adobe Premier to edit hype video, formatting video on HTML page, adding Javascript to handle autoplay/looping logic: Actual Completion Hours: 4
         - Sorting Implementation for all 3 model pages: Estimated Completion Hours: 3
         - Sorting Implementation for all 3 model pages: Actual Completion Hours: 3
+        - Selenium Testing for filtering functionality and final deployment: Estimated Completion Hours: 5
+        - Selenium Testing for filtering functionality and final deployment: Actual Completion Hours: 5
   
   Kaylee N Trevino
    - EID: knt658
