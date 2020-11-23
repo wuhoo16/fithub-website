@@ -1,4 +1,5 @@
 from api_interface import APIInterface
+from ..equipment import Equipment
 from ebaysdk.finding import Connection
 
 BLACKLIST = {'NEW CAP Barbell Standard Barbell Weight Lifting Exercise Bar 5 foot ft - NEW',
@@ -27,39 +28,7 @@ IMAGE_MAPPER = {
 }
 ID_SET = set()
 
-class Equipment(APIInterface):
-    def __init__(self, **kwargs):
-        self.id = kwargs["itemId"]
-        self.arrayIndex = kwargs["arrayIndex"]
-        self.name = kwargs["title"]
-        self.price = kwargs["value"]
-        self.category = kwargs["categoryName"]
-        self.location = kwargs["location"]
-        self.replacePictureFlag = kwargs["replacePictureFlag"]
-        self.picture = kwargs["galleryURL"]
-        self.linkToItem = kwargs["viewItemURL"]
-        self.equipmentCategory = kwargs["equipmentCategory"]
-
-
-    def to_dictionary(self):
-        return {
-            '_id': self.id,
-            'id': self.id,
-            'arrayIndex': self.arrayIndex,
-            'name': self.name,
-            'price': self.price,
-            'category': self.category,
-            'location': self.location,
-            'replacePictureFlag': self.replacePictureFlag,
-            'picture': self.picture,
-            'linkToItem': self.linkToItem,
-            'equipmentCategory': self.equipmentCategory
-        }
-
-
-    def __str__(self):
-        return self.name
-
+class EquipmentAPI(APIInterface, Equipment):
     def initialize_mongoDB_collection(db):
         db.equipments.drop()  # drop the old collection so we initialize a fresh collection
         equipment_counter = 0

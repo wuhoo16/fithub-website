@@ -1,8 +1,8 @@
 from pymongo import MongoClient
 
-from exercise_api import Exercise
-from equipment_api import Equipment
-from channel_api import Channel
+from exercise_api import ExerciseAPI
+from equipment_api import EquipmentAPI
+from channel_api import ChannelAPI
 
 client = MongoClient("mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase3Database?retryWrites=true&w=majority")
 DATABASE = client.phase3Database
@@ -26,9 +26,9 @@ def setup_database(db):
     Setup the remote mongoDB by initializing all 3 model collections back to back.
     :return: None
     """
-    Exercise.initialize_mongoDB_collection(DATABASE)
-    Equipment.initialize_mongoDB_collection(DATABASE)
-    Channel.initialize_mongoDB_collection(DATABASE)
+    ExerciseAPI.initialize_mongoDB_collection(DATABASE)
+    EquipmentAPI.initialize_mongoDB_collection(DATABASE)
+    ChannelAPI.initialize_mongoDB_collection(DATABASE)
 
 
 if __name__ == "__main__":
@@ -36,7 +36,7 @@ if __name__ == "__main__":
     # setup_database(DATABASE)
 
     # UNCOMMENT ONE OF THE FOLLOWING 3 LINES IF YOU WANT TO RE-INITIALIZE A SPECIFIC MODEL'S COLLECTION
-    # Exercise.initialize_mongoDB_collection(DATABASE)
-    # Equipment.initialize_mongoDB_collection(DATABASE)
-    # Channel.initialize_mongoDB_collection(DATABASE)
+    # ExerciseAPI.initialize_mongoDB_collection(DATABASE)
+    # EquipmentAPI.initialize_mongoDB_collection(DATABASE)
+    # ChannelAPI.initialize_mongoDB_collection(DATABASE)
 
