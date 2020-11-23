@@ -382,7 +382,8 @@ body {
   margin-right: 1rem;
 }
 .checkbox-menu .filter-button {
-  margin-left: 0.5rem;
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
   border-width: medium;
   border-radius: 0;
   font-size: 1.1rem;
@@ -422,7 +423,7 @@ body {
 .ascending-button {
   max-width: 2rem;
   max-height: 2rem;
-  margin-left: 2rem;
+  margin-left: 1.5rem;
   outline: 1px solid black;
   transition: 0.5s;
 }
@@ -434,6 +435,7 @@ body {
   max-width: 2rem;
   max-height: 2rem;
   margin-left: 1.25rem;
+  margin-right: 4rem;
   outline: 1px solid black;
   transition: 0.5s;
 }
@@ -481,4 +483,40 @@ body {
 #searchBar:focus {
   width: 35rem;
   color: black;
+}
+
+#searchBar:focus::placeholder {
+  color: grey;
+}
+
+#searchBar::placeholder {
+  color: white;
+}
+
+.sorting-form {
+  margin-left: 3rem;
+}
+
+.sort-form-style {
+  margin-left: 2rem;
+  color: #f8f9fa;
+  border-color: #f8f9fa;
+  text-align: center;
+  vertical-align: middle;
+  background-color: transparent;
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: .25rem;
+}
+
+.select-option {
+  color: #111;
+}
+
+#resetBtn {
+  right: 1rem;
+  float: right;
+  margin-top: 1.5rem;
+  margin-right: 0.5rem;
 }

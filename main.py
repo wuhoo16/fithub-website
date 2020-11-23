@@ -709,7 +709,7 @@ def load_channels_from_db(db):
     return channel_array
 
 
-# All 3 methods for getting 2D list of related cross-model instance id's by using the arrayIndex attribute
+# All 3 methods for getting 2D list of related cross-model objects by using the arrayIndex attribute
 # By passing the id value of any instance, each method will return a Python list in the format: [[], [], []] where
 # <returnedList>[0] will be the list containing all of the related EXERCISE instance objects
 # <returnedList>[1] will be the list containing all of the related EQUIPMENT instance objects

@@ -60,59 +60,58 @@
                     <li style="text-align: center; margin-top: 1rem; margin-bottom: 110px;">
                         <input type="hidden" id='exercisesResetHiddenField' name='resetHiddenField' value="">
                         <button class="filter-button btn btn-outline-light" type="button" name="Filter" onclick="verifyCheckBoxes('exercisesFilterForm')">Filter</button>
-                        <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn1" onclick="resetCheckboxState('exercisesFilterForm', 'exercisesResetHiddenField')">Reset Filters</button>
                     </li>
                 </ul>
             </form>
         </div>
     </div>
-    <!-- Use any element to open the sidenav -->
-    <div class="filtering-section">
-        <button class="filter-open-button" onclick="openNav()">Filter ></button>
-        {% if exercisesArray|length != 0 %}
-            <form id="exercisesSortForm" action="{{ url_for('exercises', page_number=1) }}" method="post">
-                <label for="exercisesSortCriteriaMenu" id="exercisesSortMenuLabel" style="color: white; margin-top: 1rem;">Sort by: </label>
-                <select id="exercisesSortCriteriaMenu" name="exercisesSortCriteriaMenu">
-                    <option value="select" id="select" selected disabled>Select</option>
-                    <option value="name">Name</option>
-                    <option value="category">Category</option>
-                    <option value="equipment">Equipment</option>
-                </select>
-                <input type="hidden" id='exercisesSortingHiddenField' name='exercisesSortingHiddenField' value="">
-                <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="submitSortForm('exercisesSortForm', 'exercisesSortingHiddenField', 'ascending');">
-                <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" id="descendBtn" onclick="submitSortForm('exercisesSortForm', 'exercisesSortingHiddenField', 'descending');">
-            </form>
-        {% endif %}
-    </div>
     
-    <div id="main">
+    <!-- Sorting Dropdown and Search Bar-->
+    {% set dataArr = [] %}
+    {% for obj in exercisesArray %}
+        {% set dataArr = dataArr.append({"name": obj.name, "category": obj.category, "equipment": obj.equipment|join(', '), "description": obj.description}) %}
+    {% endfor %}
+    <meta id="exercisesArrayData" data-arr='{{dataArr}}'/>
+    <div class="container-fluid" style="display: inline-block;">
+        <!-- Use any element to open the sidenav -->
+        <button class="filter-open-button" onclick="openNav()">Filter ></button>
+
+        <!-- Sorting Dropdown -->
+        {% if exercisesArray|length != 0 %}
+        <form class="d-inline-block sorting-form" id="exercisesSortForm" action="{{ url_for('exercises', page_number=1) }}" method="post">
+            <label for="exercisesSortCriteriaMenu" id="exercisesSortMenuLabel" style="color: white; margin-top: 1rem;"></label>
+            <select class="sort-form-style" id="exercisesSortCriteriaMenu" name="exercisesSortCriteriaMenu">
+                <option value="select" id="select" selected disabled>Sort by</option>
+                <option class="select-option" value="name">Name</option>
+                <option class="select-option" value="category">Category</option>
+                <option class="select-option" value="equipment">Equipment</option>
+            </select>
+            <input type="hidden" id='exercisesSortingHiddenField' name='exercisesSortingHiddenField' value="">
+            <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="submitSortForm('exercisesSortForm', 'exercisesSortingHiddenField', 'ascending');">
+            <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" id="descendBtn" onclick="submitSortForm('exercisesSortForm', 'exercisesSortingHiddenField', 'descending');">
+        </form>
+        {% endif %}
+
         <!--Search Bar-->
-        {% set dataArr = [] %}
-        {% for obj in exercisesArray %}
-            {% set dataArr = dataArr.append({"name": obj.name, "category": obj.category, "equipment": obj.equipment|join(', '), "description": obj.description}) %}
-        {% endfor %}
-        <meta id="exercisesArrayData" data-arr='{{dataArr}}'/>
-        <div style="display: inline-block;">
-            <div class="dropdown d-inline-block">
-                <form id="exercisesSearchForm" action="{{ url_for('exercises', page_number=1) }}" method="post" style="display: none;">
-                    <input id="exercisesSearchItems" name="exercisesSearchItems">
-                </form>
-                <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
-                <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
-                    <div id="menuItems">
-                        {% for obj in exercisesArray %}
-                            <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
-                            <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Category: {{ obj.category }}</a>
-                            <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Equipment: {{ obj.equipment|join(', ') }}</a>
-                            <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: {{ obj.description }}</a>
-                        {% endfor %}
-                    </div>
-                    <div id="empty" class="dropdown-header">No items found</div>
-                    <div id="menuLinks"></div>
+        <div class="dropdown d-inline-block">
+            <form id="exercisesSearchForm" action="{{ url_for('exercises', page_number=1) }}" method="post" style="display: none;">
+                <input id="exercisesSearchItems" name="exercisesSearchItems">
+            </form>
+            <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
+            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
+                <div id="menuItems">
+                    {% for obj in exercisesArray %}
+                        <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
+                        <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Category: {{ obj.category }}</a>
+                        <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Equipment: {{ obj.equipment|join(', ') }}</a>
+                        <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: {{ obj.description }}</a>
+                    {% endfor %}
                 </div>
+                <div id="empty" class="dropdown-header">No items found</div>
+                <div id="menuLinks"></div>
             </div>
-            <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn2" onclick="resetCheckboxState('exercisesFilterForm', 'exercisesResetHiddenField')">Reset Filters</button>
         </div>
+        <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn" onclick="resetCheckboxState('exercisesFilterForm', 'exercisesResetHiddenField')">Reset All</button>
     </div>
     
     <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
@@ -135,7 +134,7 @@
                                     <li style="padding-left: 1em;" id="exerciseDescText_{{exercisesArray[start + 3*i + offset].arrayIndex}}"><b>Description: </b>{{ exercisesArray[start + 3*i + offset].description }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('exercise_instance', arrayIndex=exercisesArray[start + 3*i + offset].arrayIndex) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('exercise_instance', arrayIndex=exercisesArray[start + 3*i + offset].arrayIndex) }}" id="exerciseCardPageLink_{{ start + 3*i + offset }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
@@ -158,7 +157,7 @@
                                     <li style="padding-left: 1em;"><b>Description: </b>{{ exercisesArray[end + 1 + i].description }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('exercise_instance', arrayIndex=exercisesArray[end + 1 + i].arrayIndex) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('exercise_instance', arrayIndex=exercisesArray[end + 1 + i].arrayIndex) }}" id="exerciseCardPageLink_{{ end + 1 + i }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
