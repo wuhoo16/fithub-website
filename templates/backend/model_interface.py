@@ -47,30 +47,31 @@ class ModelInterface:
     
     #Helper functions for get_related_objects_for_instance functions
     @staticmethod
-    def find_current_instance_object(id, currentCollection, *args):
+    def find_current_instance_object(id, currentCollection, keys):
         """
         Find the current instance object in the database and store important attributes
         """
         attributes = []
         currentDoc = currentCollection.find_one({'_id': id})
+
         if currentDoc:
-            for key in args:
+            for key in keys:
                 attributes.append(currentDoc[key])
-            
+        
         return attributes
 
 
     @staticmethod
-    def find_related_instances_based_on_subcategory(subcategory, collection, invalid_input, valid_input, ARRAY):
+    def find_related_objects_based_on_subcategory(subcategory, collection, invalid_input, valid_input, ARRAY):
         """
         Query a collection for all instances that match current exerciseCategory/Subcategory based on if the subcategory is None
         """
         if subcategory is None:
             relatedCursor = collection.find({invalid_input[0]: invalid_input[1]})
         else: # exerciseSubcategory is not None
-            relatedCursor = db.exercises.find({valid_input[0]: valid_input[1]})
+            relatedCursor = collection.find({valid_input[0]: valid_input[1]})
 
-        return find_related_objects(relatedCursor, ARRAY)
+        return ModelInterface.find_related_objects(relatedCursor, ARRAY)
     
 
     @staticmethod

@@ -48,19 +48,19 @@ def index():
 # exercises model page
 @app.route("/exercises/<int:page_number>", methods=['GET', 'POST'])
 def exercises(page_number):
-    return model_page(request.method, exercise_backend, exercise_backend.ModelInterface.EXERCISES_ARRAY, page_number)
+    return model_page(request, exercise_backend.ExerciseBackend, exercise_backend.ModelInterface.EXERCISES_ARRAY, page_number)
 
 
 # equipments model page
 @app.route("/equipment/<int:page_number>", methods=['GET', 'POST'])
 def equipments(page_number):
-    return model_page(request.method, equipment_backend, equipment_backend.ModelInterface.EQUIPMENT_ARRAY, page_number)
+    return model_page(request, equipment_backend.EquipmentBackend, equipment_backend.ModelInterface.EQUIPMENT_ARRAY, page_number)
 
 
 # channels model page
 @app.route("/channels/<int:page_number>", methods=['GET', 'POST'])
 def channels(page_number):
-    return model_page(request, channel_backend, channel_backend.ModelInterface.CHANNEL_ARRAY, page_number)
+    return model_page(request, channel_backend.ChannelBackend, channel_backend.ModelInterface.CHANNEL_ARRAY, page_number)
 
 
 def model_page(request, model, MODEL_ARR, page_number):
@@ -167,19 +167,19 @@ def searchFilterMatch(filterArr, searchArr):
 # exercise instance pages
 @app.route(EXERCISE_INSTANCE_URL_TEMPLATE.format('<int:arrayIndex>'), methods=['GET'])
 def exercise_instance(arrayIndex):
-    return instance_page(exercise_backend.ModelInterface.EXERCISES_ARRAY[arrayIndex], exercise_backend)
+    return instance_page(exercise_backend.ModelInterface.EXERCISES_ARRAY[arrayIndex], exercise_backend.ExerciseBackend)
 
 
 # equipment instance pages
 @app.route(EQUIPMENT_INSTANCE_URL_TEMPLATE.format('<int:arrayIndex>'), methods=['GET'])
 def equipment_instance(arrayIndex):
-    return instance_page(equipment_backend.ModelInterface.EQUIPMENT_ARRAY[arrayIndex], equipment_backend)
+    return instance_page(equipment_backend.ModelInterface.EQUIPMENT_ARRAY[arrayIndex], equipment_backend.EquipmentBackend)
 
 
 # channel instance pages
 @app.route(CHANNEL_INSTANCE_URL_TEMPLATE.format('<int:arrayIndex>'), methods=['GET'])
 def channel_instance(arrayIndex):
-    return instance_page(channel_backend.ModelInterface.CHANNEL_ARRAY[arrayIndex], channel_backend)
+    return instance_page(channel_backend.ModelInterface.CHANNEL_ARRAY[arrayIndex], channel_backend.ChannelBackend)
 
 def instance_page(instanceObj, model):
     """

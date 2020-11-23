@@ -1,3 +1,5 @@
+from flask import render_template
+import numpy as np
 from .model_interface import ModelInterface
 from ..exercise import Exercise
 
@@ -45,18 +47,18 @@ class ExerciseBackend(ModelInterface, Exercise):
 
     @staticmethod
     def get_related_objects_for_instance(id, db):
-        attributes = ModelInterface.find_current_instance_object(id, db.channels, ('category', 'subcategory', 'equipment'))
+        attributes = ModelInterface.find_current_instance_object(id, db.exercises, ('category', 'subcategory', 'equipment'))
         category = attributes[0]
         subcategory = attributes[1]
         equipmentCategoryList = attributes[2]
 
-        relatedExercises = ModelInterface.find_related_instances_based_on_subcategory(subcategory, db.exercises, ['category', category], ['subcategory', subcategory], ModifiedInterface.EXERCISES_ARRAY)
+        relatedExercises = ModelInterface.find_related_objects_based_on_subcategory(subcategory, db.exercises, ['category', category], ['subcategory', subcategory], ModelInterface.EXERCISES_ARRAY)
         
         relatedEquipments = []
         for equipmentCategory in equipmentCategoryList:
-            relatedEquipments = np.append(np.array(relatedEquipments), np.array(ModelInterface.find_related_instances(db.equipments.find({'equipmentCategory': equipmentCategory}), ModifiedInterface.EQUIPMENT_ARRAY)))
+            relatedEquipments = np.append(np.array(relatedEquipments), np.array(ModelInterface.find_related_objects(db.equipments.find({'equipmentCategory': equipmentCategory}), ModelInterface.EQUIPMENT_ARRAY)))
 
-        relatedChannels = ModelInterface.find_related_instances_based_on_subcategory(subcategory, db.channels, ['exerciseCategory', category], ['exerciseSubcategory', subcategory], ModifiedInterface.CHANNEL_ARRAY)
+        relatedChannels = ModelInterface.find_related_objects_based_on_subcategory(subcategory, db.channels, ['exerciseCategory', category], ['exerciseSubcategory', subcategory], ModelInterface.CHANNEL_ARRAY)
 
         return [relatedExercises, relatedEquipments, relatedChannels]
 
@@ -79,18 +81,18 @@ class ExerciseBackend(ModelInterface, Exercise):
 
         # Query the entire exercises collection on each of the selected exercise category terms and append matching Exercise objects
         for exerciseCategory in selectedExerciseCategories:
-            filteredExercises = np.array(ModelInterface.find_related_objects(db.exercises.find({'category': exerciseCategory}), ModifiedInterface.EXERCISES_ARRAY))
+            filteredExercises = np.array(ModelInterface.find_related_objects(db.exercises.find({'category': exerciseCategory}), ModelInterface.EXERCISES_ARRAY))
 
         # Query the entire exercises collection on each of the selected equipment category terms and append matching Exercise objects
         for equipmentCategory in selectedEquipmentCategories:
-            filteredExercises = np.append(filteredExercises, np.array(ModelInterface.find_related_objects(db.exercises.find({'equipment': equipmentCategory}), ModifiedInterface.EXERCISES_ARRAY)))
+            filteredExercises = np.append(filteredExercises, np.array(ModelInterface.find_related_objects(db.exercises.find({'equipment': equipmentCategory}), ModelInterface.EXERCISES_ARRAY)))
 
         # Return all of filtered Exercise objects
         return tempModifiedArray, filteredExercises
 
     @staticmethod
     def render_model_page(page_number, ARR):
-        start, end, num_pages = paginate(page_number, ARR)
+        start, end, num_pages = ModelInterface.paginate(page_number, ARR)
         return render_template('exercises.html', exercisesArray=ARR, start=start, end=end, page_number=page_number, num_pages=num_pages)
 
 
