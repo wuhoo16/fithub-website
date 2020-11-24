@@ -1,4 +1,3 @@
-from templates.api.api_interface import APIInterface
 from templates.equipment import Equipment
 from ebaysdk.finding import Connection
 
@@ -29,7 +28,7 @@ IMAGE_MAPPER = {
 ID_SET = set()
 
 
-class EquipmentAPI(APIInterface, Equipment):
+class EquipmentAPI:
     @staticmethod
     def initialize_mongoDB_collection(db):
         db.equipments.drop()  # drop the old collection so we initialize a fresh collection

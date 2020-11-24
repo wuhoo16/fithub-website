@@ -1,6 +1,10 @@
 from flask import Flask, render_template, request
 from pymongo import MongoClient
-from templates.backend import exercise_backend 
+from templates.backend import exercise_backend
+from templates.backend.exercise_backend import ModelInterface
+from templates.backend.equipment_backend import EquipmentBackend
+from templates.backend.exercise_backend import ExerciseBackend
+from templates.backend.channel_backend import ChannelBackend
 from templates.backend import equipment_backend
 from templates.backend import channel_backend
 
@@ -19,116 +23,108 @@ app = Flask("__name__")
 # homepage
 @app.route("/", methods=['GET'])
 def index():
-    if len(exercise_backend.ModelInterface.EXERCISES_ARRAY) == 0:
-        exercise_backend.ExerciseBackend.load_from_db(DATABASE)
-        exercise_backend.filterIsActive = False
-        exercise_backend.searchIsActive = False
-        exercise_backend.sortIsActive = False
-    if len(equipment_backend.ModelInterface.EQUIPMENT_ARRAY) == 0:
-        EQUIPMENT_ARRAY = equipment_backend.EquipmentBackend.load_from_db(DATABASE)
-        equipment_backend.filterIsActive = False
-        equipment_backend.searchIsActive = False
-        equipment_backend.sortIsActive = False
-    if len(channel_backend.ModelInterface.CHANNEL_ARRAY) == 0:
-        CHANNEL_ARRAY = channel_backend.ChannelBackend.load_from_db(DATABASE)
-        channel_backend.filterIsActive = False
-        channel_backend.searchIsActive = False
-        channel_backend.sortIsActive = False
-    return render_template('homepage.html', exerciseFilterIsActive=str.lower(str(exercise_backend.filterIsActive)),
-                           equipmentFilterIsActive=str.lower(str(equipment_backend.filterIsActive)),
-                           channelFilterIsActive=str.lower(str(channel_backend.filterIsActive)), 
-                           exerciseSearchIsActive=str.lower(str(exercise_backend.searchIsActive)),
-                           equipmentSearchIsActive=str.lower(str(equipment_backend.searchIsActive)),
-                           channelSearchIsActive=str.lower(str(channel_backend.searchIsActive)), 
-                           exerciseSortIsActive=str.lower(str(exercise_backend.sortIsActive)),
-                           equipmentSortIsActive=str.lower(str(equipment_backend.sortIsActive)),
-                           channelSortIsActive=str.lower(str(channel_backend.sortIsActive)))
+    if len(ModelInterface.EXERCISES_ARRAY) == 0:
+        ExerciseBackend.initialize_array_from_mongo_database(DATABASE)
+        ExerciseBackend.reset_all_flags()  # resets the filter, sort, and search flags to False for ExerciseBackend
+    if len(ModelInterface.EQUIPMENT_ARRAY) == 0:
+        EquipmentBackend.initialize_array_from_mongo_database(DATABASE)
+        EquipmentBackend.reset_all_flags()  # resets the filter, sort, and search flags to False for EquipmentBackend
+    if len(ModelInterface.CHANNEL_ARRAY) == 0:
+        ChannelBackend.initialize_array_from_mongo_database(DATABASE)
+        ChannelBackend.reset_all_flags()  # resets the filter, sort, and search flags to False for ChannelBackend
+    return render_template('homepage.html', exerciseFilterIsActive=str.lower(str(ExerciseBackend.filterIsActive)),
+                           equipmentFilterIsActive=str.lower(str(EquipmentBackend.filterIsActive)),
+                           channelFilterIsActive=str.lower(str(ChannelBackend.filterIsActive)),
+                           exerciseSearchIsActive=str.lower(str(ExerciseBackend.searchIsActive)),
+                           equipmentSearchIsActive=str.lower(str(EquipmentBackend.searchIsActive)),
+                           channelSearchIsActive=str.lower(str(ChannelBackend.searchIsActive)),
+                           exerciseSortIsActive=str.lower(str(ExerciseBackend.sortIsActive)),
+                           equipmentSortIsActive=str.lower(str(EquipmentBackend.sortIsActive)),
+                           channelSortIsActive=str.lower(str(ChannelBackend.sortIsActive)))
 
 
 # exercises model page
 @app.route("/exercises/<int:page_number>", methods=['GET', 'POST'])
 def exercises(page_number):
-    return model_page(request, exercise_backend.ExerciseBackend, exercise_backend.ModelInterface.EXERCISES_ARRAY, page_number)
+    return model_page(request, ExerciseBackend, ModelInterface.EXERCISES_ARRAY, page_number)
 
 
 # equipments model page
 @app.route("/equipment/<int:page_number>", methods=['GET', 'POST'])
 def equipments(page_number):
-    return model_page(request, equipment_backend.EquipmentBackend, equipment_backend.ModelInterface.EQUIPMENT_ARRAY, page_number)
+    return model_page(request, EquipmentBackend, ModelInterface.EQUIPMENT_ARRAY, page_number)
 
 
 # channels model page
 @app.route("/channels/<int:page_number>", methods=['GET', 'POST'])
 def channels(page_number):
-    return model_page(request, channel_backend.ChannelBackend, channel_backend.ModelInterface.CHANNEL_ARRAY, page_number)
+    return model_page(request, ChannelBackend, ModelInterface.CHANNEL_ARRAY, page_number)
 
 
-def model_page(request, model, MODEL_ARR, page_number):
-    if request.method == 'POST':
-        if request.form.get(model.searchItemsKey):
-            model.searchIsActive = True
-            NEW_ARR = getSearch(request.form.get(model.searchItemsKey), MODEL_ARR)
-            model.modifiedArray = NEW_ARR
-            return model.render_model_page(page_number, NEW_ARR)
+def model_page(flaskRequest, backendClassName, MODEL_ARR, pageNumber):
+    if flaskRequest.method == 'POST':
+        if flaskRequest.form.get(backendClassName.searchItemsKey):
+            backendClassName.searchIsActive = True
+            NEW_ARR = getSearch(flaskRequest.form.get(backendClassName.searchItemsKey), MODEL_ARR)
+            backendClassName.modifiedArray = NEW_ARR
+            return backendClassName.render_model_page(pageNumber, NEW_ARR)
             
-        elif request.form.get(model.sortingHiddenFieldKey):  # If this field in the posted form is set, then the user has clicked one of the sorting buttons
-            model.sortingAttribute = request.form.get(model.sortCriteriaMenuKey)
+        elif flaskRequest.form.get(backendClassName.sortingHiddenFieldKey):  # If this field in the posted form is set, then the user has clicked one of the sorting buttons
+            backendClassName.sortingAttribute = flaskRequest.form.get(backendClassName.sortCriteriaMenuKey)
 
-            if model.filterIsActive or model.searchIsActive:
-                sortThisArray = model.modifiedArray
+            if backendClassName.filterIsActive or backendClassName.searchIsActive:
+                sortThisArray = backendClassName.modifiedArray
             else:
                 sortThisArray = MODEL_ARR
-            if model.sortingAttribute is None:
-                model.modifiedArray = sortThisArray
+            if backendClassName.sortingAttribute is None:
+                backendClassName.modifiedArray = sortThisArray
             else: 
-                if request.form.get(model.sortingHiddenFieldKey) == 'ascending':
-                    model.sortingDirection = 'ascending'
-                    model.modifiedArray = sorted(sortThisArray,
-                                                key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
-                                                reverse=False)
-                elif request.form.get(model.sortingHiddenFieldKey) == 'descending':
-                    model.sortingDirection = 'descending'
-                    model.modifiedArray = sorted(sortThisArray,
-                                                key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
-                                                reverse=True)
-                model.sortIsActive = True
+                if flaskRequest.form.get(backendClassName.sortingHiddenFieldKey) == 'ascending':
+                    backendClassName.sortingDirection = 'ascending'
+                    backendClassName.modifiedArray = sorted(sortThisArray,
+                                                            key=lambda modelObj: getattr(modelObj, backendClassName.sortingAttribute),
+                                                            reverse=False)
+                elif flaskRequest.form.get(backendClassName.sortingHiddenFieldKey) == 'descending':
+                    backendClassName.sortingDirection = 'descending'
+                    backendClassName.modifiedArray = sorted(sortThisArray,
+                                                            key=lambda modelObj: getattr(modelObj, backendClassName.sortingAttribute),
+                                                            reverse=True)
+                backendClassName.sortIsActive = True
 
-            return model.render_model_page(page_number, model.modifiedArray)
+            return backendClassName.render_model_page(pageNumber, backendClassName.modifiedArray)
         
-        elif request.form.get('resetHiddenField') == 'resetClicked':  # If this field is set, then the user has clicked the Reset button
-            model.filterIsActive = False
-            model.sortIsActive = False
-            model.searchIsActive = False
-            return model.render_model_page(page_number, MODEL_ARR)
+        elif flaskRequest.form.get('resetHiddenField') == 'resetClicked':  # If this field is set, then the user has clicked the Reset button
+            backendClassName.reset_all_flags()
+            return backendClassName.render_model_page(pageNumber, MODEL_ARR)
             
         else:  # filter form was submitted using the Filter button
-            model.filterIsActive = True
+            backendClassName.filterIsActive = True
 
             # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
-            tempModifiedArray, modifiedArray = model.filter(DATABASE, request.form)
+            tempModifiedArray, modifiedArray = backendClassName.filter(DATABASE, flaskRequest.form)
 
-            if model.searchIsActive:
+            if backendClassName.searchIsActive:
                 modifiedArray = searchFilterMatch(modifiedArray, tempModifiedArray)
 
             # If we sorted before, sort by the same sort method again
-            if model.sortIsActive:
-                if model.sortingDirection == 'ascending':
+            if backendClassName.sortIsActive:
+                if backendClassName.sortingDirection == 'ascending':
                     modifiedArray = sorted(modifiedArray,
-                                                    key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
-                                                    reverse=False)
-                elif model.sortingDirection == 'descending':
+                                           key=lambda modelObj: getattr(modelObj, backendClassName.sortingAttribute),
+                                           reverse=False)
+                elif backendClassName.sortingDirection == 'descending':
                     modifiedArray = sorted(modifiedArray,
-                                                    key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
-                                                    reverse=True)
+                                           key=lambda modelObj: getattr(modelObj, backendClassName.sortingAttribute),
+                                           reverse=True)
 
-            model.modifiedArray = modifiedArray
-            return model.render_model_page(page_number, modifiedArray)
+            backendClassName.modifiedArray = modifiedArray
+            return backendClassName.render_model_page(pageNumber, modifiedArray)
     
-    elif request.method == 'GET':
-        if model.filterIsActive or model.sortIsActive or model.searchIsActive:
-            return model.render_model_page(page_number, model.modifiedArray)
+    elif flaskRequest.method == 'GET':
+        if backendClassName.filterIsActive or backendClassName.sortIsActive or backendClassName.searchIsActive:
+            return backendClassName.render_model_page(pageNumber, backendClassName.modifiedArray)
         else:  # else, render template using the original global array with every Exercise object
-            return model.render_model_page(page_number, MODEL_ARR)
+            return backendClassName.render_model_page(pageNumber, MODEL_ARR)
 
 
 # about page
@@ -137,28 +133,25 @@ def about():
     return render_template('about.html')
 
 
-# Helper methods for paginating all 3 model pages
-
 def getSearch(tempArr, mainArr):
     totalArray = []
     arr = tempArr.split('|')
+    searchedInstanceNamesSet = set(arr)
 
-    for item in arr:
-        for obj in mainArr:
-            if obj.name == item:
-                totalArray.append(obj)
-                break
+    for obj in mainArr:
+        if obj.name in searchedInstanceNamesSet:
+            totalArray.append(obj)
     return totalArray
+
 
 def searchFilterMatch(filterArr, searchArr):
     totalArr = []
+    searchSet = set(searchArr)
 
     for filtObj in filterArr:
-        for searchObj in searchArr:
-            if filtObj == searchObj:
-                totalArr.append(filtObj)
-                break
-    
+        if filtObj in searchSet:
+            totalArr.append(filtObj)
+
     return totalArr
 
 
@@ -167,30 +160,32 @@ def searchFilterMatch(filterArr, searchArr):
 # exercise instance pages
 @app.route(EXERCISE_INSTANCE_URL_TEMPLATE.format('<int:arrayIndex>'), methods=['GET'])
 def exercise_instance(arrayIndex):
-    return instance_page(exercise_backend.ModelInterface.EXERCISES_ARRAY[arrayIndex], exercise_backend.ExerciseBackend)
+    return instance_page(ModelInterface.EXERCISES_ARRAY[arrayIndex], ExerciseBackend)
 
 
 # equipment instance pages
 @app.route(EQUIPMENT_INSTANCE_URL_TEMPLATE.format('<int:arrayIndex>'), methods=['GET'])
 def equipment_instance(arrayIndex):
-    return instance_page(equipment_backend.ModelInterface.EQUIPMENT_ARRAY[arrayIndex], equipment_backend.EquipmentBackend)
+    return instance_page(ModelInterface.EQUIPMENT_ARRAY[arrayIndex], EquipmentBackend)
 
 
 # channel instance pages
 @app.route(CHANNEL_INSTANCE_URL_TEMPLATE.format('<int:arrayIndex>'), methods=['GET'])
 def channel_instance(arrayIndex):
-    return instance_page(channel_backend.ModelInterface.CHANNEL_ARRAY[arrayIndex], channel_backend.ChannelBackend)
+    return instance_page(ModelInterface.CHANNEL_ARRAY[arrayIndex], ChannelBackend)
 
 
-def instance_page(instanceObj, model):
+def instance_page(instanceObj, backendClassName):
     """
-    Find current channel instance object and call method to retrieve 2D List of related indices
+    Get all related instance objects and return the rendered instance page dynamically based on the model type.
+    :param instanceObj:
+    :param backendClassName:
+    :return:
     """
-    relatedObjects = model.get_related_objects_for_instance(instanceObj.id, DATABASE)
-    return model.render_instance_page(instanceObj, relatedObjects)
+    relatedObjects = backendClassName.get_related_objects_for_instance(instanceObj.id, DATABASE)
+    return backendClassName.render_instance_page(instanceObj, relatedObjects)
 
 
 # Start the Flask web-application when main.py file is run
 if __name__ == "__main__":
-
     app.run(host="localhost", port=8080, debug=True, use_reloader=True)

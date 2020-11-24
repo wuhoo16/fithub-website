@@ -1,4 +1,3 @@
-from templates.api.api_interface import APIInterface
 from templates.channel import Channel
 from googleapiclient.discovery import build
 import os
@@ -15,7 +14,7 @@ BANNER_BLACKLIST = {'Jeremy Ethier', 'Squat University', 'Squat Bench Deadlift',
                             'Stephi Nguyen', 'Juicy Calves Fitness'}
 
 
-class ChannelAPI(APIInterface):
+class ChannelAPI:
     @staticmethod
     def initialize_mongoDB_collection(db):
         db.channels.drop()  # drop the old collection so we initialize a fresh collection

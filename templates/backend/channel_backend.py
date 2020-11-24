@@ -18,7 +18,13 @@ class ChannelBackend(ModelInterface, Channel):
     modifiedArray = []
 
     @staticmethod
-    def load_from_db(db):
+    def reset_all_flags():
+        ChannelBackend.filterIsActive = False
+        ChannelBackend.sortIsActive = False
+        ChannelBackend.searchIsActive = False
+
+    @staticmethod
+    def initialize_array_from_mongo_database(db):
         channel_array = []
         channelCursor = db.channels.find()
         for channelDocument in channelCursor:
@@ -42,7 +48,6 @@ class ChannelBackend(ModelInterface, Channel):
         
         ModelInterface.CHANNEL_ARRAY = channel_array
 
-
     @staticmethod
     def get_related_objects_for_instance(id, db):
         attributes = ModelInterface.find_current_instance_object(id, db.channels, ('exerciseCategory', 'exerciseSubcategory'))
@@ -61,14 +66,13 @@ class ChannelBackend(ModelInterface, Channel):
 
         return [relatedExercises, relatedEquipments, relatedChannels]
 
-        
     @staticmethod
     def filter(db, requestForm):
         # Setting up to filter
         selectedSubscriberRange = requestForm.getlist("checkedSubscriberRange")
         selectedTotalViewsRange = requestForm.getlist("checkedTotalViewsRange")
         selectedVideosRange = requestForm.getlist("checkedVideosRange")
-        #NOTE checked was selected -- make sure it works
+        # NOTE checked was selected -- make sure it works
 
         if len(selectedSubscriberRange) == 0 and len(selectedTotalViewsRange) == 0 and len(selectedVideosRange) == 0:
             ChannelBackend.searchIsActive = True
@@ -98,12 +102,10 @@ class ChannelBackend(ModelInterface, Channel):
         # Return all of filtered Exercise objects
         return tempModifiedArray, filteredChannels
 
-
     @staticmethod
     def render_model_page(page_number, ARR):
         start, end, num_pages = ModelInterface.paginate(page_number, ARR)
         return render_template('channels.html', channelArray=ARR, start=start, end=end, page_number=page_number, num_pages=num_pages)
-
 
     @staticmethod
     def render_instance_page(instanceObj, relatedObjects):
