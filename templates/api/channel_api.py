@@ -1,4 +1,3 @@
-from templates.api.api_interface import APIInterface
 from templates.channel import Channel
 from googleapiclient.discovery import build
 import os
@@ -14,7 +13,8 @@ BANNER_BLACKLIST = {'Jeremy Ethier', 'Squat University', 'Squat Bench Deadlift',
                             'Fit Now Official',
                             'Stephi Nguyen', 'Juicy Calves Fitness'}
 
-class ChannelAPI(APIInterface):
+
+class ChannelAPI:
     @staticmethod
     def initialize_mongoDB_collection(db):
         db.channels.drop()  # drop the old collection so we initialize a fresh collection
@@ -130,6 +130,7 @@ class ChannelAPI(APIInterface):
                     db.channels.insert_one(channel.to_dictionary())
                     ID_SET.add(channel.id)
                     channel_counter += 1
+
 
 def execute_youtube_search_API(youtubeClient, searchTerm, part="snippet", maxResults=3):
     """
@@ -316,5 +317,3 @@ def convert_keywords(keywords):
             keyword_arr.append(words[i])
 
     return keyword_arr
-
-    

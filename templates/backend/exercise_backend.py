@@ -3,10 +3,11 @@ import numpy as np
 from templates.backend.model_interface import ModelInterface
 from templates.exercise import Exercise
 
+
 class ExerciseBackend(ModelInterface, Exercise):
     filterIsActive = False
-    searchIsActive = False
     sortIsActive = False
+    searchIsActive = False
     sortingAttribute = ""
     sortingDirection = ""
 
@@ -16,9 +17,14 @@ class ExerciseBackend(ModelInterface, Exercise):
 
     modifiedArray = []
 
+    @staticmethod
+    def reset_all_flags():
+        ExerciseBackend.filterIsActive = False
+        ExerciseBackend.sortIsActive = False
+        ExerciseBackend.searchIsActive = False
 
     @staticmethod
-    def load_from_db(db):
+    def initialize_array_from_mongo_database(db):
         """
         Return a python list of all Exercise objects.
         :param db: The database to load all exercises from
@@ -44,7 +50,6 @@ class ExerciseBackend(ModelInterface, Exercise):
         
         ModelInterface.EXERCISES_ARRAY = exercise_array
 
-
     @staticmethod
     def get_related_objects_for_instance(id, db):
         attributes = ModelInterface.find_current_instance_object(id, db.exercises, ('category', 'subcategory', 'equipment'))
@@ -62,10 +67,9 @@ class ExerciseBackend(ModelInterface, Exercise):
 
         return [relatedExercises, relatedEquipments, relatedChannels]
 
-
     @staticmethod
     def filter(db, requestForm):
-        #setting up to filter
+        # setting up to filter
         selectedExerciseCategories = requestForm.getlist("checkedExerciseCategories")
         selectedEquipmentCategories = requestForm.getlist("checkedEquipmentCategories")
 
@@ -76,7 +80,7 @@ class ExerciseBackend(ModelInterface, Exercise):
         if ExerciseBackend.searchIsActive:
             tempModifiedArray = ExerciseBackend.modifiedArray
         
-        #beginning to filter
+        # beginning to filter
         filteredExercises = []
 
         # Query the entire exercises collection on each of the selected exercise category terms and append matching Exercise objects
@@ -94,7 +98,6 @@ class ExerciseBackend(ModelInterface, Exercise):
     def render_model_page(page_number, ARR):
         start, end, num_pages = ModelInterface.paginate(page_number, ARR)
         return render_template('exercises.html', exercisesArray=ARR, start=start, end=end, page_number=page_number, num_pages=num_pages)
-
 
     @staticmethod
     def render_instance_page(instanceObj, relatedObjects):

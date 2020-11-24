@@ -1,11 +1,11 @@
 from pymongo import MongoClient
-
-from exercise_api import ExerciseAPI
-from equipment_api import EquipmentAPI
-from channel_api import ChannelAPI
+from templates.api.exercise_api import ExerciseAPI
+from templates.api.equipment_api import EquipmentAPI
+from templates.api.channel_api import ChannelAPI
 
 client = MongoClient("mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase3Database?retryWrites=true&w=majority")
 DATABASE = client.phase3Database
+
 
 # All methods to setup of mongoDB remote database is done below.
 # Note that 'setup_database()' should only be run ONCE (unless you want to reinitialize remote database)
@@ -39,4 +39,5 @@ if __name__ == "__main__":
     # ExerciseAPI.initialize_mongoDB_collection(DATABASE)
     # EquipmentAPI.initialize_mongoDB_collection(DATABASE)
     # ChannelAPI.initialize_mongoDB_collection(DATABASE)
+    pass
 

@@ -1,14 +1,17 @@
 import math
+from abc import ABC, abstractmethod
 
-class ModelInterface:
-    #All are initialized from our mongoDB the first time the homepage is visited
+
+# Note that ModelInterface is an abstract base class = Python's version of an interface
+class ModelInterface(ABC):
+    # All are initialized from our mongoDB the first time the homepage is visited
     EXERCISES_ARRAY = []
     EQUIPMENT_ARRAY = []
     CHANNEL_ARRAY = []
 
-
     @staticmethod
-    def load_from_db(db):
+    @abstractmethod
+    def initialize_array_from_mongo_database(db):
         """
         Method for loading from the remote MongoDB to initialize model global array
         NOTE THAT ANY CHANGES TO THE OBJECT CONSTRUCTORS MUST BE CHANGED HERE TO MATCH!
@@ -16,6 +19,7 @@ class ModelInterface:
         pass
     
     @staticmethod
+    @abstractmethod
     def get_related_objects_for_instance(id, db):
         """
         Getting 2D list of related cross-model objects by using the arrayIndex attribute
@@ -33,6 +37,7 @@ class ModelInterface:
         pass
 
     @staticmethod
+    @abstractmethod
     def filter(db, **kwargs):
         """
         Pass in the selected categories to filter on and return all of the filtered model objects in a Python list.
@@ -44,8 +49,7 @@ class ModelInterface:
         """
         pass
 
-    
-    #Helper functions for get_related_objects_for_instance functions
+    # Helper functions for get_related_objects_for_instance functions
     @staticmethod
     def find_current_instance_object(id, currentCollection, keys):
         """
@@ -60,7 +64,6 @@ class ModelInterface:
         
         return attributes
 
-
     @staticmethod
     def find_related_objects_based_on_subcategory(subcategory, collection, invalid_input, valid_input, ARRAY):
         """
@@ -72,7 +75,6 @@ class ModelInterface:
             relatedCursor = collection.find({valid_input[0]: valid_input[1]})
 
         return ModelInterface.find_related_objects(relatedCursor, ARRAY)
-    
 
     @staticmethod
     def find_related_objects(relatedCursor, ARRAY):
@@ -92,4 +94,3 @@ class ModelInterface:
             endIndex = len(array) - 1
         num_pages = math.ceil(len(array) / 9)
         return startIndex, endIndex, num_pages
-        
