@@ -1,5 +1,5 @@
 from templates.api.api_interface import APIInterface
-from ..exercise import Exercise
+from templates.exercise import Exercise
 import requests
 import re
 
@@ -40,6 +40,7 @@ PLANK_REMOVED_FLAG = False
 
 
 class ExerciseAPI(APIInterface, Exercise):
+    @staticmethod
     def initialize_mongoDB_collection(db):
         db.exercises.drop()  # drop the old collection so we initialize a fresh collection
 

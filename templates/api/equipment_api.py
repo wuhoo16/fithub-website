@@ -1,5 +1,5 @@
 from templates.api.api_interface import APIInterface
-from ..equipment import Equipment
+from templates.equipment import Equipment
 from ebaysdk.finding import Connection
 
 BLACKLIST = {'NEW CAP Barbell Standard Barbell Weight Lifting Exercise Bar 5 foot ft - NEW',
@@ -30,6 +30,7 @@ ID_SET = set()
 
 
 class EquipmentAPI(APIInterface, Equipment):
+    @staticmethod
     def initialize_mongoDB_collection(db):
         db.equipments.drop()  # drop the old collection so we initialize a fresh collection
         equipment_counter = 0

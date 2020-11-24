@@ -1,6 +1,7 @@
 from flask import render_template
-from .model_interface import ModelInterface
-from ..channel import Channel
+from templates.backend.model_interface import ModelInterface
+from templates.channel import Channel
+import numpy as np
 
 
 class ChannelBackend(ModelInterface, Channel):
@@ -65,16 +66,16 @@ class ChannelBackend(ModelInterface, Channel):
     def filter(db, requestForm):
         # Setting up to filter
         selectedSubscriberRange = requestForm.getlist("checkedSubscriberRange")
-        selectedTotalViewsRange = kwargs["checkedTotalViewsRange"]
-        selectedVideosRange = kwargs["checkedVideosRange"]
+        selectedTotalViewsRange = requestForm.getlist("checkedTotalViewsRange")
+        selectedVideosRange = requestForm.getlist("checkedVideosRange")
         #NOTE checked was selected -- make sure it works
 
         if len(selectedSubscriberRange) == 0 and len(selectedTotalViewsRange) == 0 and len(selectedVideosRange) == 0:
-            searchIsActive = True
+            ChannelBackend.searchIsActive = True
         
         tempModifiedArray = []
-        if searchIsActive:
-            tempModifiedArray = modifiedArray
+        if ChannelBackend.searchIsActive:
+            tempModifiedArray = ChannelBackend.modifiedArray
 
         # Beginning to implement filter
         filteredChannels = []
