@@ -1,6 +1,7 @@
 from flask import render_template
-from .model_interface import ModelInterface
-from ..equipment import Equipment
+from templates.backend.model_interface import ModelInterface
+from templates.equipment import Equipment
+import numpy as np
 
 class EquipmentBackend(ModelInterface, Equipment):
     filterIsActive = False
@@ -9,7 +10,7 @@ class EquipmentBackend(ModelInterface, Equipment):
     sortingAttribute = ""
     sortingDirection = ""
 
-    searchItemKey = 'equipmentsSearchItems'
+    searchItemsKey = 'equipmentsSearchItems'
     sortingHiddenFieldKey = 'equipmentsSortingHiddenField'
     sortCriteriaMenuKey = 'equipmentsSortCriteriaMenu'
 
@@ -63,17 +64,18 @@ class EquipmentBackend(ModelInterface, Equipment):
 
     @staticmethod
     def filter(db, requestForm):
+        print("in equipment")
         # Setting up for filtering
-        selectedPriceRanges = requestForm.getlist("selectedPriceRanges")
-        selectedEquipmentCategories = requestForm.getlist("selectedEquipmentCategories")
+        selectedPriceRanges = requestForm.getlist("checkedPriceRanges")
+        selectedEquipmentCategories = requestForm.getlist("checkedEquipmentCategories")
 
         if len(selectedPriceRanges) == 0 and len(selectedEquipmentCategories) == 0:
-            searchIsActive = True
+            EquipmentBackend.searchIsActive = True
 
         tempModifiedArray = []
-        if searchIsActive:
-            tempModifiedArray = modifiedArray
-        
+        if EquipmentBackend.searchIsActive:
+            tempModifiedArray = EquipmentBackend.modifiedArray
+
         filteredEquipments = []
 
         # Query the entire exercises collection on each of the selected exercise category terms and append matching Exercise objects
