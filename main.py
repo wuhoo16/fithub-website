@@ -8,8 +8,8 @@ EXERCISE_INSTANCE_URL_TEMPLATE = '/exerciseinstance/{}'
 EQUIPMENT_INSTANCE_URL_TEMPLATE = '/equipmentinstance/{}'
 CHANNEL_INSTANCE_URL_TEMPLATE = '/channelinstance/{}'
 
-client = MongoClient("mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase3Database?retryWrites=true&w=majority")
-DATABASE = client.phase3Database
+client = MongoClient("mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase2Database?retryWrites=true&w=majority")
+DATABASE = client.phase2Database
 
 # Flask and view methods for home, models, model instances, and about pages below
 # ====================================================================================================================
@@ -98,7 +98,7 @@ def model_page(request, model, MODEL_ARR, page_number):
         elif request.form.get('resetHiddenField') == 'resetClicked':  # If this field is set, then the user has clicked the Reset button
             model.filterIsActive = False
             model.sortIsActive = False
-            modle.searchIsActive = False
+            model.searchIsActive = False
             return model.render_model_page(page_number, MODEL_ARR)
             
         else:  # filter form was submitted using the Filter button
@@ -179,7 +179,7 @@ def equipment_instance(arrayIndex):
 # channel instance pages
 @app.route(CHANNEL_INSTANCE_URL_TEMPLATE.format('<int:arrayIndex>'), methods=['GET'])
 def channel_instance(arrayIndex):
-    return instance_page(channel_backend.ModelInterface.CHANNEL_ARRAY[arrayIndex], channel_backend.ChannelBackend)
+    return instance_page(channel_backend.ModelInterface.CHANNEL_ARRAY[arraqyIndex], channel_backend.ChannelBackend)
 
 def instance_page(instanceObj, model):
     """

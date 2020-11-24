@@ -1,7 +1,7 @@
 from flask import render_template
 import numpy as np
-from .model_interface import ModelInterface
-from ..exercise import Exercise
+from templates.backend.model_interface import ModelInterface
+from templates.exercise import Exercise
 
 class ExerciseBackend(ModelInterface, Exercise):
     filterIsActive = False
@@ -66,15 +66,15 @@ class ExerciseBackend(ModelInterface, Exercise):
     @staticmethod
     def filter(db, requestForm):
         #setting up to filter
-        selectedExerciseCategories = requestForm.getlist("selectedExerciseCategories")
-        selectedEquipmentCategories = requestForm.getlist("selectedEquipmentCategories")
+        selectedExerciseCategories = requestForm.getlist("checkedExerciseCategories")
+        selectedEquipmentCategories = requestForm.getlist("checkedEquipmentCategories")
 
         if len(selectedExerciseCategories) == 0 and len(selectedEquipmentCategories) == 0:
-            searchIsActive = True
+            ExerciseBackend.searchIsActive = True
 
         tempModifiedArray = []
-        if searchIsActive:
-            tempModifiedArray = modifiedArray
+        if ExerciseBackend.searchIsActive:
+            tempModifiedArray = ExerciseBackend.modifiedArray
         
         #beginning to filter
         filteredExercises = []
