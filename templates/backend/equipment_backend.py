@@ -64,9 +64,8 @@ class EquipmentBackend(ModelInterface, Equipment):
 
     @staticmethod
     def filter(db, requestForm):
-        print("in equipment")
         # Setting up for filtering
-        selectedPriceRanges = requestForm.getlist("checkedPriceRanges")
+        selectedPriceRanges = requestForm.getlist("checkedPriceRange")
         selectedEquipmentCategories = requestForm.getlist("checkedEquipmentCategories")
 
         if len(selectedPriceRanges) == 0 and len(selectedEquipmentCategories) == 0:
@@ -81,6 +80,7 @@ class EquipmentBackend(ModelInterface, Equipment):
         # Query the entire exercises collection on each of the selected exercise category terms and append matching Exercise objects
         for priceString in selectedPriceRanges:
             priceRangeList = priceString.split(" ")
+            print(priceRangeList)
             filteredEquipments = np.array(ModelInterface.find_related_objects(db.equipments.find({'price': {'$gte': float(priceRangeList[0]), '$lt': float(priceRangeList[1])}}), ModelInterface.EQUIPMENT_ARRAY))
 
         # Query the entire exercises collection on each of the selected equipment category terms and append matching Exercise objects
