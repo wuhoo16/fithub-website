@@ -2,6 +2,7 @@ from flask import render_template
 from .model_interface import ModelInterface
 from ..channel import Channel
 
+
 class ChannelBackend(ModelInterface, Channel):
     filterIsActive = False
     searchIsActive = False

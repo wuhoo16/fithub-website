@@ -1,4 +1,4 @@
-from api_interface import APIInterface
+from templates.api.api_interface import APIInterface
 from ..exercise import Exercise
 import requests
 import re
@@ -37,6 +37,7 @@ GIF_MAPPER = {
     'Weighted Step': '/../static/weighted_step_gif.gif'
 }
 PLANK_REMOVED_FLAG = False
+
 
 class ExerciseAPI(APIInterface, Exercise):
     def initialize_mongoDB_collection(db):

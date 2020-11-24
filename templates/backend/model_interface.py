@@ -1,5 +1,6 @@
 import math
 
+
 class ModelInterface:
     #All are initialized from our mongoDB the first time the homepage is visited
     EXERCISES_ARRAY = []
@@ -44,7 +45,6 @@ class ModelInterface:
         """
         pass
 
-    
     #Helper functions for get_related_objects_for_instance functions
     @staticmethod
     def find_current_instance_object(id, currentCollection, keys):

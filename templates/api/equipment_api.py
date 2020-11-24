@@ -1,4 +1,4 @@
-from api_interface import APIInterface
+from templates.api.api_interface import APIInterface
 from ..equipment import Equipment
 from ebaysdk.finding import Connection
 
@@ -27,6 +27,7 @@ IMAGE_MAPPER = {
     '72" x 24" Exercise Yoga Mat 1/2" Thick w/ Carry Strap - Pilates Fitness': "mat_picture_5.jpg"
 }
 ID_SET = set()
+
 
 class EquipmentAPI(APIInterface, Equipment):
     def initialize_mongoDB_collection(db):

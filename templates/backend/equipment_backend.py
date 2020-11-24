@@ -2,6 +2,7 @@ from flask import render_template
 from .model_interface import ModelInterface
 from ..equipment import Equipment
 
+
 class EquipmentBackend(ModelInterface, Equipment):
     filterIsActive = False
     searchIsActive = False

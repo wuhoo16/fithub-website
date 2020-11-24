@@ -3,6 +3,7 @@ import numpy as np
 from .model_interface import ModelInterface
 from ..exercise import Exercise
 
+
 class ExerciseBackend(ModelInterface, Exercise):
     filterIsActive = False
     searchIsActive = False
@@ -15,7 +16,6 @@ class ExerciseBackend(ModelInterface, Exercise):
     sortCriteriaMenuKey = 'exercisesSortCriteriaMenu'
 
     modifiedArray = []
-
 
     @staticmethod
     def load_from_db(db):
@@ -44,7 +44,6 @@ class ExerciseBackend(ModelInterface, Exercise):
         
         ModelInterface.EXERCISES_ARRAY = exercise_array
 
-
     @staticmethod
     def get_related_objects_for_instance(id, db):
         attributes = ModelInterface.find_current_instance_object(id, db.exercises, ('category', 'subcategory', 'equipment'))
@@ -61,7 +60,6 @@ class ExerciseBackend(ModelInterface, Exercise):
         relatedChannels = ModelInterface.find_related_objects_based_on_subcategory(subcategory, db.channels, ['exerciseCategory', category], ['exerciseSubcategory', subcategory], ModelInterface.CHANNEL_ARRAY)
 
         return [relatedExercises, relatedEquipments, relatedChannels]
-
 
     @staticmethod
     def filter(db, requestForm):

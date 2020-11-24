@@ -181,6 +181,7 @@ def equipment_instance(arrayIndex):
 def channel_instance(arrayIndex):
     return instance_page(channel_backend.ModelInterface.CHANNEL_ARRAY[arrayIndex], channel_backend.ChannelBackend)
 
+
 def instance_page(instanceObj, model):
     """
     Find current channel instance object and call method to retrieve 2D List of related indices
@@ -188,6 +189,8 @@ def instance_page(instanceObj, model):
     relatedObjects = model.get_related_objects_for_instance(instanceObj.id, DATABASE)
     return model.render_instance_page(instanceObj, relatedObjects)
 
+
 # Start the Flask web-application when main.py file is run
 if __name__ == "__main__":
+
     app.run(host="localhost", port=8080, debug=True, use_reloader=True)
