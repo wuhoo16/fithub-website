@@ -179,7 +179,7 @@ def equipment_instance(arrayIndex):
 # channel instance pages
 @app.route(CHANNEL_INSTANCE_URL_TEMPLATE.format('<int:arrayIndex>'), methods=['GET'])
 def channel_instance(arrayIndex):
-    return instance_page(channel_backend.ModelInterface.CHANNEL_ARRAY[arraqyIndex], channel_backend.ChannelBackend)
+    return instance_page(channel_backend.ModelInterface.CHANNEL_ARRAY[arrayIndex], channel_backend.ChannelBackend)
 
 
 def instance_page(instanceObj, model):
