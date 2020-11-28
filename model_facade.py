@@ -69,11 +69,11 @@ class ModelFacade():
     def render_model_page(model, page_number, request_param, db):
         ModelFacade.__initialize_model_arrays_if_required(db)
         if model == "exercise":
-            return ModelFacade.__model_page(request_param, exercise_backend.ExerciseBackend, exercise_backend.ModelInterface.EXERCISES_ARRAY, page_number, db)
+            return ModelFacade.__model_page(request_param, exercise_backend.ExerciseBackend, exercise_backend.ModelBackend.EXERCISES_ARRAY, page_number, db)
         elif model == "equipment":
-            return ModelFacade.__model_page(request_param, equipment_backend.EquipmentBackend, equipment_backend.ModelInterface.EQUIPMENT_ARRAY, page_number, db)
+            return ModelFacade.__model_page(request_param, equipment_backend.EquipmentBackend, equipment_backend.ModelBackend.EQUIPMENT_ARRAY, page_number, db)
         elif model == "channel":
-            return ModelFacade.__model_page(request_param, channel_backend.ChannelBackend, channel_backend.ModelInterface.CHANNEL_ARRAY, page_number, db)
+            return ModelFacade.__model_page(request_param, channel_backend.ChannelBackend, channel_backend.ModelBackend.CHANNEL_ARRAY, page_number, db)
         else:
             raise NameError("ERROR: " + model + " is not a model!")
 
@@ -81,11 +81,11 @@ class ModelFacade():
     @staticmethod
     def render_model_instance_page(model, array_index, db):
         if model == "exercise":
-            return ModelFacade.__instance_page(exercise_backend.ModelInterface.EXERCISES_ARRAY[array_index], exercise_backend.ExerciseBackend, db)
+            return ModelFacade.__instance_page(exercise_backend.ModelBackend.EXERCISES_ARRAY[array_index], exercise_backend.ExerciseBackend, db)
         elif model == "equipment":
-            return ModelFacade.__instance_page(equipment_backend.ModelInterface.EQUIPMENT_ARRAY[array_index], equipment_backend.EquipmentBackend, db)
+            return ModelFacade.__instance_page(equipment_backend.ModelBackend.EQUIPMENT_ARRAY[array_index], equipment_backend.EquipmentBackend, db)
         elif model == "channel":
-            return ModelFacade.__instance_page(channel_backend.ModelInterface.CHANNEL_ARRAY[array_index], channel_backend.ChannelBackend, db)
+            return ModelFacade.__instance_page(channel_backend.ModelBackend.CHANNEL_ARRAY[array_index], channel_backend.ChannelBackend, db)
         else:
             raise NameError("ERROR: " + model + " is not a model!")
 
@@ -95,17 +95,17 @@ class ModelFacade():
 
     @staticmethod
     def __initialize_model_arrays_if_required(db):
-        if len(exercise_backend.ModelInterface.EXERCISES_ARRAY) == 0:
+        if len(exercise_backend.ModelBackend.EXERCISES_ARRAY) == 0:
             exercise_backend.ExerciseBackend.load_from_db(db)
             exercise_backend.filterIsActive = False
             exercise_backend.searchIsActive = False
             exercise_backend.sortIsActive = False
-        if len(equipment_backend.ModelInterface.EQUIPMENT_ARRAY) == 0:
+        if len(equipment_backend.ModelBackend.EQUIPMENT_ARRAY) == 0:
             EQUIPMENT_ARRAY = equipment_backend.EquipmentBackend.load_from_db(db)
             equipment_backend.filterIsActive = False
             equipment_backend.searchIsActive = False
             equipment_backend.sortIsActive = False
-        if len(channel_backend.ModelInterface.CHANNEL_ARRAY) == 0:
+        if len(channel_backend.ModelBackend.CHANNEL_ARRAY) == 0:
             CHANNEL_ARRAY = channel_backend.ChannelBackend.load_from_db(db)
             channel_backend.filterIsActive = False
             channel_backend.searchIsActive = False

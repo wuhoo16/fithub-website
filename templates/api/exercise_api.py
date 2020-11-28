@@ -56,7 +56,7 @@ class ExerciseAPI(APIInterface, Exercise):
         image_URL = 'https://wger.de/api/v2/exerciseimage/?limit=204'
         comment_URL = 'https://wger.de/api/v2/exercisecomment/?limit=113'
 
-        exercise_data, category_data, muscle_data, equipment_data, image_data, comment_data = get_json(exercise_URL,
+        exercise_data, category_data, muscle_data, equipment_data, image_data, comment_data = ExerciseAPI.__get_json(exercise_URL,
                                                                                                     category_URL,
                                                                                                     muscle_URL,
                                                                                                     equipment_URL,
@@ -69,7 +69,7 @@ class ExerciseAPI(APIInterface, Exercise):
                 exerciseID = x["id"]
 
                 # strip description of html elements
-                description = clean_html(x["description"])
+                description = ExerciseAPI.__clean_html(x["description"])
                 if x["name"] in DESCRIPTION:  # replace bad descriptions
                     description = DESCRIPTION[x["name"]]
 
@@ -121,7 +121,7 @@ class ExerciseAPI(APIInterface, Exercise):
                 for result in image_results:
                     if result["exercise"] == exerciseID:
                         images.append(result["image"])
-                images.extend(get_google_images(query_template.format(x["name"])))
+                images.extend(ExerciseAPI.__get_google_images(query_template.format(x["name"])))
                 # Replace some images with gifs
                 if len(images) > 0:
                     if x['name'] in GIF_MAPPER:
@@ -137,9 +137,9 @@ class ExerciseAPI(APIInterface, Exercise):
                 # Initialize subcategory variable. Use the category_name, x["name"], muscles_string, and sec_muscles_string to decide the subcategory. Note only 'Arms' and 'Legs' are broken down into subcategories
                 subcategory = None
                 if category_name == 'Arms':
-                    subcategory = return_arms_subcategory(x['name'], muscles_string, sec_muscles_string)
+                    subcategory = ExerciseAPI.__return_arms_subcategory(x['name'], muscles_string, sec_muscles_string)
                 elif category_name == 'Legs':
-                    subcategory = return_legs_subcategory(x['name'])
+                    subcategory = ExerciseAPI.__return_legs_subcategory(x['name'])
 
                 exercise = Exercise(**{
                     "exercise_id": exerciseID, 
@@ -157,150 +157,159 @@ class ExerciseAPI(APIInterface, Exercise):
 
                 if exercise.name in BLACKLIST:
                     pass
-                elif should_add_exercise(exercise):
+                elif ExerciseAPI.__should_add_exercise(exercise):
                     # Fix badly-named exercises
                     if exercise.name in RENAME_DICT.keys():
                         exercise.name = RENAME_DICT[exercise.name]
                     # Fix SZ-Bar/SZ-bar typos for 4 exercise name, description, and equipment attributes
                     if exercise.name in SZ_BAR_TYPOS:
-                        fix_SZ_bar_typo(exercise)
+                        ExerciseAPI.__fix_SZ_bar_typo(exercise)
                     # Make equipment naming consistent across all models ('Gym mat' -> 'Exercise mat')
                     if exercise.name in GYM_MAT_SET:
-                        convert_gym_mat_to_exercise_mat(exercise)
+                        ExerciseAPI.__convert_gym_mat_to_exercise_mat(exercise)
                     db.exercises.insert_one(exercise.to_dictionary())
                     exercise_counter += 1
 
 
-# All helper methods for creating HTTP requests, cleaning, filtering, or executing APIs defined below
-# ======================================================================================================================
-def get_json(exercise_URL, category_URL, muscle_URL, equipment_URL, image_URL, comment_URL, data, headers):
-    """
-    This method gets a response from all URLs needed from the wger REST API, parses it into json, and returns the json
-    :return: JSON message
-    """
-    exercise = requests.get(url=exercise_URL, data=data, headers=headers).json()
-    category = requests.get(url=category_URL, data=data, headers=headers).json()
-    muscle = requests.get(url=muscle_URL, data=data, headers=headers).json()
-    equipment = requests.get(url=equipment_URL, data=data, headers=headers).json()
-    image = requests.get(url=image_URL, data=data, headers=headers).json()
-    comment = requests.get(url=comment_URL, data=data, headers=headers).json()
-    return exercise, category, muscle, equipment, image, comment
+    # All helper methods for creating HTTP requests, cleaning, filtering, or executing APIs defined below
+    # ======================================================================================================================
+    @staticmethod
+    def __get_json(exercise_URL, category_URL, muscle_URL, equipment_URL, image_URL, comment_URL, data, headers):
+        """
+        This method gets a response from all URLs needed from the wger REST API, parses it into json, and returns the json
+        :return: JSON message
+        """
+        exercise = requests.get(url=exercise_URL, data=data, headers=headers).json()
+        category = requests.get(url=category_URL, data=data, headers=headers).json()
+        muscle = requests.get(url=muscle_URL, data=data, headers=headers).json()
+        equipment = requests.get(url=equipment_URL, data=data, headers=headers).json()
+        image = requests.get(url=image_URL, data=data, headers=headers).json()
+        comment = requests.get(url=comment_URL, data=data, headers=headers).json()
+        return exercise, category, muscle, equipment, image, comment
 
 
-def should_add_exercise(exercise):
-    """
-    Helper function called in the initialize_mongoDB_exercises_collection() method to mark specific exercise duplicates
-    that should NOT be added to the database. These can't be eliminated with the simple blacklist due to identical exercise names.
-    This method achieves the following rules:
-    1.) Blacklists one of the 'Military Press' exercise with Category == Arms
-    2.) Blacklists the first of 2 'Plank' exercises using the global PLANK_REMOVED_FLAG
-    3.) Blacklist spanish exercise 'Curl su Panca a 45°" using substring.
-    :param exercise: an Exercise object that should have all attributes initialized
-    :return: Boolean, True if exercise should be added, False otherwise
-    """
+    @staticmethod
+    def __should_add_exercise(exercise):
+        """
+        Helper function called in the initialize_mongoDB_exercises_collection() method to mark specific exercise duplicates
+        that should NOT be added to the database. These can't be eliminated with the simple blacklist due to identical exercise names.
+        This method achieves the following rules:
+        1.) Blacklists one of the 'Military Press' exercise with Category == Arms
+        2.) Blacklists the first of 2 'Plank' exercises using the global PLANK_REMOVED_FLAG
+        3.) Blacklist spanish exercise 'Curl su Panca a 45°" using substring.
+        :param exercise: an Exercise object that should have all attributes initialized
+        :return: Boolean, True if exercise should be added, False otherwise
+        """
 
-    if exercise.name == 'Military Press' and exercise.category == 'Arms':
-        return False
-    elif exercise.name == 'Plank' and PLANK_REMOVED_FLAG is False:
-        return False
-    elif 'Curl su Panca a ' in exercise.name:
-        return False
-    else:
-        return True
-
-
-def fix_SZ_bar_typo(exercise):
-    """
-    Helper function to fix the SZ-Bar and SZ-bar typos for 4 equipment names, descriptions, and equipment attributes.
-    :param exercise: Exercise object with name verified to be in the SZ_BAR_TYPO set
-    :return: None
-    """
-    exercise.name = exercise.name.replace('SZ-Bar', 'EZ-Bar')
-    exercise.name = exercise.name.replace('SZ-bar', 'EZ-bar')
-    exercise.description = exercise.description.replace('SZ-Bar', 'EZ-Bar')
-    exercise.description = exercise.description.replace('SZ-bar', 'EZ-bar')
-    new_equipment_list = []
-    for e in exercise.equipment:
-        if e == 'SZ-Bar':
-            new_equipment_list.append('EZ-Bar')
+        if exercise.name == 'Military Press' and exercise.category == 'Arms':
+            return False
+        elif exercise.name == 'Plank' and PLANK_REMOVED_FLAG is False:
+            return False
+        elif 'Curl su Panca a ' in exercise.name:
+            return False
         else:
-            new_equipment_list.append(e)
-    exercise.equipment = new_equipment_list
+            return True
 
 
-def convert_gym_mat_to_exercise_mat(exercise):
-    """
-    Helper function that renames the equipment attribute for 3 exercises from 'equipment = Gym mat' to 'equipment = Exercise mat'.
-    To have consistent tags and link instances across models, we need consistent names.
-    :param exercise: An exercise object from the GYM_MAT_SET
-    :return: None
-    """
-    exercise.equipment = ['Exercise mat']
+    @staticmethod
+    def __fix_SZ_bar_typo(exercise):
+        """
+        Helper function to fix the SZ-Bar and SZ-bar typos for 4 equipment names, descriptions, and equipment attributes.
+        :param exercise: Exercise object with name verified to be in the SZ_BAR_TYPO set
+        :return: None
+        """
+        exercise.name = exercise.name.replace('SZ-Bar', 'EZ-Bar')
+        exercise.name = exercise.name.replace('SZ-bar', 'EZ-bar')
+        exercise.description = exercise.description.replace('SZ-Bar', 'EZ-Bar')
+        exercise.description = exercise.description.replace('SZ-bar', 'EZ-bar')
+        new_equipment_list = []
+        for e in exercise.equipment:
+            if e == 'SZ-Bar':
+                new_equipment_list.append('EZ-Bar')
+            else:
+                new_equipment_list.append(e)
+        exercise.equipment = new_equipment_list
 
 
-def return_arms_subcategory(exerciseName, muscles_string, sec_muscles_string):
-    if 'Bicep' in exerciseName:
-        return 'Bicep'
-    elif 'Tricep' in exerciseName:
-        return 'Tricep'
-    else:
-        if 'Biceps' in muscles_string:
+    @staticmethod
+    def __convert_gym_mat_to_exercise_mat(exercise):
+        """
+        Helper function that renames the equipment attribute for 3 exercises from 'equipment = Gym mat' to 'equipment = Exercise mat'.
+        To have consistent tags and link instances across models, we need consistent names.
+        :param exercise: An exercise object from the GYM_MAT_SET
+        :return: None
+        """
+        exercise.equipment = ['Exercise mat']
+
+
+    @staticmethod
+    def __return_arms_subcategory(exerciseName, muscles_string, sec_muscles_string):
+        if 'Bicep' in exerciseName:
             return 'Bicep'
-        elif 'Triceps' in muscles_string:
+        elif 'Tricep' in exerciseName:
             return 'Tricep'
         else:
-            if 'Biceps' in sec_muscles_string:
+            if 'Biceps' in muscles_string:
                 return 'Bicep'
-            elif 'Triceps' in sec_muscles_string:
+            elif 'Triceps' in muscles_string:
                 return 'Tricep'
-            else:  # If exercise fits neither subcategory, return None
-                return None
+            else:
+                if 'Biceps' in sec_muscles_string:
+                    return 'Bicep'
+                elif 'Triceps' in sec_muscles_string:
+                    return 'Tricep'
+                else:  # If exercise fits neither subcategory, return None
+                    return None
 
 
-def return_legs_subcategory(exerciseName):
-    if 'Squat' in exerciseName:
-        return 'Squats'
-    elif 'Deadlift' in exerciseName:
-        return 'Deadlift'
-    else:  # There are 5 specific exercises that don't fall under Squats or Deadlift subcategory... check <https://github.com/UT-SWLab/TeamA13/issues/47> for more details
-        return None
+    @staticmethod
+    def __return_legs_subcategory(exerciseName):
+        if 'Squat' in exerciseName:
+            return 'Squats'
+        elif 'Deadlift' in exerciseName:
+            return 'Deadlift'
+        else:  # There are 5 specific exercises that don't fall under Squats or Deadlift subcategory... check <https://github.com/UT-SWLab/TeamA13/issues/47> for more details
+            return None
 
 
-def clean_html(raw_html):
-    """
-    This method takes a raw HTML string and returns a string without the HTML elements
-    """
-    clean = re.compile('<.*?>')
-    clean_text = re.sub(clean, '', raw_html)
-    return clean_text
+    @staticmethod
+    def __clean_html(raw_html):
+        """
+        This method takes a raw HTML string and returns a string without the HTML elements
+        """
+        clean = re.compile('<.*?>')
+        clean_text = re.sub(clean, '', raw_html)
+        return clean_text
 
 
-def get_google_images(search_string, file_type=None):
-    """
-    This method makes a request to the Google Custom Search API and returns the 10 images in the search result as a
-    list of strings, where each string represents an image URL. Can pass in additional optional params
-    :param search_string: query string that will be searched
-    :param file_type: Optional file-type parameter to limit resulting extension types in the result
-    :return: List of image URLs
-    """
-    if file_type is not None:
-        url = f"https://customsearch.googleapis.com/customsearch/v1?searchType=image&key={API_KEY}&cx={SEARCH_ENGINE_ID}&q={search_string}&fileType={file_type}"
-    else:
-        url = f"https://customsearch.googleapis.com/customsearch/v1?searchType=image&key={API_KEY}&cx={SEARCH_ENGINE_ID}&q={search_string}"
-    data = requests.get(url).json()
-    search_items = data.get("items")
-    images = []
-    if search_items:
-        for item in search_items:
-            image_link = item["link"]
-            if imageURL_exists(image_link):
-                images.append(image_link)
-    return images
+    @staticmethod
+    def __get_google_images(search_string, file_type=None):
+        """
+        This method makes a request to the Google Custom Search API and returns the 10 images in the search result as a
+        list of strings, where each string represents an image URL. Can pass in additional optional params
+        :param search_string: query string that will be searched
+        :param file_type: Optional file-type parameter to limit resulting extension types in the result
+        :return: List of image URLs
+        """
+        if file_type is not None:
+            url = f"https://customsearch.googleapis.com/customsearch/v1?searchType=image&key={API_KEY}&cx={SEARCH_ENGINE_ID}&q={search_string}&fileType={file_type}"
+        else:
+            url = f"https://customsearch.googleapis.com/customsearch/v1?searchType=image&key={API_KEY}&cx={SEARCH_ENGINE_ID}&q={search_string}"
+        data = requests.get(url).json()
+        search_items = data.get("items")
+        images = []
+        if search_items:
+            for item in search_items:
+                image_link = item["link"]
+                if ExerciseAPI.__imageURL_exists(image_link):
+                    images.append(image_link)
+        return images
 
 
-def imageURL_exists(path):
-    try:
-        r = requests.head(path)
-        return r.status_code == requests.codes.ok
-    except:
-        return False
+    @staticmethod
+    def __imageURL_exists(path):
+        try:
+            r = requests.head(path)
+            return r.status_code == requests.codes.ok
+        except:
+            return False
