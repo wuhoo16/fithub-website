@@ -62,7 +62,7 @@ class ModelInterface:
 
 
     @staticmethod
-    def find_related_objects_based_on_subcategory(subcategory, collection, invalid_input, valid_input, ARRAY):
+    def find_related_objects_based_on_subcategory(subcategory, collection, invalid_input, valid_input, arr):
         """
         Query a collection for all instances that match current exerciseCategory/Subcategory based on if the subcategory is None
         """
@@ -71,14 +71,14 @@ class ModelInterface:
         else: # exerciseSubcategory is not None
             relatedCursor = collection.find({valid_input[0]: valid_input[1]})
 
-        return ModelInterface.find_related_objects(relatedCursor, ARRAY)
+        return ModelInterface.find_related_objects(relatedCursor, arr)
     
 
     @staticmethod
-    def find_related_objects(relatedCursor, ARRAY):
+    def find_related_objects(relatedCursor, arr):
         relatedInstances = []
         for relatedDoc in relatedCursor:
-            relatedInstances.append(ARRAY[relatedDoc['arrayIndex']])
+            relatedInstances.append(arr[relatedDoc['arrayIndex']])
         return relatedInstances
 
     @staticmethod

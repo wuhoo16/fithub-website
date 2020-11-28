@@ -1,4 +1,6 @@
-class Channel():
+from templates.models.model import ModelObjInterface
+
+class Channel(ModelObjInterface):
     def __init__(self, **kwargs):
         self.id = kwargs["id"]  # unique channelId string passed in from the JSON response
         self.arrayIndex = kwargs["arrayIndex"]

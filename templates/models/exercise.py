@@ -1,4 +1,6 @@
-class Exercise():
+from templates.models.model import ModelObjInterface
+
+class Exercise(ModelObjInterface):
     def __init__(self, **kwargs):
         self.id = kwargs["exercise_id"]
         self.arrayIndex = kwargs["arrayIndex"]
