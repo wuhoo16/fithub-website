@@ -1,6 +1,6 @@
 from flask import render_template
 from templates.backend.model_interface import ModelInterface
-from templates.equipment import Equipment
+from templates.models.equipment import Equipment
 import numpy as np
 
 class EquipmentBackend(ModelInterface, Equipment):

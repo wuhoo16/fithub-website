@@ -1,7 +1,7 @@
 from flask import render_template
 import numpy as np
 from templates.backend.model_interface import ModelInterface
-from templates.exercise import Exercise
+from templates.models.exercise import Exercise
 
 class ExerciseBackend(ModelInterface, Exercise):
     filterIsActive = False

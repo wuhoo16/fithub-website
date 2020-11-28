@@ -1,6 +1,6 @@
 from flask import render_template
 from templates.backend.model_interface import ModelInterface
-from templates.channel import Channel
+from templates.models.channel import Channel
 import numpy as np
 
 class ChannelBackend(ModelInterface, Channel):

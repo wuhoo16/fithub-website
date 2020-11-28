@@ -1,5 +1,5 @@
 from templates.api.api_interface import APIInterface
-from templates.exercise import Exercise
+from templates.models.exercise import Exercise
 import requests
 import re
 
