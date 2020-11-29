@@ -1,4 +1,5 @@
-from templates.channel import Channel
+from templates.api.api_interface import APIInterface
+from templates.models.channel import Channel
 from googleapiclient.discovery import build
 import os
 
@@ -42,28 +43,28 @@ class ChannelAPI:
 
         # Call helper methods to initialize Channel arrays
         for searchTerm in searchTermsArray:
-            for item in execute_youtube_search_API(youtube, searchTermTemplate.format(searchTerm), maxResults=9):
+            for item in ChannelAPI.__execute_youtube_search_API(youtube, searchTermTemplate.format(searchTerm), maxResults=9):
                 snippet = item['snippet']
-                statistics = execute_statistics_API(youtube, item['snippet']['channelId'])
-                contentDetails = execute_content_details_API(youtube, item['snippet']['channelId'])
+                statistics = ChannelAPI.__execute_statistics_API(youtube, item['snippet']['channelId'])
+                contentDetails = ChannelAPI.__execute_content_details_API(youtube, item['snippet']['channelId'])
                 playlistTags = contentDetails['player']['embedHtml']
-                playlistUrl = convert_embedded_URL(playlistTags)
+                playlistUrl = ChannelAPI.__convert_embedded_URL(playlistTags)
                 playlist = {"title": contentDetails['snippet']['title'],
                             "description": contentDetails['snippet']['description'],
                             "image": contentDetails['snippet']['thumbnails']['high']['url'], "url": playlistUrl}
 
-                topicDetails = execute_topic_details_API(youtube, item['snippet']['channelId'])
+                topicDetails = ChannelAPI.__execute_topic_details_API(youtube, item['snippet']['channelId'])
                 if topicDetails is None: continue        
 
-                topicIdCat = convert_ids_categories(convert_topic_ids(topicDetails['topicIds']),
+                topicIdCat = ChannelAPI.__convert_ids_categories(ChannelAPI.__convert_topic_ids(topicDetails['topicIds']),
                                                             topicDetails['topicCategories'])
-                brandingSettings = execute_branding_settings_API(youtube, item['snippet']['channelId'])
+                brandingSettings = ChannelAPI.__execute_branding_settings_API(youtube, item['snippet']['channelId'])
 
                 brandingSettingsKeywords = None
                 brandingSettingsImage = None
                 brandingSettingsTrailer = None
                 try:
-                    brandingSettingsKeywords = convert_keywords(brandingSettings['channel']['keywords'])
+                    brandingSettingsKeywords = ChannelAPI.__convert_keywords(brandingSettings['channel']['keywords'])
                 except:
                     pass
 
@@ -80,7 +81,7 @@ class ChannelAPI:
                     trailerTemp = brandingSettings['channel']['unsubscribedTrailer']
                     trailerUrl = ""
                     try:
-                        trailerUrl = convert_embedded_URL(trailerTemp['player']['embedHtml'])
+                        trailerUrl = ChannelAPI.__convert_embedded_URL(trailerTemp['player']['embedHtml'])
                     except:
                         pass
                     brandingSettingsTrailer = {'title': trailerTemp['snippet']['title'],
@@ -132,188 +133,199 @@ class ChannelAPI:
                     channel_counter += 1
 
 
-def execute_youtube_search_API(youtubeClient, searchTerm, part="snippet", maxResults=3):
-    """
-    Helper function that calls the Youtube Data API with youtube client and search term to return an array of Channel resources.
-    Each channel resource is modeled in the JSON response as a dictionary with 'etag', 'id', 'kind', and 'snippet' keys. The 'snippet' key --> dictionary with 'channelID',
-    'channelTitle', 'description', and 'thumbnails' keys.
-    :param youtubeClient: Google api client for Youtube that is expected to already be built/authenticated.
-    :param searchTerm: The query search term to pass to the youtube search().list API
-    :param part: The type of attribute to return. Set to "snippet" by default
-    :param maxResults: The max number of results to return. Set to 3 by default
-    :return: Array of Channel resources that are returned from querying the searchTerm
-    """
-    channelSearchRequest = youtubeClient.search().list(
-        q=searchTerm,
-        part=part,
-        maxResults=maxResults,
-        type='channel'
-    )
-    return channelSearchRequest.execute()['items']
+    @staticmethod
+    def __execute_youtube_search_API(youtubeClient, searchTerm, part="snippet", maxResults=3):
+        """
+        Helper function that calls the Youtube Data API with youtube client and search term to return an array of Channel resources.
+        Each channel resource is modeled in the JSON response as a dictionary with 'etag', 'id', 'kind', and 'snippet' keys. The 'snippet' key --> dictionary with 'channelID',
+        'channelTitle', 'description', and 'thumbnails' keys.
+        :param youtubeClient: Google api client for Youtube that is expected to already be built/authenticated.
+        :param searchTerm: The query search term to pass to the youtube search().list API
+        :param part: The type of attribute to return. Set to "snippet" by default
+        :param maxResults: The max number of results to return. Set to 3 by default
+        :return: Array of Channel resources that are returned from querying the searchTerm
+        """
+        channelSearchRequest = youtubeClient.search().list(
+            q=searchTerm,
+            part=part,
+            maxResults=maxResults,
+            type='channel'
+        )
+        return channelSearchRequest.execute()['items']
 
 
-def execute_statistics_API(youtubeClient, channelID):
-    """
-    Call the Youtube Data API with youtube client and channel ID to return 'statistics' dictionary describing that channel.
-    :param youtubeClient: Google api client for Youtube that is expected to already be built/authenticated.
-    :param channelID: The channel ID of the channel to get statistics of.
-    :return: Statistics object with 'viewCount', 'commentCount', 'subscriberCount', 'hiddenSubscriberCount', 'videoCount' keys
-    """
-    getChannelStatisticsRequest = youtubeClient.channels().list(
-        part="statistics",
-        id=channelID
-    )
-    return getChannelStatisticsRequest.execute()['items'][0]['statistics']
+    @staticmethod
+    def __execute_statistics_API(youtubeClient, channelID):
+        """
+        Call the Youtube Data API with youtube client and channel ID to return 'statistics' dictionary describing that channel.
+        :param youtubeClient: Google api client for Youtube that is expected to already be built/authenticated.
+        :param channelID: The channel ID of the channel to get statistics of.
+        :return: Statistics object with 'viewCount', 'commentCount', 'subscriberCount', 'hiddenSubscriberCount', 'videoCount' keys
+        """
+        getChannelStatisticsRequest = youtubeClient.channels().list(
+            part="statistics",
+            id=channelID
+        )
+        return getChannelStatisticsRequest.execute()['items'][0]['statistics']
 
 
-def execute_content_details_API(youtubeClient, channelID):
-    """
-    Call the Youtube Data API with youtube client and channel ID to return 'contentDetails' dictionary describing that channel.
-    :param youtubeClient: Google api client for Youtube that is expected to already be built/authenticated.
-    :param channelID: The channel ID of the channel to get statistics of.
-    :return: ContentDetails object with 'relatedPlaylists.uploads' key
-    """
-    getChannelContentDetailsRequest = youtubeClient.channels().list(
-        part="contentDetails",
-        id=channelID
-    )
-    uploadID = getChannelContentDetailsRequest.execute()['items'][0]['contentDetails']['relatedPlaylists']['uploads']
+    @staticmethod
+    def __execute_content_details_API(youtubeClient, channelID):
+        """
+        Call the Youtube Data API with youtube client and channel ID to return 'contentDetails' dictionary describing that channel.
+        :param youtubeClient: Google api client for Youtube that is expected to already be built/authenticated.
+        :param channelID: The channel ID of the channel to get statistics of.
+        :return: ContentDetails object with 'relatedPlaylists.uploads' key
+        """
+        getChannelContentDetailsRequest = youtubeClient.channels().list(
+            part="contentDetails",
+            id=channelID
+        )
+        uploadID = getChannelContentDetailsRequest.execute()['items'][0]['contentDetails']['relatedPlaylists']['uploads']
 
-    getPlaylistRequest = youtubeClient.playlists().list(
-        part=["snippet", "player"],
-        id=uploadID
-    )
-
-    return getPlaylistRequest.execute()['items'][0]
-
-
-def execute_topic_details_API(youtubeClient, channelID):
-    """
-    Call the Youtube Data API with youtube client and channel ID to return 'topicDetails' dictionary describing that channel.
-    :param youtubeClient: Google api client for Youtube that is expected to already be built/authenticated.
-    :param channelID: The channel ID of the channel to get statistics of.
-    :return: topicDetails object with 'topicIds[]', 'topicCategories[]' keys
-    """
-    getChannelTopicDetailsRequest = youtubeClient.channels().list(
-        part="topicDetails",
-        id=channelID
-    )
-
-    try:
-        return getChannelTopicDetailsRequest.execute()['items'][0]['topicDetails']
-    except KeyError:
-        return None
-
-
-def execute_branding_settings_API(youtubeClient, channelID):
-    """
-    Call the Youtube Data API with youtube client and channel ID to return 'brandingSettings' dictionary describing that channel.
-    :param youtubeClient: Google api client for Youtube that is expected to already be built/authenticated.
-    :param channelID: The channel ID of the channel to get statistics of.
-    :return: brandingSettings object with 'channel.keywords', 'channel.defaultTab', 'channel.featuredChannelsUrls[]', 'channel.unsubscribedTrailer' keys
-    """
-    getChannelbrandingSettingsRequest = youtubeClient.channels().list(
-        part="brandingSettings",
-        id=channelID
-    )
-    brandingSettings = getChannelbrandingSettingsRequest.execute()['items'][0]['brandingSettings']
-
-    # didn't set up featured channels: ftChannels = brandingSettings['channel']['featuredChannelsUrls'] (MAY DO LATER IF MORE INFO NEEDED) -- channels.list()
-    # setting up embedded html
-    try:
-        videoID = brandingSettings['channel']['unsubscribedTrailer']
-        getUnsubscribedTrailerRequest = youtubeClient.videos().list(
-            part=["snippet", "player", "statistics"],
-            id=videoID
+        getPlaylistRequest = youtubeClient.playlists().list(
+            part=["snippet", "player"],
+            id=uploadID
         )
 
-        brandingSettings['channel']['unsubscribedTrailer'] = getUnsubscribedTrailerRequest.execute()['items'][0]
-    except:
-        pass
-
-    return brandingSettings
+        return getPlaylistRequest.execute()['items'][0]
 
 
-def convert_topic_ids(ids):
-    topic_arr = []
-    i = 0
-    # ensuring ids topic ids are unique
-    while i < len(ids):
-        j = i + 1
-        while j < len(ids):
-            if ids[i] == ids[j]:
-                ids.pop(i)
-                i -= 1
-                j -= 1
+    @staticmethod
+    def __execute_topic_details_API(youtubeClient, channelID):
+        """
+        Call the Youtube Data API with youtube client and channel ID to return 'topicDetails' dictionary describing that channel.
+        :param youtubeClient: Google api client for Youtube that is expected to already be built/authenticated.
+        :param channelID: The channel ID of the channel to get statistics of.
+        :return: topicDetails object with 'topicIds[]', 'topicCategories[]' keys
+        """
+        getChannelTopicDetailsRequest = youtubeClient.channels().list(
+            part="topicDetails",
+            id=channelID
+        )
+
+        try:
+            return getChannelTopicDetailsRequest.execute()['items'][0]['topicDetails']
+        except KeyError:
+            return None
+
+
+    @staticmethod
+    def __execute_branding_settings_API(youtubeClient, channelID):
+        """
+        Call the Youtube Data API with youtube client and channel ID to return 'brandingSettings' dictionary describing that channel.
+        :param youtubeClient: Google api client for Youtube that is expected to already be built/authenticated.
+        :param channelID: The channel ID of the channel to get statistics of.
+        :return: brandingSettings object with 'channel.keywords', 'channel.defaultTab', 'channel.featuredChannelsUrls[]', 'channel.unsubscribedTrailer' keys
+        """
+        getChannelbrandingSettingsRequest = youtubeClient.channels().list(
+            part="brandingSettings",
+            id=channelID
+        )
+        brandingSettings = getChannelbrandingSettingsRequest.execute()['items'][0]['brandingSettings']
+
+        # didn't set up featured channels: ftChannels = brandingSettings['channel']['featuredChannelsUrls'] (MAY DO LATER IF MORE INFO NEEDED) -- channels.list()
+        # setting up embedded html
+        try:
+            videoID = brandingSettings['channel']['unsubscribedTrailer']
+            getUnsubscribedTrailerRequest = youtubeClient.videos().list(
+                part=["snippet", "player", "statistics"],
+                id=videoID
+            )
+
+            brandingSettings['channel']['unsubscribedTrailer'] = getUnsubscribedTrailerRequest.execute()['items'][0]
+        except:
+            pass
+
+        return brandingSettings
+
+
+    @staticmethod
+    def __convert_topic_ids(ids):
+        topic_arr = []
+        i = 0
+        # ensuring ids topic ids are unique
+        while i < len(ids):
+            j = i + 1
+            while j < len(ids):
+                if ids[i] == ids[j]:
+                    ids.pop(i)
+                    i -= 1
+                    j -= 1
+                    break
+                j += 1
+            i += 1
+
+        for id in ids:
+            if id in TOPICS:
+                topic_arr.append(TOPICS[id])
+            else:
+                print("error in topic dictionary (MISSING TOPIC): ")
+                print(id)
+                topic_arr.append(id)
+
+        return topic_arr
+
+
+    @staticmethod
+    def __convert_ids_categories(ids, categories):
+        id_cat_arr = []
+        found_match_flag = False
+
+        id_dict = {}
+        for id in ids:
+            id_dict[id.lower()] = id
+
+        for cat in categories:
+            temp_cat = cat.replace("https://en.wikipedia.org/wiki/", "")
+            temp_cat = temp_cat.replace("(", "")
+            temp_cat = temp_cat.replace(")", "")
+            temp_cat_arr = temp_cat.split("_")
+            temp_cat_arr.append(temp_cat.replace("_", " "))
+
+            for word in temp_cat_arr:
+                if word.lower() == "sport":
+                    word = "sports"
+
+                if word.lower() in id_dict:
+                    id_cat_arr.append({'topicId': id_dict[word.lower()], 'topicCategory': cat})
+                    found_match_flag = True
+                    break
+
+            if not found_match_flag:
+                print("DIDNT FIND MATCH W/ ID & CATEGORY")
+                print(cat)
+
+        return id_cat_arr
+
+
+    @staticmethod
+    def __convert_embedded_URL(embeddedTag):
+        elements = embeddedTag.split(" ")
+        url = ""
+        for el in elements:
+            if el.startswith("src="):
+                el = el.replace("src=", "")
+                url = el.replace('"', "")
                 break
-            j += 1
-        i += 1
-
-    for id in ids:
-        if id in TOPICS:
-            topic_arr.append(TOPICS[id])
-        else:
-            print("error in topic dictionary (MISSING TOPIC): ")
-            print(id)
-            topic_arr.append(id)
-
-    return topic_arr
+        return url.replace('http', 'https')
 
 
-def convert_ids_categories(ids, categories):
-    id_cat_arr = []
-    found_match_flag = False
+    @staticmethod
+    def __convert_keywords(keywords):
+        keyword_arr = []
+        words = keywords.split(" ")
+        for i in range(len(words)):
+            if words[i].startswith('"'):
+                phrase = ""
+                while not words[i].endswith('"'):
+                    phrase = phrase + words[i].replace('"', "") + " "
+                    i += 1
+                phrase = phrase + words[i].replace('"', "")
+                keyword_arr.append(phrase)
+            else:
+                keyword_arr.append(words[i])
 
-    id_dict = {}
-    for id in ids:
-        id_dict[id.lower()] = id
+        return keyword_arr
 
-    for cat in categories:
-        temp_cat = cat.replace("https://en.wikipedia.org/wiki/", "")
-        temp_cat = temp_cat.replace("(", "")
-        temp_cat = temp_cat.replace(")", "")
-        temp_cat_arr = temp_cat.split("_")
-        temp_cat_arr.append(temp_cat.replace("_", " "))
-
-        for word in temp_cat_arr:
-            if word.lower() == "sport":
-                word = "sports"
-
-            if word.lower() in id_dict:
-                id_cat_arr.append({'topicId': id_dict[word.lower()], 'topicCategory': cat})
-                found_match_flag = True
-                break
-
-        if not found_match_flag:
-            print("DIDNT FIND MATCH W/ ID & CATEGORY")
-            print(cat)
-
-    return id_cat_arr
-
-
-def convert_embedded_URL(embeddedTag):
-    elements = embeddedTag.split(" ")
-    url = ""
-    for el in elements:
-        if el.startswith("src="):
-            el = el.replace("src=", "")
-            url = el.replace('"', "")
-            break
-    return url.replace('http', 'https')
-
-
-def convert_keywords(keywords):
-    keyword_arr = []
-    words = keywords.split(" ")
-    for i in range(len(words)):
-        if words[i].startswith('"'):
-            phrase = ""
-            while not words[i].endswith('"'):
-                phrase = phrase + words[i].replace('"', "") + " "
-                i += 1
-            phrase = phrase + words[i].replace('"', "")
-            keyword_arr.append(phrase)
-        else:
-            keyword_arr.append(words[i])
-
-    return keyword_arr
+    

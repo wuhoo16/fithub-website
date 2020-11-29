@@ -1,4 +1,6 @@
-class Equipment():
+from templates.models.model import ModelObjInterface
+
+class Equipment(ModelObjInterface):
     def __init__(self, **kwargs):
         self.id = kwargs["itemId"]
         self.arrayIndex = kwargs["arrayIndex"]

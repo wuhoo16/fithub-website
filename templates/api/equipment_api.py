@@ -1,4 +1,5 @@
-from templates.equipment import Equipment
+from templates.api.api_interface import APIInterface
+from templates.models.equipment import Equipment
 from ebaysdk.finding import Connection
 
 BLACKLIST = {'NEW CAP Barbell Standard Barbell Weight Lifting Exercise Bar 5 foot ft - NEW',
