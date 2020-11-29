@@ -28,7 +28,8 @@ IMAGE_MAPPER = {
 }
 ID_SET = set()
 
-class EquipmentAPI(APIInterface, Equipment):
+
+class EquipmentAPI:
     @staticmethod
     def initialize_mongoDB_collection(db):
         db.equipments.drop()  # drop the old collection so we initialize a fresh collection

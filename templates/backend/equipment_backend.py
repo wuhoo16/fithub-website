@@ -16,9 +16,14 @@ class EquipmentBackend(ModelBackend, Equipment):
 
     modifiedArray = []
 
+    @staticmethod
+    def reset_all_flags():
+        EquipmentBackend.filterIsActive = False
+        EquipmentBackend.sortIsActive = False
+        EquipmentBackend.searchIsActive = False
 
     @staticmethod
-    def load_from_db(db):
+    def initialize_array_from_mongo_database(db):
         """
         Return a python list of all Equipment objects.
         :param db: The database to load all equipments from
@@ -42,7 +47,6 @@ class EquipmentBackend(ModelBackend, Equipment):
         
         ModelBackend.EQUIPMENT_ARRAY = equipment_array
 
-
     @staticmethod    
     def get_related_objects_for_instance(id, db):
         attributes = ModelBackend.find_current_instance_object(id, db.equipments, ['equipmentCategory'])
@@ -60,7 +64,6 @@ class EquipmentBackend(ModelBackend, Equipment):
         relatedChannels = ModelBackend.find_related_objects_based_on_subcategory(exerciseSubcategory, db.channels, ['exerciseCategory', exerciseCategory], ['exerciseSubcategory', exerciseSubcategory], ModelBackend.CHANNEL_ARRAY)
 
         return [relatedExercises, relatedEquipments, relatedChannels]
-
 
     @staticmethod
     def filter(db, requestForm):
@@ -90,12 +93,10 @@ class EquipmentBackend(ModelBackend, Equipment):
         # Return all of filtered Exercise objects
         return tempModifiedArray, filteredEquipments
 
-
     @staticmethod
     def render_model_page(page_number, arr):
         start, end, num_pages = ModelBackend.paginate(page_number, arr)
         return render_template('equipments.html', equipmentArray=arr, start=start, end=end, page_number=page_number, num_pages=num_pages)
-
 
     @staticmethod
     def render_instance_page(instance_obj, related_objects):
