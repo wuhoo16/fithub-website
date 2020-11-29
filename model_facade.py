@@ -116,12 +116,15 @@ class ModelFacade():
     def __model_page(request_param, model, model_arr, page_number, db):
         if request_param.method == 'POST':
             if request_param.form.get(model.searchItemsKey):
+                #searching
+                print("IN SEARCHING")
                 model.searchIsActive = True
                 NEW_ARR = ModelFacade.__get_search(request_param.form.get(model.searchItemsKey), model_arr)
                 model.modifiedArray = NEW_ARR
                 return model.render_model_page(page_number, NEW_ARR)
                 
             elif request_param.form.get(model.sortingHiddenFieldKey):  # If this field in the posted form is set, then the user has clicked one of the sorting buttons
+                print("IN SORTING")
                 model.sortingAttribute = request_param.form.get(model.sortCriteriaMenuKey)
 
                 if model.filterIsActive or model.searchIsActive:
@@ -146,12 +149,14 @@ class ModelFacade():
                 return model.render_model_page(page_number, model.modifiedArray)
             
             elif request_param.form.get('resetHiddenField') == 'resetClicked':  # If this field is set, then the user has clicked the Reset button
+                print("RESETTING")
                 model.filterIsActive = False
                 model.sortIsActive = False
                 model.searchIsActive = False
                 return model.render_model_page(page_number, model_arr)
                 
             else:  # filter form was submitted using the Filter button
+                print("FILTERING")
                 model.filterIsActive = True
 
                 # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects

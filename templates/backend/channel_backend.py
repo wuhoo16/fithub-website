@@ -14,8 +14,6 @@ class ChannelBackend(ModelBackend, Channel):
     sortingHiddenFieldKey = 'channelsSortingHiddenField'
     sortCriteriaMenuKey = 'channelsSortCriteriaMenu'
 
-    modifiedArray = []
-
     @staticmethod
     def load_from_db(db):
         channel_array = []

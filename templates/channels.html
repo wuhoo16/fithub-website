@@ -8,6 +8,7 @@
 
 {% block body %}
 <div class="exercise-div container-fluid">   
+    {% set currArray = channelArray %}
     <div class="jumbotron-exercise jumbotron jumbotron-fluid text-center">
         <h1 class="modelHeader">Get ready to get fit</h1>
         <p class="modelDescription">Explore some of the most popular Youtube fitness channels.</p>
@@ -78,7 +79,7 @@
 
     <!-- Sorting Dropdown and Search Bar-->
     {% set dataArr = [] %}
-    {% for obj in channelArray %}
+    {% for obj in currArray %}
         {% if obj.description|length == 0 %}
             {% set dataArr = dataArr.append({"name": obj.name, "description": "|No description provided.", "subscriber": obj.subscriberCount, "view": obj.viewCount, "video": obj.videoCount}) %}
         {% else %}
@@ -90,7 +91,6 @@
         <button class="filter-open-button" onclick="openNav()">Filter ></button>
 
         <!-- Sorting Dropdown -->
-        {% if channelArray|length != 0 %}
         <form class="d-inline-block sorting-form" id="channelsSortForm" action="{{ url_for('channels', page_number=1) }}" method="post">
             <label for="channelsSortCriteriaMenu" id="channelsSortMenuLabel" style="color: white; margin-top: 1rem;"></label>
             <select class="sort-form-style" id="channelsSortCriteriaMenu" name="channelsSortCriteriaMenu">
@@ -104,7 +104,6 @@
             <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'ascending');">
             <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending"id="descendBtn" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'descending');">
         </form>
-        {% endif %}
 
         <!--Search Bar-->
         <div id="searchBarContainer" class="dropdown d-inline-block" tabindex="-1">
@@ -114,7 +113,7 @@
             <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" name="searchBar" type="search" placeholder="Search"/>
             <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
                 <div id="menuItems">
-                    {% for obj in channelArray %}
+                    {% for obj in currArray %}
                         <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
                         {% if obj.description|length == 0 %}
                             <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: No description provided.</a>
@@ -129,127 +128,108 @@
                 <div id="empty" class="dropdown-header">No items found</div>
             </div>
         </div>
-        <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn" onclick="resetCheckboxState('channelsFilterForm', 'channelsResetHiddenField')">Reset All</button>
+        <!-- <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn" onclick="resetCheckboxState('channelsFilterForm', 'channelsResetHiddenField')">Reset All</button> -->
+        <button class="reset-button btn btn-outline-light" type="button" onclick="reset()">Reset All</button>
     </div>
 
     <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
     <div id="main">
         <div class="grid-div container-fluid" id="modelGrid">
-        {% set numFullRows = ((end + 1) - start) // 3 %}
-        {% set numLeftOverChannels = ((end + 1) - start) % 3 %}
-        {% for i in range(numFullRows) %}
-            <div class="row justify-content-center" id="row{{ i|string }}">
-                {% for offset in range(3) %}
-                <div class="col-md-4 p-4">
+            {% set numRows = channelArray|length // 3 %}
+            {% if channelArray|length % 3 > 0 %}
+                {% set numRows = channelArray|length // 3 + 1 %}
+            {% endif %}
+            {% for i in range(numRows) %}
+                {% for offset in range(3) if (channelArray|length > 3*i + offset) %}
+                    {% if ((i * 3 + offset) >= start) and ((end >= i * 3 + offset)) %}
                     <div class="card card-style h-100 pt-4">
-                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ channelArray[start + 3*i + offset].thumbnailURL }}" alt="{{ channelArray[start + 3*i + offset].name }}">
+                    {% else %}
+                    <div class="card card-style h-100 pt-4" style="display: none;">
+                    {% endif %}
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ channelArray[3*i + offset].thumbnailURL }}" alt="{{ channelArray[3*i + offset].name }}">
                         <div class="card-body">
-                            <h2 class="card-title text-center">{{ channelArray[start + 3*i + offset].name }}</h2>
+                            <h2 class="card-title text-center">{{ channelArray[3*i + offset].name }}</h2>
                             <p class="card-text">
-                                <ul class="channelAttributesList list-unstyled" id="list_{{channelArray[start + 3*i + offset].arrayIndex}}">
-                                    {% if channelArray[start + 3*i + offset].description|length != 0 %}
-                                        <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="descriptionTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Description: </b>{{ channelArray[start + 3*i + offset].description }}</li>
+                                <ul class="channelAttributesList list-unstyled" id="list_{{channelArray[3*i + offset].arrayIndex}}">
+                                    {% if channelArray[3*i + offset].description|length != 0 %}
+                                        <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="descriptionTxt_{{channelArray[3*i + offset].arrayIndex}}"><b>Description: </b>{{ channelArray[3*i + offset].description }}</li>
                                     {% else %}
-                                        <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="descriptionTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Description: </b>No description provided.</li>
+                                        <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="descriptionTxt_{{channelArray[3*i + offset].arrayIndex}}"><b>Description: </b>No description provided.</li>
                                     {% endif %}
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="subscriberTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Subscribers: </b>{{ channelArray[start + 3*i + offset].subscriberCount }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="viewTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Total Views: </b>{{ channelArray[start + 3*i + offset].viewCount }}</li>
-                                    <li style="padding-left: 1em;" id="videoTxt_{{channelArray[start + 3*i + offset].arrayIndex}}"><b>Videos: </b>{{ channelArray[start + 3*i + offset].videoCount }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="subscriberTxt_{{channelArray[3*i + offset].arrayIndex}}"><b>Subscribers: </b>{{ channelArray[3*i + offset].subscriberCount }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="viewTxt_{{channelArray[3*i + offset].arrayIndex}}"><b>Total Views: </b>{{ channelArray[3*i + offset].viewCount }}</li>
+                                    <li style="padding-left: 1em;" id="videoTxt_{{channelArray[3*i + offset].arrayIndex}}"><b>Videos: </b>{{ channelArray[3*i + offset].videoCount }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('channel_instance', arrayIndex=channelArray[start + 3*i + offset].arrayIndex) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('channel_instance', arrayIndex=channelArray[3*i + offset].arrayIndex) }}" class="stretched-link"></a>
                         </div>
                     </div>
-                </div>
-                {% endfor %}      
-            </div>
+                {% endfor %}
+            {% endfor %}
+    </div>
+    <h4 id="noInstances" style="color: white;">Sorry! No instances meet your set requirements. Please reset the filters to see channels.</h4>
+    <ul class="pagination justify-content-center" style="margin:20px 0" id="paginationBar">
+        <!--Previous Page Button-->
+        {% if page_number == 1 %}
+            <li class="page-item disabled"><a class="page-link">Previous</a></li>
+        {% else %}
+            <li class="page-item"><a class="page-link">Previous</a></li>
+        {% endif %}  
+
+        <!--All Pages Buttons-->
+        {% for i in range(1, num_pages+1) %}
+            {% if i == page_number %}
+                <li class="page-item active"><a class="page-link">{{i}}</a></li>
+            {% else %}
+                <li class="page-item"><a class="page-link">{{i}}</a></li>
+            {% endif %}    
         {% endfor %}
 
-        <!-- Now if there are leftover channels, we place the leftover channels into bottom-most row, using indexing from back of the array -->
-        {% if numLeftOverChannels > 0 %}
-            <div class="row" id="bottomRow">
-            {% for i in range(-numLeftOverChannels, 0) %}
-                <div class="col-md-4 p-4">
-                    <div class="card card-style h-100 pt-4">
-                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ channelArray[end + 1 + i].thumbnailURL }}" alt="{{ channelArray[end + 1 + i].name }}">
-                        <div class="card-body">
-                            <h2 class="card-title text-center">{{ channelArray[end + 1 + i].name }}</h2>
-                            <p class="card-text">
-                                <ul class="channelAttributesList list-unstyled">
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Description: </b>{{ channelArray[end + 1 + i].description }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Subscribers: </b>{{ channelArray[end + 1 + i].subscriberCount }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Total Views: </b>{{ channelArray[end + 1 + i].viewCount }}</li>
-                                    <li style="padding-left: 1em;"><b>Videos: </b>{{ channelArray[end + 1 + i].videoCount }}</li>
-                                </ul>
-                            </p>
-                            <a href="{{ url_for('channel_instance', arrayIndex=channelArray[end + 1 + i].arrayIndex) }}" class="stretched-link"></a>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-            </div>
-        {% endif %}
-        </div>
-
-        {% if channelArray|length == 0 %}
-            <h4 id="noInstances" style="color: white;">Sorry! No instances meet your set requirements. Please reset the filters to see channels.</h4>
+        <!--Next Page Button-->
+        {% if page_number == num_pages %}
+            <li class="page-item disabled"><a class="page-link">Next</a></li>
         {% else %}
-            <ul class="pagination justify-content-center" style="margin:20px 0">
-                <!--Previous Page Button-->
-                {% if page_number == 1 %}
-                    <li class="page-item disabled"><a class="page-link" href="">Previous</a></li>
-                {% else %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('channels', page_number=page_number-1) }}">Previous</a></li>
-                {% endif %}  
-
-                <!--All Pages Buttons-->
-                {% for i in range(1, num_pages+1) %}
-                    {% if i == page_number %}
-                        <li class="page-item active"><a class="page-link" href="{{ url_for('channels', page_number=i) }}">{{i}}</a></li>
-                    {% else %}
-                        <li class="page-item"><a class="page-link" href="{{ url_for('channels', page_number=i) }}">{{i}}</a></li>
-                    {% endif %}    
-                {% endfor %}
-
-                <!--Next Page Button-->
-                {% if page_number == num_pages %}
-                    <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
-                {% else %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('channels', page_number=page_number+1) }}">Next</a></li>
-                {% endif %}
-            </ul>
+            <li class="page-item"><a class="page-link">Next</a></li>
         {% endif %}
-    </div>
+    </ul>
 </div>
 
     <script>
-        $("#searchBar").val(localStorage.getItem("channelsSearchPhrase"));
+        //took out local storage for search item -- want to switch to session state for when click on instance & go back to model page
         if (localStorage.getItem("channelsSortPhrase") == null || localStorage.getItem("channelsSortPhrase") == "null") $("#channelsSortCriteriaMenu").val("select");
         else $("#channelsSortCriteriaMenu").val(localStorage.getItem("channelsSortPhrase"));
 
         let items = document.getElementsByClassName("dropdown-item");
         var data = $('#channelArrayData').data().arr;
-        var dataArr = processData();
+        var dataArr = processData(); //holds current array
+        var cards = document.getElementsByClassName("card card-style h-100 pt-4"); //references to list of all cards
+        
+        function setup() {
+            $("#noInstances").hide();
+        }
+        setup();
 
-        function filter() {
+        function filterSearchDropdown() {
+            console.log("entering filter");
             phrase = $("#searchBar").val().trim().toLowerCase();
 
             $("#menu").show()
             var headers = {};
             var hidden = 0;
 
-
             for (const [name, info] of Object.entries(dataArr)) {
-                if (name.toLowerCase().includes(phrase)) {
-                    headers[name.toLowerCase().replace(/'/g, "")] = 1;
-                } else if (("description: " + info.description.toLowerCase()).includes(phrase)) {
-                    headers[(name.toLowerCase() + " - description: " + info.description.toLowerCase()).trim().replace(/'/g, "")] = 1;
-                } else if (("subscribers: " + info.subscriber.toLowerCase()).includes(phrase)) {
-                    headers[(name.toLowerCase() + " - subscribers: " + info.subscriber.toLowerCase()).trim().replace(/'/g, "")] = 1;
-                } else if (("total views: " + info.view.toLowerCase()).includes(phrase)) {
-                    headers[(name.toLowerCase() + " - total views: " + info.view.toLowerCase()).trim().replace(/'/g, "")] = 1;
-                } else if (("videos: " + info.video.toLowerCase()).includes(phrase)) {
-                    headers[(name.toLowerCase() + " - videos: " + info.video.toLowerCase()).trim().replace(/'/g, "")] = 1;
+                if (info.isVisible) {
+                    if (name.toLowerCase().includes(phrase)) {
+                        headers[name.toLowerCase().replace(/'/g, "")] = 1;
+                    } else if (("description: " + info.description.toLowerCase()).includes(phrase)) {
+                        headers[(name.toLowerCase() + " - description: " + info.description.toLowerCase()).trim().replace(/'/g, "")] = 1;
+                    } else if (("subscribers: " + info.subscriber.toLowerCase()).includes(phrase)) {
+                        headers[(name.toLowerCase() + " - subscribers: " + info.subscriber.toLowerCase()).trim().replace(/'/g, "")] = 1;
+                    } else if (("total views: " + info.view.toLowerCase()).includes(phrase)) {
+                        headers[(name.toLowerCase() + " - total views: " + info.view.toLowerCase()).trim().replace(/'/g, "")] = 1;
+                    } else if (("videos: " + info.video.toLowerCase()).includes(phrase)) {
+                        headers[(name.toLowerCase() + " - videos: " + info.video.toLowerCase()).trim().replace(/'/g, "")] = 1;
+                    }
                 }
             }
 
@@ -271,10 +251,213 @@
             }
         }
 
+        function searchCards() {
+            console.log("entering search cards");
+            var searchPhrase = $("#searchBar").val().trim().toLowerCase();
+            var shown = 0;
+            var matches = 0;
+
+            var i = 0;
+            for (const [name, info] of Object.entries(dataArr)) {
+                var cardBodyNodes = cards[i].childNodes[3].childNodes;
+                var cardDisplay = cards[i].style.display;
+                var nameText = cardBodyNodes[1].innerText.trim().toLowerCase();
+                var listNodes = cardBodyNodes[4].childNodes;
+                var descriptionText = listNodes[1].innerText.trim().toLowerCase();
+                var subscriberText = listNodes[3].innerText.trim().toLowerCase();
+                var viewText = listNodes[5].innerText.trim().toLowerCase();
+                var videoText = listNodes[7].innerText.trim().toLowerCase();
+
+                if (info.isVisible) {
+                    if (!(nameText.includes(searchPhrase) || descriptionText.includes(searchPhrase) || subscriberText.includes(searchPhrase) || viewText.includes(searchPhrase) || videoText.includes(searchPhrase))) {
+                        info.isVisible = false;
+                        cards[i].style.display = "none";
+                    } else {
+                        matches += 1;
+                        if (shown < 9) { 
+                            cards[i].style.display = "";
+                            shown += 1;
+                        }
+                    }
+                }
+
+                i += 1;
+            }
+
+            if (shown == 0) {
+                $("#channelsSortForm").hide();
+                $("#noInstances").show();
+                $("#paginationBar").hide();
+            }
+
+            changePaginationBtns(matches);
+            paginateFirstPage();
+        }
+
+        function reset() {
+            var paginationBtns = document.getElementsByClassName("page-item");
+            $("#channelsSortForm").show();
+            $("#noInstances").hide();
+            $("#paginationBar").show();
+            $("#searchBar").val("");
+
+            // console.log(document.getElementsByClassName("page-item active")[0].innerText);
+
+            for (const [name, info] of Object.entries(dataArr)) {
+                info.isVisible = true;
+            }
+
+            var i;
+            for (i = 0; i < 9; i++) {
+                cards[i].style.display = "";
+            }
+            for (; i < cards.length; i++) {
+                cards[i].style.display = "none";
+            }
+            for (i = 0; i < paginationBtns.length; i++) {
+                paginationBtns[i].style.display = "";
+            }
+            paginateFirstPage();
+        }
+
+        function changePaginationBtns(matches) {
+            var numPages = Math.ceil(matches / 9);
+            var paginationBtns = document.getElementsByClassName("page-item");
+
+            if (numPages == 1) {
+                paginationBtns[0].className = "page-item disabled";
+                paginationBtns[paginationBtns.length - 1].className = "page-item disabled"
+            }
+            
+            for (i = numPages + 1; i < paginationBtns.length - 1; i++) {
+                paginationBtns[i].style.display = "none";
+            }
+        }
+
+        function paginateFirstPage() {
+            var paginationBtns = document.getElementsByClassName("page-item");
+
+            paginationBtns[0].className = "page-item disabled";
+            paginationBtns[1].className = "page-item active";
+            for (i = 2; i < paginationBtns.length; i++) {
+                paginationBtns[i].className = "page-item";
+            }
+        }
+
+        function getNumDisplayedPaginationBtns() {
+            var paginationBtns = document.getElementsByClassName("page-item");
+
+            var numDisplayed = 0;
+            for (i = 1; i < paginationBtns.length - 1; i++) {
+                if (!(paginationBtns[i].style.display == "none")) {
+                    numDisplayed += 1;
+                }
+            }
+            return numDisplayed;
+        }
+
+        function paginatePrevious() {
+            var paginationBtns = document.getElementsByClassName("page-item");
+            var numBtnsDisplayed = getNumDisplayedPaginationBtns();
+            var newPageNum = null;
+
+            for (i = 2; i <= numBtnsDisplayed; i++) {
+                if (paginationBtns[i].className.includes("active")) {
+                    newPageNum = i - 1;
+                    paginationBtns[i].className = "page-item";
+                    paginationBtns[i - 1].className = "page-item active";
+
+                    if (i == 2) {
+                        paginationBtns[0].className = "page-item disabled";
+                    }
+                    if (i == numBtnsDisplayed) {
+                        paginationBtns[paginationBtns.length - 1].className = "page-item";
+                    }
+                }
+            }
+
+            paginateRender(newPageNum);
+        }
+
+        function paginateNum(num) {
+            var paginationBtns = document.getElementsByClassName("page-item");
+            var numBtnsDisplayed = getNumDisplayedPaginationBtns();
+
+            if (numBtnsDisplayed == 1) {
+                paginationBtns[0].className = "page-item disabled";
+                paginationBtns[paginationBtns.length - 1].className = "page-item disabled";
+                return;
+            }
+
+            for (i = 1; i <= numBtnsDisplayed; i++) {
+                if (paginationBtns[i].className.includes("active")) {
+                    paginationBtns[i].className = "page-item";
+                }
+            }
+            paginationBtns[num].className = "page-item active";
+
+            if (num == 1) {
+                paginationBtns[0].className = "page-item disabled";
+                paginationBtns[paginationBtns.length - 1].className = "page-item";
+            }
+            else if (num == numBtnsDisplayed) {
+                paginationBtns[paginationBtns.length - 1].className = "page-item disabled";
+                paginationBtns[0].className = "page-item";
+            } else {
+                paginationBtns[paginationBtns.length - 1].className = "page-item";
+                paginationBtns[0].className = "page-item";
+            }
+
+            paginateRender(num);
+        }
+
+        function paginateNext() {
+            var paginationBtns = document.getElementsByClassName("page-item");
+            var numBtnsDisplayed = getNumDisplayedPaginationBtns();
+            var newPageNum = null;
+
+            for (i = 1; i < numBtnsDisplayed; i++) {
+                if (paginationBtns[i].className.includes("active")) {
+                    newPageNum = i + 1;
+                    paginationBtns[i].className = "page-item";
+                    paginationBtns[i + 1].className = "page-item active";
+
+                    if (i == 1) {
+                        paginationBtns[0].className = "page-item";
+                    }
+                    if (i == numBtnsDisplayed - 1) {
+                        paginationBtns[paginationBtns.length - 1].className = "page-item disabled";
+                    }
+                    break;
+                }
+            }
+
+            paginateRender(newPageNum);
+        }
+
+        function paginateRender(newPageNum) {
+            var visibleCt = 0;
+            var i = 0;
+            for (const [name, info] of Object.entries(dataArr)) {
+                if (info.isVisible) {
+                    visibleCt += 1;
+
+                    if ((visibleCt - 1 >= (newPageNum - 1) * 9) && (visibleCt - 1 < (newPageNum - 1) * 9 + 9)) {
+                        cards[i].style.display = "";
+                    } else {
+                        cards[i].style.display = "none";
+                    }
+                } else {
+                    cards[i].style.display = "none";
+                }
+                i += 1;
+            }
+        }
+
         $(document).ready(function() {
             $("#searchBar").on("keyup", function() {
                 if ($(this).val().length > 0) {
-                    filter();
+                    filterSearchDropdown();
                 } else {
                     $("#menu").hide();
                 }
@@ -282,25 +465,14 @@
             $("#searchBar").on("search", function() {
                 channelsSearchPhrase = $(this).val();
                 if(channelsSearchPhrase.length != 0) {
-                    localStorage.setItem("channelsSearchPhrase", channelsSearchPhrase);
-                    $("#channelsSearchItems").val("");
-                    for (i = 0; i < items.length; i++) {
-                        if ($(items[i]).is(":visible")) {
-                            currVal = $("#channelsSearchItems").val();
-                            if (currVal.length != 0) currVal = currVal + "|";
-                            $("#channelsSearchItems").val(currVal + (items[i].innerHTML.split("</b>")[0]).replace("<b>", ""));
-                        }
-                    }
-                    $("#channelsSearchForm").submit();
-                    $("#channelsSearchItems").val("");
+                    searchCards();
                 }
-                
             });
             $("#searchBar").on("blur", function() {
                 if (!($("#menu").is(":hover"))) $("#menu").hide();
             });
             $("#searchBar").on("focus", function() {
-                if ($(this).val().length != 0) filter();
+                if ($(this).val().length != 0) filterSearchDropdown();
             });
             $("#ascendBtn").on("click", function() {
                 if (!($("#channelsSortCriteriaMenu").val() == null || $("#channelsSortCriteriaMenu").val() == localStorage.getItem("channelsSortPhrase"))) localStorage.setItem("channelsSortPhrase", $("#channelsSortCriteriaMenu").val());
@@ -308,6 +480,15 @@
             $("#descendBtn").on("click", function() {
                 if (!($("#channelsSortCriteriaMenu").val() == null || $("#channelsSortCriteriaMenu").val() == localStorage.getItem("channelsSortPhrase"))) localStorage.setItem("channelsSortPhrase", $("#channelsSortCriteriaMenu").val());
             });
+            $(".page-item").on("click", function() {
+                if ($(this)[0].innerText == "Previous") {
+                    paginatePrevious();
+                } else if ($(this)[0].innerText == "Next") {
+                    paginateNext();
+                } else {
+                    paginateNum($(this)[0].innerText);
+                }
+            })
         });
 
         function processData() {
@@ -337,10 +518,11 @@
                 var viewStr = tempStr[0];
                 var videoStr = tempStr[1];
 
-                finalObj[nameStr] = {"description": descripStr, "subscriber": subscriberStr, "view": viewStr, "video": videoStr, "idx": i};
+                finalObj[nameStr] = {"description": descripStr, "subscriber": subscriberStr, "view": viewStr, "video": videoStr, "idx": i, "isVisible": true};
             }
 
             return finalObj;
         }
     </script>
 {% endblock %}
+
