@@ -57,4 +57,3 @@ class ModelBackendInterface(ABC):
     def render_instance_page(instance_obj, related_objects):
         pass
         
-
