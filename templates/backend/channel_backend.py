@@ -103,4 +103,4 @@ class ChannelBackend(ModelBackend, Channel):
     # TODO: NEED TO ADD A 'modelType' string parameter to form the html file name DYNAMICALLY BEFORE PULLING IT OUT
     @staticmethod
     def render_instance_page(instanceObject, relatedObjects):
-        return render_template('channelInstance.html', channelObj=instanceObject, relatedObjects=relatedObjects)
+        return render_template('channelInstance.html', instanceObject=instanceObject, relatedObjects=relatedObjects)

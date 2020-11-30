@@ -1,57 +1,49 @@
+<!-- Passed in Jinja 2 Variables are named as: instanceObject, relatedObjects -->
+
 {% extends 'base.html' %}
 
-<!-- Equipment Object Param Name: equipmentObject -->
-<!-- 2D List of Related Indices Param Name: relatedIndices -->
-
 {% block head %}
-    <title>{{ equipmentObject.name }}</title>
+    <title>{{ instanceObject.name }}</title>
 {% endblock %}
 
 
 {% block body %}
 <div class="exercise-instance-div container-fluid mx-auto">
   <div class="jumbotron-exercise-instance jumbotron jumbotron-fluid text-center">
-    <h1>{{ equipmentObject.name }}</h1>
+    <h1>{{ instanceObject.name }}</h1>
   </div>
-      <!-- There's no rating returned by the API -->
-<!--            <img id="equipmentInstanceRating" class="img-fluid w-50 h-auto" src="{{ url_for('static', filename='{{ equipmentObject.rating }}stars.png') }}" alt="Rating: {{ equipmentObject.rating }}/5 stars">-->
-    <!-- Image -->
-  {% if equipmentObject.replacePictureFlag %}-->
-      <center><img class="card-img-top img-fluid mx-auto" style="width: auto; min-height: 300px; max-height: 400px; background-color: whitesmoke;" src="/../static/{{ equipmentObject.picture }}" alt="{{ equipmentObject.name }}'s image"></center>
+  {% if instanceObject.replacePictureFlag %}-->
+      <center><img class="card-img-top img-fluid mx-auto" style="width: auto; min-height: 300px; max-height: 400px; background-color: whitesmoke;" src="/../static/{{ instanceObject.picture }}" alt="{{ instanceObject.name }}'s image"></center>
   {% else %}
-      <center><img class="card-img-top img-fluid mx-auto" style="width: auto; min-height: 300px; max-height: 400px; background-color: whitesmoke;" src="{{ equipmentObject.picture }}" onerror="this.onerror=null; this.src='{{ equipmentObject.picture }}'"; alt="{{ equipmentObject.name }}'s image"></center>
+      <center><img class="card-img-top img-fluid mx-auto" style="width: auto; min-height: 300px; max-height: 400px; background-color: whitesmoke;" src="{{ instanceObject.picture }}" onerror="this.onerror=null; this.src='{{ instanceObject.picture }}'"; alt="{{ instanceObject.name }}'s image"></center>
   {% endif %}
   <br>
-  <!-- Information -->
-<!--        <div id="equipmentInstanceDescriptionRow" class="row justify-content-center align-items-center">-->
-<!--            <p></p>-->
-<!--        </div>-->
 
   <div class="exercise-instance-text container-fluid text-center">
     <div class="jumbotron-exercise-instance-text jumbotron jumbotron-fluid text-center">
-      <h4 id="priceText"><b><u>Price:</u> </b>{{ equipmentObject.price }} USD</h4>
+      <h4 id="priceText"><b><u>Price:</u> </b>{{ instanceObject.price }} USD</h4>
     </div>
     <div class="jumbotron-exercise-instance-text jumbotron jumbotron-fluid text-center">
       <div class="row">
         <div class="col-sm-6">
-          <h4 class="sellerLocationText"><b><u>Seller Location:</u> </b>{{ equipmentObject.location }}</h4>
+          <h4 class="sellerLocationText"><b><u>Seller Location:</u> </b>{{ instanceObject.location }}</h4>
         </div>
         <div class="col-sm-6">
-          <h4 class="categoryText"><b><u>Category:</u> </b>{{ equipmentObject.category }}</h4>
+          <h4 class="categoryText"><b><u>Category:</u> </b>{{ instanceObject.category }}</h4>
         </div>
       </div>
     </div>
-    <h4><b><a href="{{ equipmentObject.linkToItem }}">View item on eBay</a></b></h4>
+    <h4><b><a href="{{ instanceObject.linkToItem }}">View item on eBay</a></b></h4>
   </div>
   
   <hr><hr>
 
+  <!-- Related exercises, equipment, and channel instances -->
   <div class="tables">
-    <!-- Related exercises, equipment, and channel instances -->
     <!-- Related exercises table -->
     <h4 class="instance-text">Related Exercise Pages: </h4>
     <table class="table table-striped table-hover table-sm">
-      <caption>Exercise pages are related by category {{ equipmentObject.equipmentCategory }}</caption>
+      <caption>Exercise pages are related by category {{ instanceObject.equipmentCategory }}</caption>
       <thead class="thead-dark">
         <tr>
           <th scope="col">#</th>
@@ -72,7 +64,7 @@
     <!-- Related equipment table -->
     <h4 class="instance-text">Related Equipment Pages: </h4>
     <table class="table table-striped table-hover table-sm">
-      <caption>Equipment pages are related by category {{ equipmentObject.equipmentCategory }}</caption>
+      <caption>Equipment pages are related by category {{ instanceObject.equipmentCategory }}</caption>
       <thead class="thead-dark">
         <tr>
           <th scope="col">#</th>
@@ -101,7 +93,7 @@
     <!-- Related channels table -->
     <h4 class="instance-text">Related Channel Pages: </h4>
     <table class="table table-striped table-hover table-sm">
-      <caption>Channel pages are related by category {{ equipmentObject.equipmentCategory }}</caption>
+      <caption>Channel pages are related by category {{ instanceObject.equipmentCategory }}</caption>
       <thead class="thead-dark">
         <tr>
           <th scope="col">#</th>

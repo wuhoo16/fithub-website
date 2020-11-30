@@ -129,7 +129,7 @@ class ModelFacade:
         self.CHANNEL_ARRAY = ChannelBackend.load_and_return_model_array_from_db(db)
 
     def __model_page(self, backendClass, pageNumber, flaskRequest, db, currentArray, operationUsed, modelType):
-        print(f'Right at the beginning of __model_page(), the currentArray param is: { currentArray}')
+        print(f'Right at the beginning of __model_page(), the currentArray param is: {currentArray}')
         # Wrap this in a private helper function to convert array of integers to objects
         if len(currentArray) != 0:
             if isinstance(currentArray[0], int):
@@ -149,7 +149,7 @@ class ModelFacade:
         if flaskRequest.method == 'POST':
             if operationUsed == "Search":
                 print(
-                    f'In the operationUsed == "Search" branch, the currentArray param before __get_search() is: { currentArray}')
+                    f'In the operationUsed == "Search" branch, the currentArray param before __get_search() is: {currentArray}')
                 print(flaskRequest.form.get(backendClass.searchItemsKey))
                 arrayAfterSearch = self.__get_search(flaskRequest.form.get(backendClass.searchItemsKey), currentArray)
                 print(
@@ -161,12 +161,14 @@ class ModelFacade:
                 if selectedSortingAttribute is None:
                     return backendClass.render_model_page(pageNumber, currentArray, 0)
                 elif flaskRequest.form.get(backendClass.sortingHiddenFieldKey) == 'ascending':
-                    sortedArray = sorted(currentArray, key=lambda modelObj: getattr(modelObj, selectedSortingAttribute), reverse=False)
+                    sortedArray = sorted(currentArray, key=lambda modelObj: getattr(modelObj, selectedSortingAttribute),
+                                         reverse=False)
                     return backendClass.render_model_page(pageNumber, sortedArray, 0)
                 elif flaskRequest.form.get(backendClass.sortingHiddenFieldKey) == 'descending':
-                    sortedArray = sorted(currentArray, key=lambda modelObj: getattr(modelObj, selectedSortingAttribute), reverse=True)
+                    sortedArray = sorted(currentArray, key=lambda modelObj: getattr(modelObj, selectedSortingAttribute),
+                                         reverse=True)
                     return backendClass.render_model_page(pageNumber, sortedArray, 0)
-                else: # selected sorting attribute was not None, or the sorting button clicked did not send ascending or descending
+                else:  # selected sorting attribute was not None, or the sorting button clicked did not send ascending or descending
                     raise NameError('Unsupported sorting form submitted in POST request!')
             elif operationUsed == "Filter":
                 filteredArray = backendClass.filter(db, flaskRequest.form, currentArray)
@@ -181,32 +183,8 @@ class ModelFacade:
             else:
                 return backendClass.render_model_page(pageNumber, currentArray, 1)
 
-        else: #  Not a POST or GET request
+        else:  # Not a POST or GET request
             raise NameError("Not a supported Flask request. Only GET and POST supported!")
-
-        #     else:  # filter form was submitted using the Filter button
-        #         print("FILTERING")
-        #         model.filterIsActive = True
-
-        #         # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
-        #         tempModifiedArray, modifiedArray = model.filter(db, request_param.form)
-
-        #         if model.searchIsActive:
-        #             modifiedArray = self.__search_filter_match(modifiedArray, tempModifiedArray)
-
-        #         # If we sorted before, sort by the same sort method again
-        #         if model.sortIsActive:
-        #             if model.sortingDirection == 'ascending':
-        #                 modifiedArray = sorted(modifiedArray,
-        #                                                 key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
-        #                                                 reverse=False)
-        #             elif model.sortingDirection == 'descending':
-        #                 modifiedArray = sorted(modifiedArray,
-        #                                                 key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
-        #                                                 reverse=True)
-
-        #         model.modifiedArray = modifiedArray
-        #         return model.render_model_page(page_number, modifiedArray)
 
     def __instance_page(self, modelType, instanceObject, db):
         """
@@ -214,8 +192,6 @@ class ModelFacade:
         """
         relatedObjects = modelType.get_related_objects_for_instance(instanceObject.id, db)
         return modelType.render_instance_page(instanceObject, relatedObjects)
-
-    # Helper methods for paginating all 3 model pages
 
     def __get_search(self, delimited_search_string, main_arr):
         totalArray = []

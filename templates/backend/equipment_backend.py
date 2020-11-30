@@ -93,4 +93,4 @@ class EquipmentBackend(ModelBackend, Equipment):
     # TODO: NEED TO ADD A 'modelType' string parameter to form the html file name DYNAMICALLY BEFORE PULLING IT OUT
     @staticmethod
     def render_instance_page(instanceObject, relatedObjects):
-        return render_template('equipmentInstance.html', equipmentObject=instanceObject, relatedObjects=relatedObjects)
+        return render_template('equipmentInstance.html', instanceObject=instanceObject, relatedObjects=relatedObjects)

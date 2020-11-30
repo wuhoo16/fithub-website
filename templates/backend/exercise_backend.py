@@ -83,8 +83,7 @@ class ExerciseBackend(ModelBackend, Exercise):
                                numPages=numPages,
                                resetLocalStorageFlag=resetLocalStorageFlag)
 
-    # TODO: IF ALL INSTANCE HTML PAGES HAVE THE SAME RED PARAM NAME, CAN PULL OUT THIS METHOD OUT FROM ALL MODEL TYPES INTO MODEL_BACKEND TO REDUCE REDUNDANT CODE (as of now fails since exerciseInstance.html uses e instead of instanceObject)
     # TODO: NEED TO ADD A 'modelType' string parameter to form the html file name DYNAMICALLY BEFORE PULLING IT OUT
     @staticmethod
     def render_instance_page(instanceObject, relatedObjects):
-        return render_template('exerciseInstance.html', e=instanceObject, relatedObjects=relatedObjects)
+        return render_template('exerciseInstance.html', instanceObject=instanceObject, relatedObjects=relatedObjects)
