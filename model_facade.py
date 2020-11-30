@@ -49,15 +49,8 @@ class ModelFacade():
     @staticmethod
     def render_homepage(db):
         ModelFacade.__initialize_model_arrays_if_required(db)
-        return render_template('homepage.html', exerciseFilterIsActive=str.lower(str(exercise_backend.filterIsActive)),
-                           equipmentFilterIsActive=str.lower(str(equipment_backend.filterIsActive)),
-                           channelFilterIsActive=str.lower(str(channel_backend.filterIsActive)), 
-                           exerciseSearchIsActive=str.lower(str(exercise_backend.searchIsActive)),
-                           equipmentSearchIsActive=str.lower(str(equipment_backend.searchIsActive)),
-                           channelSearchIsActive=str.lower(str(channel_backend.searchIsActive)), 
-                           exerciseSortIsActive=str.lower(str(exercise_backend.sortIsActive)),
-                           equipmentSortIsActive=str.lower(str(equipment_backend.sortIsActive)),
-                           channelSortIsActive=str.lower(str(channel_backend.sortIsActive)))
+        return render_template('homepage.html', exerciseArray=exercise_backend.ModelBackend.EXERCISES_ARRAY, 
+            equipmentArray=equipment_backend.ModelBackend.EQUIPMENT_ARRAY, channelArray=channel_backend.ModelBackend.CHANNEL_ARRAY)
 
 
     @staticmethod
@@ -66,14 +59,14 @@ class ModelFacade():
 
 
     @staticmethod
-    def render_model_page(model, page_number, request_param, db):
+    def render_model_page(model, page_number, request_param, db, curr_arr, operation_used):
         ModelFacade.__initialize_model_arrays_if_required(db)
         if model == "exercise":
-            return ModelFacade.__model_page(request_param, exercise_backend.ExerciseBackend, exercise_backend.ModelBackend.EXERCISES_ARRAY, page_number, db)
+            return ModelFacade.__model_page(request_param, exercise_backend.ExerciseBackend, curr_arr, page_number, db, operation_used)
         elif model == "equipment":
-            return ModelFacade.__model_page(request_param, equipment_backend.EquipmentBackend, equipment_backend.ModelBackend.EQUIPMENT_ARRAY, page_number, db)
+            return ModelFacade.__model_page(request_param, equipment_backend.EquipmentBackend, curr_arr, page_number, db, operation_used)
         elif model == "channel":
-            return ModelFacade.__model_page(request_param, channel_backend.ChannelBackend, channel_backend.ModelBackend.CHANNEL_ARRAY, page_number, db)
+            return ModelFacade.__model_page(request_param, channel_backend.ChannelBackend, curr_arr, page_number, db, operation_used)
         else:
             raise NameError("ERROR: " + model + " is not a model!")
 
@@ -95,8 +88,12 @@ class ModelFacade():
 
     @staticmethod
     def __initialize_model_arrays_if_required(db):
+        print(exercise_backend.ModelBackend.EXERCISES_ARRAY)
+        print(equipment_backend.ModelBackend.EQUIPMENT_ARRAY)
+        print(channel_backend.ModelBackend.CHANNEL_ARRAY)
         if len(exercise_backend.ModelBackend.EXERCISES_ARRAY) == 0:
             exercise_backend.ExerciseBackend.load_from_db(db)
+            print(exercise_backend.ExerciseBackend.EXERCISES_ARRAY)
             exercise_backend.filterIsActive = False
             exercise_backend.searchIsActive = False
             exercise_backend.sortIsActive = False
@@ -113,77 +110,98 @@ class ModelFacade():
 
 
     @staticmethod
-    def __model_page(request_param, model, model_arr, page_number, db):
+    def __model_page(request_param, model, curr_arr, page_number, db, operation_used):
         if request_param.method == 'POST':
-            if request_param.form.get(model.searchItemsKey):
-                #searching
-                print("IN SEARCHING")
-                model.searchIsActive = True
-                NEW_ARR = ModelFacade.__get_search(request_param.form.get(model.searchItemsKey), model_arr)
-                model.modifiedArray = NEW_ARR
-                return model.render_model_page(page_number, NEW_ARR)
-                
-            elif request_param.form.get(model.sortingHiddenFieldKey):  # If this field in the posted form is set, then the user has clicked one of the sorting buttons
-                print("IN SORTING")
-                model.sortingAttribute = request_param.form.get(model.sortCriteriaMenuKey)
+            if operation_used == "search":
+                new_arr = ModelFacade.__get_search(request_param.form.get(model.searchItemsKey), curr_arr)
+                return model.render_model_page(page_number, new_arr)
+            # elif operation_used == "sort":
 
-                if model.filterIsActive or model.searchIsActive:
-                    sortThisArray = model.modifiedArray
-                else:
-                    sortThisArray = model_arr
-                if model.sortingAttribute is None:
-                    model.modifiedArray = sortThisArray
-                else: 
-                    if request_param.form.get(model.sortingHiddenFieldKey) == 'ascending':
-                        model.sortingDirection = 'ascending'
-                        model.modifiedArray = sorted(sortThisArray,
-                                                    key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
-                                                    reverse=False)
-                    elif request_param.form.get(model.sortingHiddenFieldKey) == 'descending':
-                        model.sortingDirection = 'descending'
-                        model.modifiedArray = sorted(sortThisArray,
-                                                    key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
-                                                    reverse=True)
-                    model.sortIsActive = True
+            # elif operation_used == "filter":
 
-                return model.render_model_page(page_number, model.modifiedArray)
-            
-            elif request_param.form.get('resetHiddenField') == 'resetClicked':  # If this field is set, then the user has clicked the Reset button
-                print("RESETTING")
-                model.filterIsActive = False
-                model.sortIsActive = False
-                model.searchIsActive = False
-                return model.render_model_page(page_number, model_arr)
-                
-            else:  # filter form was submitted using the Filter button
-                print("FILTERING")
-                model.filterIsActive = True
+            else:
+                raise NameError("operation_used param is not valid")
 
-                # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
-                tempModifiedArray, modifiedArray = model.filter(db, request_param.form)
-
-                if model.searchIsActive:
-                    modifiedArray = ModelFacade.__search_filter_match(modifiedArray, tempModifiedArray)
-
-                # If we sorted before, sort by the same sort method again
-                if model.sortIsActive:
-                    if model.sortingDirection == 'ascending':
-                        modifiedArray = sorted(modifiedArray,
-                                                        key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
-                                                        reverse=False)
-                    elif model.sortingDirection == 'descending':
-                        modifiedArray = sorted(modifiedArray,
-                                                        key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
-                                                        reverse=True)
-
-                model.modifiedArray = modifiedArray
-                return model.render_model_page(page_number, modifiedArray)
-        
         elif request_param.method == 'GET':
-            if model.filterIsActive or model.sortIsActive or model.searchIsActive:
-                return model.render_model_page(page_number, model.modifiedArray)
-            else:  # else, render template using the original global array with every Exercise object
-                return model.render_model_page(page_number, model_arr)
+            if operation_used == "pagination":
+                print("pagination")
+                # will render model page w/ resetStorageFlag = 0
+            else:
+                # will render model page w/ resetStorageFlag = 1
+                return model.render_model_page(page_number, curr_arr)
+
+        #     else:
+        #         raise NameError("operation_used param is not valid")
+
+        #     if request_param.form.get(model.searchItemsKey):
+        #         #searching
+        #         print("IN SEARCHING")
+        #         # model.searchIsActive = True
+        #         NEW_ARR = ModelFacade.__get_search(request_param.form.get(model.searchItemsKey), curr_arr)
+        #         # model.modifiedArray = NEW_ARR
+        #         return model.render_model_page(page_number, NEW_ARR)
+                
+        #     elif request_param.form.get(model.sortingHiddenFieldKey):  # If this field in the posted form is set, then the user has clicked one of the sorting buttons
+        #         print("IN SORTING")
+        #         model.sortingAttribute = request_param.form.get(model.sortCriteriaMenuKey)
+
+        #         if model.filterIsActive or model.searchIsActive:
+        #             sortThisArray = model.modifiedArray
+        #         else:
+        #             sortThisArray = curr_arr
+        #         if model.sortingAttribute is None:
+        #             model.modifiedArray = sortThisArray
+        #         else: 
+        #             if request_param.form.get(model.sortingHiddenFieldKey) == 'ascending':
+        #                 model.sortingDirection = 'ascending'
+        #                 model.modifiedArray = sorted(sortThisArray,
+        #                                             key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
+        #                                             reverse=False)
+        #             elif request_param.form.get(model.sortingHiddenFieldKey) == 'descending':
+        #                 model.sortingDirection = 'descending'
+        #                 model.modifiedArray = sorted(sortThisArray,
+        #                                             key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
+        #                                             reverse=True)
+        #             model.sortIsActive = True
+
+        #         return model.render_model_page(page_number, model.modifiedArray)
+            
+        #     elif request_param.form.get('resetHiddenField') == 'resetClicked':  # If this field is set, then the user has clicked the Reset button
+        #         print("RESETTING")
+        #         model.filterIsActive = False
+        #         model.sortIsActive = False
+        #         model.searchIsActive = False
+        #         return model.render_model_page(page_number, curr_arr)
+                
+        #     else:  # filter form was submitted using the Filter button
+        #         print("FILTERING")
+        #         model.filterIsActive = True
+
+        #         # Call the helper function in the backend to query mongodb and get Array of filtered exercise objects
+        #         tempModifiedArray, modifiedArray = model.filter(db, request_param.form)
+
+        #         if model.searchIsActive:
+        #             modifiedArray = ModelFacade.__search_filter_match(modifiedArray, tempModifiedArray)
+
+        #         # If we sorted before, sort by the same sort method again
+        #         if model.sortIsActive:
+        #             if model.sortingDirection == 'ascending':
+        #                 modifiedArray = sorted(modifiedArray,
+        #                                                 key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
+        #                                                 reverse=False)
+        #             elif model.sortingDirection == 'descending':
+        #                 modifiedArray = sorted(modifiedArray,
+        #                                                 key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
+        #                                                 reverse=True)
+
+        #         model.modifiedArray = modifiedArray
+        #         return model.render_model_page(page_number, modifiedArray)
+        
+        # elif request_param.method == 'GET':
+        #     if model.filterIsActive or model.sortIsActive or model.searchIsActive:
+        #         return model.render_model_page(page_number, model.modifiedArray)
+        #     else:  # else, render template using the original global array with every Exercise object
+        #         return model.render_model_page(page_number, curr_arr)
         
 
     @staticmethod

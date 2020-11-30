@@ -31,20 +31,20 @@ def about():
 
 # exercises model page
 @app.route("/exercises/<int:page_number>", methods=['GET', 'POST'])
-def exercises(page_number):
-    return ModelFacade.render_model_page("exercise", page_number, request, DATABASE)
+def exercises(page_number, curr_arr, operation_used):
+    return ModelFacade.render_model_page("exercise", page_number, request, DATABASE, curr_arr, operation_used)
 
 
 # equipments model page
 @app.route("/equipment/<int:page_number>", methods=['GET', 'POST'])
-def equipments(page_number):
-    return ModelFacade.render_model_page("equipment", page_number, request, DATABASE)
+def equipments(page_number, curr_arr, operation_used):
+    return ModelFacade.render_model_page("equipment", page_number, request, DATABASE, curr_arr, operation_used)
 
 
 # channels model page
 @app.route("/channels/<int:page_number>", methods=['GET', 'POST'])
-def channels(page_number):
-    return ModelFacade.render_model_page("channel", page_number, request, DATABASE)
+def channels(page_number, curr_arr, operation_used):
+    return ModelFacade.render_model_page("channel", page_number, request, DATABASE, curr_arr, operation_used)
 
 
 # All view methods for INSTANCE pages are defined below:

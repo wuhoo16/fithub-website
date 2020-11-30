@@ -4,12 +4,6 @@ from templates.models.channel import Channel
 import numpy as np
 
 class ChannelBackend(ModelBackend, Channel):
-    filterIsActive = False
-    searchIsActive = False
-    sortIsActive = False
-    sortingAttribute = ""
-    sortingDirection = ""
-
     searchItemsKey = 'channelsSearchItems'
     sortingHiddenFieldKey = 'channelsSortingHiddenField'
     sortCriteriaMenuKey = 'channelsSortCriteriaMenu'
@@ -97,9 +91,9 @@ class ChannelBackend(ModelBackend, Channel):
 
 
     @staticmethod
-    def render_model_page(page_number, arr):
-        start, end, num_pages = ModelBackend.paginate(page_number, arr)
-        return render_template('channels.html', channelArray=arr, start=start, end=end, page_number=page_number, num_pages=num_pages)
+    def render_model_page(page_number, curr_arr):
+        start, end, num_pages = ModelBackend.paginate(page_number, curr_arr)
+        return render_template('channels.html', channelArray=curr_arr, start=start, end=end, page_number=page_number, num_pages=num_pages)
 
 
     @staticmethod

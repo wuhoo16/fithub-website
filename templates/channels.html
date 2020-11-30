@@ -101,13 +101,13 @@
                 <option class="select-option" value="videoCount">Video Count</option>
             </select>
             <input type="hidden" id='channelsSortingHiddenField' name='channelsSortingHiddenField' value="">
-            <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'ascending');">
-            <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending"id="descendBtn" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'descending');">
+            <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="sortAscending()">
+            <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending"id="descendBtn" onclick="sortDescending()">
         </form>
 
         <!--Search Bar-->
         <div id="searchBarContainer" class="dropdown d-inline-block" tabindex="-1">
-            <form id="channelsSearchForm" action="{{ url_for('channels', page_number=1) }}" method="post" style="display: none;">
+            <form id="channelsSearchForm" action="{{ url_for('channels', page_number=1, currentArray=channelArray, operationUsed='search') }}" method="post" style="display: none;">
                 <input id="channelsSearchItems" name="channelsSearchItems">
             </form>
             <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" name="searchBar" type="search" placeholder="Search"/>
@@ -129,7 +129,8 @@
             </div>
         </div>
         <!-- <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn" onclick="resetCheckboxState('channelsFilterForm', 'channelsResetHiddenField')">Reset All</button> -->
-        <button class="reset-button btn btn-outline-light" type="button" onclick="reset()">Reset All</button>
+        <a id="resetLink" href="{{ url_for('channels', page_number=1) }}" style="display: none;"></a>
+        <button class="reset-button btn btn-outline-light" id="resetBtn" type="button" onclick="reset()">Reset All</button>
     </div>
 
     <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
@@ -168,28 +169,28 @@
             {% endfor %}
     </div>
     <h4 id="noInstances" style="color: white;">Sorry! No instances meet your set requirements. Please reset the filters to see channels.</h4>
-    <ul class="pagination justify-content-center" style="margin:20px 0" id="paginationBar">
+    <ul class="pagination justify-content-center" style="margin:20px 0">
         <!--Previous Page Button-->
         {% if page_number == 1 %}
-            <li class="page-item disabled"><a class="page-link">Previous</a></li>
+            <li class="page-item disabled"><a class="page-link" href="">Previous</a></li>
         {% else %}
-            <li class="page-item"><a class="page-link">Previous</a></li>
+            <li class="page-item"><a class="page-link" href="{{ url_for('channels', page_number=page_number-1, currentArray=channelArray, operationUsed='pagination') }}">Previous</a></li>
         {% endif %}  
 
         <!--All Pages Buttons-->
         {% for i in range(1, num_pages+1) %}
             {% if i == page_number %}
-                <li class="page-item active"><a class="page-link">{{i}}</a></li>
+                <li class="page-item active"><a class="page-link" href="{{ url_for('channels', page_number=i, currentArray=channelArray, operationUsed='pagination') }}">{{i}}</a></li>
             {% else %}
-                <li class="page-item"><a class="page-link">{{i}}</a></li>
+                <li class="page-item"><a class="page-link" href="{{ url_for('channels', page_number=i, currentArray=channelArray, operationUsed='pagination') }}">{{i}}</a></li>
             {% endif %}    
         {% endfor %}
 
         <!--Next Page Button-->
         {% if page_number == num_pages %}
-            <li class="page-item disabled"><a class="page-link">Next</a></li>
+            <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
         {% else %}
-            <li class="page-item"><a class="page-link">Next</a></li>
+            <li class="page-item"><a class="page-link" href="{{ url_for('channels', page_number=page_number+1, currentArray=channelArray, operationUsed='pagination') }}">Next</a></li>
         {% endif %}
     </ul>
 </div>
@@ -202,7 +203,9 @@
         let items = document.getElementsByClassName("dropdown-item");
         var data = $('#channelArrayData').data().arr;
         var dataArr = processData(); //holds current array
-        var cards = document.getElementsByClassName("card card-style h-100 pt-4"); //references to list of all cards
+        var cardsGrid = $("#modelGrid");
+        var cards = cardsGrid[0].children; //references to list of all cards
+        var cardsDict = processCardDict();
         
         function setup() {
             $("#noInstances").hide();
@@ -259,8 +262,8 @@
 
             var i = 0;
             for (const [name, info] of Object.entries(dataArr)) {
-                var cardBodyNodes = cards[i].childNodes[3].childNodes;
-                var cardDisplay = cards[i].style.display;
+                var cardBodyNodes = cardsDict[name].childNodes[3].childNodes;
+                var cardDisplay = cardsDict[name].style.display;
                 var nameText = cardBodyNodes[1].innerText.trim().toLowerCase();
                 var listNodes = cardBodyNodes[4].childNodes;
                 var descriptionText = listNodes[1].innerText.trim().toLowerCase();
@@ -271,11 +274,11 @@
                 if (info.isVisible) {
                     if (!(nameText.includes(searchPhrase) || descriptionText.includes(searchPhrase) || subscriberText.includes(searchPhrase) || viewText.includes(searchPhrase) || videoText.includes(searchPhrase))) {
                         info.isVisible = false;
-                        cards[i].style.display = "none";
+                        cardsDict[name].style.display = "none";
                     } else {
                         matches += 1;
                         if (shown < 9) { 
-                            cards[i].style.display = "";
+                            cardsDict[name].style.display = "";
                             shown += 1;
                         }
                     }
@@ -295,6 +298,7 @@
         }
 
         function reset() {
+            console.log("resetting");
             var paginationBtns = document.getElementsByClassName("page-item");
             $("#channelsSortForm").show();
             $("#noInstances").hide();
@@ -307,17 +311,7 @@
                 info.isVisible = true;
             }
 
-            var i;
-            for (i = 0; i < 9; i++) {
-                cards[i].style.display = "";
-            }
-            for (; i < cards.length; i++) {
-                cards[i].style.display = "none";
-            }
-            for (i = 0; i < paginationBtns.length; i++) {
-                paginationBtns[i].style.display = "";
-            }
-            paginateFirstPage();
+            $("#resetLink")[0].click();
         }
 
         function changePaginationBtns(matches) {
@@ -339,7 +333,7 @@
 
             paginationBtns[0].className = "page-item disabled";
             paginationBtns[1].className = "page-item active";
-            for (i = 2; i < paginationBtns.length; i++) {
+            for (i = 2; i < paginationBtns.length - 1; i++) {
                 paginationBtns[i].className = "page-item";
             }
         }
@@ -438,6 +432,8 @@
         function paginateRender(newPageNum) {
             var visibleCt = 0;
             var i = 0;
+            cards = cardsGrid[0].children; //do this in case ordering of cards has changed
+            
             for (const [name, info] of Object.entries(dataArr)) {
                 if (info.isVisible) {
                     visibleCt += 1;
@@ -454,6 +450,80 @@
             }
         }
 
+        function sortAscending() {
+            var selectedVal = $("#channelsSortCriteriaMenu :selected").val().toLowerCase();
+            if (selectedVal == "select") return;
+
+            var sortField = null;
+            var sortThisArray = [];
+            var sortedArray = [];
+            
+            for (const [name, info] of Object.entries(dataArr)) {
+                if (info.isVisible) {
+                    
+                }
+            }
+            cards = cardsGrid[0].children;
+            quickSort(0, cards.length-1, selectedVal);
+            // var sortedArr = sorted(sortThisArray, key=lambda modelObj: getattr(modelObj, model.sortingAttribute), reverse=False)
+        }
+
+        function sortDescending() {
+        }
+
+        function quickSort(left, right, sortKey) {
+            var len = cards.length;
+            var pivot;
+            var partitionIndex;
+
+            if (left < right) {
+                pivot = right;
+                partitionIndex = partition(pivot, left, right, sortKey);
+                return;
+                quickSort(left, partitionIdx - 1);
+                quickSort(partitionIndex + 1, right);
+            }
+        }
+
+        function partition(pivot, left, right, sortKey) {
+            var pivotCard = cards[pivot];
+            var partitionIndex = left;
+
+            for (var i = left; i < right; i++) {
+                console.log(cards[i]);
+                console.log(pivotCard);
+                console.log(sortKey);
+                console.log(compareCards(cards[i], pivotCard, sortKey));
+            }
+        }
+
+        function swap(cardsArr, i, j) {
+            var temp = cards[i];
+            cards[i] = cards[j];
+            cards[j] = temp;
+        }
+
+        function compareCards(card1, card2, sortKey) {
+            console.log("comparing cards");
+            var cardBody1 = card1.childNodes[3].childNodes;
+            var cardBodyList1 = cardBody1[4].childNodes;
+            var cardBody2 = card2.childNodes[3].childNodes;
+            var cardBodyList2 = cardBody2[4].childNodes;
+            
+            switch(sortKey) {
+                case "name":
+                    return cardBody1[1].innerText.trim().toLowerCase() > cardBody2[1].innerText.trim().toLowerCase();
+                case "subscribercount":
+                    return parseInt(cardBodyList1[3].innerText.toLowerCase().replace("subscribers: ", "")) > parseInt(cardBodyList2[3].innerText.toLowerCase().replace("subscribers: ", ""));
+                case "viewcount":
+                    return parseInt(cardBodyList1[5].innerText.toLowerCase().replace("total views: ", "")) > parseInt(cardBodyList2[5].innerText.toLowerCase().replace("total views: ", ""));
+                case "videocount":
+                    return parseInt(cardBodyList1[7].innerText.toLowerCase().replace("videos: ", "")) > parseInt(cardBodyList2[7].innerText.toLowerCase().replace("videos: ", ""));
+                default:
+                    throw "not valid sort key in comparing cards";
+            }
+        }
+
         $(document).ready(function() {
             $("#searchBar").on("keyup", function() {
                 if ($(this).val().length > 0) {
@@ -465,7 +535,10 @@
             $("#searchBar").on("search", function() {
                 channelsSearchPhrase = $(this).val();
                 if(channelsSearchPhrase.length != 0) {
-                    searchCards();
+                    localStorage.setItem("channelsSearchPhrase", channelsSearchPhrase);
+                    $("#channelsSearchItems").val(channelsSearchPhrase);
+                    $("#channelsSearchForm").submit();
+                    $("#channelsSearchItems").val("");
                 }
             });
             $("#searchBar").on("blur", function() {
@@ -522,6 +595,16 @@
             }
 
             return finalObj;
+        }
+
+        function processCardDict() {
+            var dict = {};
+            var i = 0;
+            for (const [name, info] of Object.entries(dataArr)) {
+                dict[name] = cards[i];
+                i += 1;
+            }
+            return dict;
         }
     </script>
 {% endblock %}
