@@ -4,7 +4,7 @@ from templates.api.channel_api import ChannelAPI
 from templates.backend.exercise_backend import ExerciseBackend
 from templates.backend.equipment_backend import EquipmentBackend
 from templates.backend.channel_backend import ChannelBackend
-from templates.backend.model_backend import self
+from templates.backend.model_backend import ModelBackend
 
 from flask import render_template
 
@@ -19,7 +19,7 @@ class ModelFacade:
         self.__initialize_model_arrays_if_required(self.db)
 
     def get_exercises_array(self):
-        print(f'In the get function, the EXERCISES_ARRAY= { self.EXERCISES_ARRAY }')
+        print(f'In the get function, the EXERCISES_ARRAY= {self.EXERCISES_ARRAY}')
         return self.EXERCISES_ARRAY
 
     def get_equipment_array(self):
@@ -80,45 +80,45 @@ class ModelFacade:
             print(f'In render_model_page() method, the currentArray= {currentArray}')
         if modelType == "exercise":
             return self.__model_page(backendClass=ExerciseBackend,
-                                            pageNumber=pageNumber,
-                                            flaskRequest=flaskRequest,
-                                            db=db,
-                                            currentArray=currentArray,
-                                            operationUsed=operationUsed,
-                                            modelType=modelType)
+                                     pageNumber=pageNumber,
+                                     flaskRequest=flaskRequest,
+                                     db=db,
+                                     currentArray=currentArray,
+                                     operationUsed=operationUsed,
+                                     modelType=modelType)
         elif modelType == "equipment":
             return self.__model_page(backendClass=EquipmentBackend,
-                                            pageNumber=pageNumber,
-                                            flaskRequest=flaskRequest,
-                                            db=db,
-                                            currentArray=currentArray,
-                                            operationUsed=operationUsed,
-                                            modelType=modelType)
+                                     pageNumber=pageNumber,
+                                     flaskRequest=flaskRequest,
+                                     db=db,
+                                     currentArray=currentArray,
+                                     operationUsed=operationUsed,
+                                     modelType=modelType)
         elif modelType == "channel":
             print('In render_model_page() method, just entered the modelType="channel" branch...')
             return self.__model_page(backendClass=ChannelBackend,
-                                            pageNumber=pageNumber,
-                                            flaskRequest=flaskRequest,
-                                            db=db,
-                                            currentArray=currentArray,
-                                            operationUsed=operationUsed,
-                                            modelType=modelType)
+                                     pageNumber=pageNumber,
+                                     flaskRequest=flaskRequest,
+                                     db=db,
+                                     currentArray=currentArray,
+                                     operationUsed=operationUsed,
+                                     modelType=modelType)
         else:
             raise NameError("ERROR: " + modelType + " is not a supported model type!")
 
     def render_model_instance_page(self, modelType, array_index, db):
         if modelType == "exercise":
             return self.__instance_page(modelType=ExerciseBackend,
-                                               instanceObject=self.EXERCISES_ARRAY[array_index],
-                                               db=db)
+                                        instanceObject=self.EXERCISES_ARRAY[array_index],
+                                        db=db)
         elif modelType == "equipment":
             return self.__instance_page(modelType=EquipmentBackend,
-                                               instanceObject=self.EQUIPMENT_ARRAY[array_index],
-                                               db=db)
+                                        instanceObject=self.EQUIPMENT_ARRAY[array_index],
+                                        db=db)
         elif modelType == "channel":
             return self.__instance_page(modelType=ChannelBackend,
-                                               instanceObject=self.CHANNEL_ARRAY[array_index],
-                                               db=db)
+                                        instanceObject=self.CHANNEL_ARRAY[array_index],
+                                        db=db)
         else:
             raise NameError("ERROR: " + modelType + " is not a supported model type!")
 
@@ -130,89 +130,60 @@ class ModelFacade:
         self.CHANNEL_ARRAY = ChannelBackend.load_and_return_model_array_from_db(db)
 
     def __model_page(self, backendClass, pageNumber, flaskRequest, db, currentArray, operationUsed, modelType):
-        print('Right at the beginning of __model_page(), the currentArray param is: { currentArray}')
+        print(f'Right at the beginning of __model_page(), the currentArray param is: { currentArray}')
         # Wrap this in a private helper function to convert array of integers to objects
         if len(currentArray) != 0:
             if isinstance(currentArray[0], int):
                 currentArrayOfObjects = []
                 for arrayIndex in currentArray:
-                    if modelType == 'exercises':
+                    if modelType == 'exercise':
                         currentArrayOfObjects.append(self.EXERCISES_ARRAY[arrayIndex])
                     elif modelType == 'equipment':
                         currentArrayOfObjects.append(self.EQUIPMENT_ARRAY[arrayIndex])
                     elif modelType == 'channel':
                         currentArrayOfObjects.append(self.CHANNEL_ARRAY[arrayIndex])
                 currentArray = currentArrayOfObjects
-            else: # Make sure currentArray is not reassigned
+            else:  # Make sure currentArray is not reassigned
                 pass
 
         # At this point currentArray should be an array of OBJECTS!!!
         if flaskRequest.method == 'POST':
             if operationUsed == "Search":
-                print(f'In the operationUsed == "Search" branch, the currentArray param before __get_search() is: { currentArray }')
+                print(
+                    f'In the operationUsed == "Search" branch, the currentArray param before __get_search() is: { currentArray}')
                 print(flaskRequest.form.get(backendClass.searchItemsKey))
                 arrayAfterSearch = self.__get_search(flaskRequest.form.get(backendClass.searchItemsKey), currentArray)
-                print(f'In the operationUsed == "Search" branch, the arrayAfterSearch variable after __get_search() is: { arrayAfterSearch }')
-                return backendClass.render_model_page(pageNumber, arrayAfterSearch)
+                print(
+                    f'In the operationUsed == "Search" branch, the arrayAfterSearch variable after __get_search() is: {arrayAfterSearch}')
+                return backendClass.render_model_page(pageNumber, arrayAfterSearch, 0)
             elif operationUsed == "Sort":
-                pass
+                print("IN SORTING")
+                selectedSortingAttribute = flaskRequest.form.get(backendClass.sortCriteriaMenuKey)
+                if selectedSortingAttribute is None:
+                    return backendClass.render_model_page(pageNumber, currentArray, 0)
+                elif flaskRequest.form.get(backendClass.sortingHiddenFieldKey) == 'ascending':
+                    sortedArray = sorted(currentArray, key=lambda modelObj: getattr(modelObj, selectedSortingAttribute), reverse=False)
+                    return backendClass.render_model_page(pageNumber, sortedArray, 0)
+                elif flaskRequest.form.get(backendClass.sortingHiddenFieldKey) == 'descending':
+                    sortedArray = sorted(currentArray, key=lambda modelObj: getattr(modelObj, selectedSortingAttribute), reverse=True)
+                    return backendClass.render_model_page(pageNumber, sortedArray, 0)
+                else: # selected sorting attribute was not None, or the sorting button clicked did not send ascending or descending
+                    raise NameError('Unsupported sorting form submitted in POST request!')
             elif operationUsed == "Filter":
-                pass
+                filteredArray = backendClass.filter(db, flaskRequest.form, currentArray)
+                return backendClass.render_model_page(pageNumber, filteredArray, 0)
             else:
                 raise NameError("operationUsed param is not valid!")
 
         elif flaskRequest.method == 'GET':
             if operationUsed == "Pagination":
                 print("In Pagination branch...")
-                # will render model page w/ resetStorageFlag = 0
+                return backendClass.render_model_page(pageNumber, currentArray, 0)
             else:
-                # will render model page w/ resetStorageFlag = 1
-                print('In the __model_page() method in the else branch for a GET request...')
-                print(f'In __model_page() method, the currentArray= {currentArray}')
-                return backendClass.render_model_page(pageNumber, currentArray)
+                return backendClass.render_model_page(pageNumber, currentArray, 1)
 
-        #     else:
-        #         raise NameError("operation_used param is not valid")
-
-        #     if request_param.form.get(model.searchItemsKey):
-        #         #searching
-        #         print("IN SEARCHING")
-        #         # model.searchIsActive = True
-        #         NEW_ARR = self.__get_search(request_param.form.get(model.searchItemsKey), curr_arr)
-        #         # model.modifiedArray = NEW_ARR
-        #         return model.render_model_page(page_number, NEW_ARR)
-
-        #     elif request_param.form.get(model.sortingHiddenFieldKey):  # If this field in the posted form is set, then the user has clicked one of the sorting buttons
-        #         print("IN SORTING")
-        #         model.sortingAttribute = request_param.form.get(model.sortCriteriaMenuKey)
-
-        #         if model.filterIsActive or model.searchIsActive:
-        #             sortThisArray = model.modifiedArray
-        #         else:
-        #             sortThisArray = curr_arr
-        #         if model.sortingAttribute is None:
-        #             model.modifiedArray = sortThisArray
-        #         else: 
-        #             if request_param.form.get(model.sortingHiddenFieldKey) == 'ascending':
-        #                 model.sortingDirection = 'ascending'
-        #                 model.modifiedArray = sorted(sortThisArray,
-        #                                             key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
-        #                                             reverse=False)
-        #             elif request_param.form.get(model.sortingHiddenFieldKey) == 'descending':
-        #                 model.sortingDirection = 'descending'
-        #                 model.modifiedArray = sorted(sortThisArray,
-        #                                             key=lambda modelObj: getattr(modelObj, model.sortingAttribute),
-        #                                             reverse=True)
-        #             model.sortIsActive = True
-
-        #         return model.render_model_page(page_number, model.modifiedArray)
-
-        #     elif request_param.form.get('resetHiddenField') == 'resetClicked':  # If this field is set, then the user has clicked the Reset button
-        #         print("RESETTING")
-        #         model.filterIsActive = False
-        #         model.sortIsActive = False
-        #         model.searchIsActive = False
-        #         return model.render_model_page(page_number, curr_arr)
+        else: #  Not a POST or GET request
+            raise NameError("Not a supported Flask request. Only GET and POST supported!")
 
         #     else:  # filter form was submitted using the Filter button
         #         print("FILTERING")
@@ -237,12 +208,6 @@ class ModelFacade:
 
         #         model.modifiedArray = modifiedArray
         #         return model.render_model_page(page_number, modifiedArray)
-
-        # elif request_param.method == 'GET':
-        #     if model.filterIsActive or model.sortIsActive or model.searchIsActive:
-        #         return model.render_model_page(page_number, model.modifiedArray)
-        #     else:  # else, render template using the original global array with every Exercise object
-        #         return model.render_model_page(page_number, curr_arr)
 
     def __instance_page(self, modelType, instanceObject, db):
         """

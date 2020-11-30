@@ -1,10 +1,10 @@
 from flask import render_template
-from templates.backend.model_backend import self
+from templates.backend.model_backend import ModelBackend
 from templates.models.channel import Channel
 import numpy as np
 
 
-class ChannelBackend(self, Channel):
+class ChannelBackend(ModelBackend, Channel):
     searchItemsKey = 'channelsSearchItems'
     sortingHiddenFieldKey = 'channelsSortingHiddenField'
     sortCriteriaMenuKey = 'channelsSortCriteriaMenu'
@@ -31,6 +31,8 @@ class ChannelBackend(self, Channel):
                 "keywords": channelDocument['keywords'],
                 "exerciseSubcategory": channelDocument['exerciseSubcategory']
             }))
+        # Refactor this later, but try to ensure ModelBackend global arrays are intialized for now
+        ModelBackend.CHANNEL_ARRAY = channel_array
         return channel_array
 
     @staticmethod
@@ -62,73 +64,66 @@ class ChannelBackend(self, Channel):
                 "exerciseSubcategory": channelDocument['exerciseSubcategory']
             }))
         
-        self.CHANNEL_ARRAY = channel_array
+        ModelBackend.CHANNEL_ARRAY = channel_array
 
     @staticmethod
     def get_related_objects_for_instance(id, db):
-        attributes = self.find_current_instance_object(id, db.channels, ('exerciseCategory', 'exerciseSubcategory'))
+        attributes = ModelBackend.find_current_instance_object(id, db.channels, ('exerciseCategory', 'exerciseSubcategory'))
         category = attributes[0]
         subcategory = attributes[1]
 
-        relatedExercises = self.find_related_objects_based_on_subcategory(subcategory, db.exercises, ['category', category], ['subcategory', subcategory], self.EXERCISES_ARRAY)
+        relatedExercises = ModelBackend.find_related_objects_based_on_subcategory(subcategory, db.exercises, ['category', category], ['subcategory', subcategory], ModelBackend.EXERCISES_ARRAY)
 
         # Use the first related exercise object to determine what equipmentCategory to use when querying equipments collection
         topExerciseDoc = db.exercises.find_one({'_id': relatedExercises[0].id})
         if topExerciseDoc:
             equipmentCategory = topExerciseDoc['equipment'][0]  # Select the first equipment term in the equipment array attribute to use
 
-        relatedEquipments = self.find_related_objects(db.equipments.find({'equipmentCategory': equipmentCategory}), self.EQUIPMENT_ARRAY)
-        relatedChannels = self.find_related_objects_based_on_subcategory(subcategory, db.channels, ['exerciseCategory', category], ['exerciseSubcategory', subcategory], self.CHANNEL_ARRAY)
+        relatedEquipments = ModelBackend.find_related_objects(db.equipments.find({'equipmentCategory': equipmentCategory}), ModelBackend.EQUIPMENT_ARRAY, ModelBackend.EQUIPMENT_ARRAY)
+        relatedChannels = ModelBackend.find_related_objects_based_on_subcategory(subcategory, db.channels, ['exerciseCategory', category], ['exerciseSubcategory', subcategory], ModelBackend.CHANNEL_ARRAY)
 
         return [relatedExercises, relatedEquipments, relatedChannels]
 
     @staticmethod
-    def filter(db, requestForm):
+    def filter(db, filterRequestForm, currentArray):
         # Setting up to filter
-        selectedSubscriberRange = requestForm.getlist("checkedSubscriberRange")
-        selectedTotalViewsRange = requestForm.getlist("checkedTotalViewsRange")
-        selectedVideosRange = requestForm.getlist("checkedVideosRange")
-        # NOTE checked was selected -- make sure it works
-
-        if len(selectedSubscriberRange) == 0 and len(selectedTotalViewsRange) == 0 and len(selectedVideosRange) == 0:
-            ChannelBackend.searchIsActive = True
-        
-        tempModifiedArray = []
-        if ChannelBackend.searchIsActive:
-            tempModifiedArray = ChannelBackend.modifiedArray
-
-        # Beginning to implement filter
-        filteredChannels = []
+        selectedSubscriberRange = filterRequestForm.getlist("checkedSubscriberRange")
+        selectedTotalViewsRange = filterRequestForm.getlist("checkedTotalViewsRange")
+        selectedVideosRange = filterRequestForm.getlist("checkedVideosRange")
 
         # Query the entire exercises collection on all selected ranges and append matching Exercise objects
+        filteredChannels = []
         for subscriberRangeString in selectedSubscriberRange:
             subscriberRangeList = subscriberRangeString.split(" ")
-            filteredChannels = np.array(self.find_related_objects(db.channels.find({'subscriberCount': {'$gte': int(subscriberRangeList[0]), '$lt': int(subscriberRangeList[1])}}), self.CHANNEL_ARRAY))
+            filteredChannels += ModelBackend.find_related_objects(db.channels.find({'subscriberCount': {'$gte': int(subscriberRangeList[0]), '$lt': int(subscriberRangeList[1])}}), currentArray, ModelBackend.CHANNEL_ARRAY)
 
         # Query the entire exercises collection on selected ranges and append matching Exercise objects
+        # UNION OF PREVIOUS FILTER RESULTS
         for totalViewsString in selectedTotalViewsRange:
             totalViewsList = totalViewsString.split(" ")
-            filteredChannels = np.append(filteredChannels, np.array(self.find_related_objects(db.channels.find({'viewCount': {'$gte': int(totalViewsList[0]), '$lt': int(totalViewsList[1])}}), self.CHANNEL_ARRAY)))
+            filteredChannels += ModelBackend.find_related_objects(db.channels.find({'viewCount': {'$gte': int(totalViewsList[0]), '$lt': int(totalViewsList[1])}}), currentArray, ModelBackend.CHANNEL_ARRAY)
 
         # Query the entire exercises collection on each of the selected ranges and append matching Exercise objects
+        # UNION OF PREVIOUS FILTER RESULTS
         for videoRangeString in selectedVideosRange:
             videoRangeList = videoRangeString.split(" ")
-            filteredChannels = np.append(filteredChannels, np.array(self.find_related_objects(db.channels.find({'videoCount': {'$gte': int(videoRangeList[0]), '$lt': int(videoRangeList[1])}}), self.CHANNEL_ARRAY)))
+            filteredChannels += ModelBackend.find_related_objects(db.channels.find({'videoCount': {'$gte': int(videoRangeList[0]), '$lt': int(videoRangeList[1])}}), currentArray, ModelBackend.CHANNEL_ARRAY)
 
         # Return all of filtered Exercise objects
-        return tempModifiedArray, filteredChannels
+        return list(set(filteredChannels))
 
     @staticmethod
-    def render_model_page(pageNumber, currentArray):
+    def render_model_page(pageNumber, currentArray, resetLocalStorageFlag):
         print(f'Before pagination, the currentArray is: {currentArray}')
-        start, end, numPages = self.paginate(pageNumber, currentArray)
+        start, end, numPages = ModelBackend.paginate(pageNumber, currentArray)
         print(f'After pagination, the currentArray is: {currentArray}')
         return render_template('channels.html',
                                currentChannelArray=currentArray,
                                start=start,
                                end=end,
                                pageNumber=pageNumber,
-                               numPages=numPages)
+                               numPages=numPages,
+                               resetLocalStorageFlag=resetLocalStorageFlag)
 
     @staticmethod
     def render_instance_page(instance_obj, related_objects):

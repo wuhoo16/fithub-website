@@ -9,7 +9,8 @@ class ListConverter(BaseConverter):
     def to_python(self, value):
         splitStringArray = value.split('+%+')
         if len(splitStringArray) == 0:
-            print('While converting the list parameter from frontend to backed with the ListConverter, empty array given.')
+            print(
+                'While converting the list parameter from frontend to backed with the ListConverter, empty array given.')
             return []
         elif splitStringArray[0] == 'INITIALIZE':
             print('In elif branch...')
@@ -34,7 +35,8 @@ CHANNEL_INSTANCE_URL_TEMPLATE = '/channelinstance/{}'
 # client = MongoClient("mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase3Database?retryWrites=true&w=majority")
 # INITIALIZE_DATABASE = client.phase3Database
 
-client = MongoClient("mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase2Database?retryWrites=true&w=majority")
+client = MongoClient(
+    "mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase2Database?retryWrites=true&w=majority")
 DATABASE = client.phase2Database
 
 # GLOBAL ARRAYS AND MODEL_FACADE_INSTANCE (should only have 1)
@@ -42,7 +44,6 @@ EXERCISES_ARRAY = []
 EQUIPMENT_ARRAY = []
 CHANNEL_ARRAY = []
 MODEL_FACADE_INSTANCE = None
-
 
 # Flask and view methods for home, models, model instances, and about pages below
 # ====================================================================================================================
@@ -73,11 +74,11 @@ def exercises(pageNumber, currentArray, operationUsed):
         currentArray = EXERCISES_ARRAY
 
     return MODEL_FACADE_INSTANCE.render_model_page(modelType="exercise",
-                                         pageNumber=pageNumber,
-                                         flaskRequest=request,
-                                         db=DATABASE,
-                                         currentArray=currentArray,
-                                         operationUsed=operationUsed)
+                                                   pageNumber=pageNumber,
+                                                   flaskRequest=request,
+                                                   db=DATABASE,
+                                                   currentArray=currentArray,
+                                                   operationUsed=operationUsed)
 
 
 # equipments model page
@@ -87,11 +88,11 @@ def equipments(pageNumber, currentArray, operationUsed):
     if currentArray[0] == 'INITIALIZE':
         currentArray = EQUIPMENT_ARRAY
     return MODEL_FACADE_INSTANCE.render_model_page(modelType="equipment",
-                                         pageNumber=pageNumber,
-                                         flaskRequest=request,
-                                         db=DATABASE,
-                                         currentArray=currentArray,
-                                         operationUsed=operationUsed)
+                                                   pageNumber=pageNumber,
+                                                   flaskRequest=request,
+                                                   db=DATABASE,
+                                                   currentArray=currentArray,
+                                                   operationUsed=operationUsed)
 
 
 # channels model page
@@ -101,11 +102,12 @@ def channels(pageNumber, currentArray, operationUsed):
     if currentArray[0] == 'INITIALIZE':
         currentArray = CHANNEL_ARRAY
     return MODEL_FACADE_INSTANCE.render_model_page(modelType="channel",
-                                         pageNumber=pageNumber,
-                                         flaskRequest=request,
-                                         db=DATABASE,
-                                         currentArray=currentArray,
-                                         operationUsed=operationUsed)
+                                                   pageNumber=pageNumber,
+                                                   flaskRequest=request,
+                                                   db=DATABASE,
+                                                   currentArray=currentArray,
+                                                   operationUsed=operationUsed)
+
 
 # All view methods for INSTANCE pages are defined below:
 # ==================================================================================================================
@@ -131,7 +133,8 @@ def setup():
     # Ensure main.py has a initialized version of the 3 global model arrays
     global EXERCISES_ARRAY, EQUIPMENT_ARRAY, CHANNEL_ARRAY, MODEL_FACADE_INSTANCE
     MODEL_FACADE_INSTANCE = ModelFacade(DATABASE)
-    print(f'In setup(), instance method to get the instance EXERCISE ARRAY: { MODEL_FACADE_INSTANCE.get_exercises_array()}')
+    print(
+        f'In setup(), instance method to get the instance EXERCISE ARRAY: {MODEL_FACADE_INSTANCE.get_exercises_array()}')
     EXERCISES_ARRAY = MODEL_FACADE_INSTANCE.get_exercises_array()
     EQUIPMENT_ARRAY = MODEL_FACADE_INSTANCE.get_equipment_array()
     CHANNEL_ARRAY = MODEL_FACADE_INSTANCE.get_channel_array()
@@ -150,4 +153,3 @@ if __name__ == "__main__":
     # ================================================================================
     # MODEL_FACADE_INSTANCE.clean_database(INITIALIZE_DATABASE)
     app.run(host="localhost", port=8080, debug=True, use_reloader=True)
-

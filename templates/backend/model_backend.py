@@ -3,7 +3,7 @@ from templates.backend.model_interface import ModelBackendInterface
 import math
 
 
-class self(ModelBackendInterface, ABC):
+class ModelBackend(ModelBackendInterface, ABC):
     # All are initialized from our mongoDB the first time the homepage is visited
     EXERCISES_ARRAY = []
     EQUIPMENT_ARRAY = []
@@ -54,14 +54,22 @@ class self(ModelBackendInterface, ABC):
         else: # exerciseSubcategory is not None
             relatedCursor = collection.find({valid_input[0]: valid_input[1]})
 
-        return self.find_related_objects(relatedCursor, arr)
+        return ModelBackend.find_related_objects(relatedCursor, arr, arr)
     
     @staticmethod
-    def find_related_objects(relatedCursor, arr):
+    def find_related_objects(relatedCursor, currentArray, globalArray):
         relatedInstances = []
+
+        # Only allow database results if it is contained in the passed array (may be a subset of the collection)
+        validArrayIndexSet = set()
+        for obj in currentArray:
+            validArrayIndexSet.add(obj.arrayIndex)
+        print(f'The validArrayIndexSet contains: {validArrayIndexSet}')
+
         for relatedDoc in relatedCursor:
-            relatedInstances.append(arr[relatedDoc['arrayIndex']])
-        return relatedInstances
+            if relatedDoc['arrayIndex'] in validArrayIndexSet:
+                relatedInstances.append(globalArray[relatedDoc['arrayIndex']])
+        return list(set(relatedInstances))
 
     @staticmethod
     def paginate(pageNumber, currentArray):

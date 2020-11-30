@@ -1,4 +1,4 @@
-<!-- Variables accessible with Jinja 2: currentEquipmentArray, start, end, pageNumber, numPages-->
+<!-- Variables accessible with Jinja 2: currentEquipmentArray, start, end, pageNumber, numPages, resetLocalStorageFlag-->
 
 {% extends 'base.html' %}
 
@@ -9,6 +9,7 @@
 
 {% block body %}
 <div class="exercise-div container-fluid">
+    <meta id="resetLocalStorageFlag" data-flag="{{ resetLocalStorageFlag }}">
     <div class="jumbotron-exercise jumbotron jumbotron-fluid text-center">
         <h1 class="modelHeader">Find your gear</h1>
         <p class="modelDescription">Check out our selection of fitness equipment.</p>
@@ -47,7 +48,6 @@
                     <label><input type="checkbox" id='equipmentsOption9' name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
                 </li>
                 <li style="text-align: center; margin-top: 1rem; margin-bottom: 110px;">
-                    <input type="hidden" id='equipmentsResetHiddenField' name='resetHiddenField' value="">
                     <button class="filter-button btn btn-outline-light" id="filterButton" type="button" name="Filter" onclick="verifyCheckBoxes('equipmentsFilterForm')">Filter</button>
                 </li>
             </ul>
@@ -98,7 +98,7 @@
                 <div id="menuLinks"></div>
             </div>
         </div>
-        <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn" onclick="resetCheckboxState('equipmentsFilterForm', 'equipmentsResetHiddenField')">Reset All</button>
+        <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn" onclick="resetFreshState()">Reset All</button>
     </div>
     
     <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
@@ -109,6 +109,7 @@
         {% for i in range(numRows) %}
             <div class="row justify-content-center" id="row {{ i|string }}">
             {% for offset in range(3) %}
+                <div class="col-md-4 p-4">
                     <div class="card card-style h-100 pt-4">
                     {% if currentEquipmentArray[start + 3*i+offset].replacePictureFlag %}
                         <img class="card-img-top card-image-style img-fluid mx-auto" src="/../static/{{ currentEquipmentArray[start+3*i+offset].picture }}" alt="{{ currentEquipmentArray[start + 3*i+offset].name }}">
@@ -127,6 +128,7 @@
                             <a href="{{ url_for('equipment_instance', arrayIndex=currentEquipmentArray[start + 3*i+offset].arrayIndex) }}" class="stretched-link" id="instancePageLink_{{ start + 3*i+offset }}"></a>
                         </div>
                     </div>
+                </div>
             {% endfor %}
             </div>
         {% endfor %}
@@ -134,6 +136,7 @@
         {% if remainder > 0 %}
             <div class="row" id="bottomRow">
             {% for i in range(-remainder, 0) %}
+                <div class="col-md-4 p-4">
                     <div class="card card-style h-100 pt-4">
                         {% if currentEquipmentArray[end + 1 + i].replacePictureFlag %}
                             <img class="card-img-top card-image-style img-fluid mx-auto" src="/../static/{{ currentEquipmentArray[end + 1 + i].picture }}" alt="{{ currentEquipmentArray[end + 1 + i].name }}">
@@ -154,6 +157,7 @@
                     </div>
                 </div>
             {% endfor %}
+            </div>
         {% endif %}
         </div>
 
