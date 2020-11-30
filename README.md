@@ -150,6 +150,9 @@ Website Link: [FitHub](https://imbdproject.wn.r.appspot.com/)
         - Testing sorting and filtering for all 3 models: Actual Completion Hours: 3
         - Testing JavaScript functions: Estimated Completion Hours: 6
         - Testing JavaScript functions: Actual Completion Hours: 5
+      - Phase 4:
+        - Test cases for issues found in Phase 3: Estimated Completion Hours: 4
+        - Test cases for issues found in Phase 3: Actual Completion Hours: 2
 
 
   Michelle Wen
