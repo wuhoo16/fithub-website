@@ -61,43 +61,43 @@
     {% endfor %}
     <meta id="currentEquipmentArrayData" data-arr='{{dataArr}}'/>
     <div class="container-fluid" style="display: inline-block;">
-        <button class="filter-open-button" id="openNavButton" onclick="openNav()">Filter ></button>
+        {% if currentEquipmentArray | length != 0 %}
+            <button class="filter-open-button" id="openNavButton" onclick="openNav()">Filter ></button>
 
-        <!-- Sorting Dropdown -->
-        {% if currentEquipmentArray|length > 0 %}
-        <form class="d-inline-block sorting-form" id="equipmentsSortForm" action="{{ url_for('equipments', pageNumber=1, currentArray=currentEquipmentArray, operationUsed='Sort') }}" method="post">
-            <label for="equipmentsSortCriteriaMenu" id="equipmentsSortMenuLabel" style="color: white; margin-top: 1rem;"></label>
-            <select class="sort-form-style" id="equipmentsSortCriteriaMenu" name="equipmentsSortCriteriaMenu">
-                <option value="select" id="select" selected disabled>Sort by</option>
-                <option class="select-option" value="name">Name</option>
-                <option class="select-option" value="price">Price</option>
-                <option class="select-option" value="category">Category</option>
-            </select>
-            <input type="hidden" id='equipmentsSortingHiddenField' name='equipmentsSortingHiddenField' value="">
-            <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="submitSortForm('equipmentsSortForm', 'equipmentsSortingHiddenField', 'ascending');">
-            <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" id="descendBtn" onclick="submitSortForm('equipmentsSortForm', 'equipmentsSortingHiddenField', 'descending');">
-        </form>
-        {% endif %}
-
-        <!--Search Bar-->
-        <div class="dropdown d-inline-block">
-            <form id="equipmentsSearchForm" action="{{ url_for('equipments', pageNumber=1, currentArray=currentEquipmentArray, operationUsed='Search') }}" method="post" style="display: none;">
-                <input id="equipmentsSearchItems" name="equipmentsSearchItems">
+            <!-- Sorting Dropdown -->
+            <form class="d-inline-block sorting-form" id="equipmentsSortForm" action="{{ url_for('equipments', pageNumber=1, currentArray=currentEquipmentArray, operationUsed='Sort') }}" method="post">
+                <label for="equipmentsSortCriteriaMenu" id="equipmentsSortMenuLabel" style="color: white; margin-top: 1rem;"></label>
+                <select class="sort-form-style" id="equipmentsSortCriteriaMenu" name="equipmentsSortCriteriaMenu">
+                    <option value="select" id="select" selected disabled>Sort by</option>
+                    <option class="select-option" value="name">Name</option>
+                    <option class="select-option" value="price">Price</option>
+                    <option class="select-option" value="category">Category</option>
+                </select>
+                <input type="hidden" id='equipmentsSortingHiddenField' name='equipmentsSortingHiddenField' value="">
+                <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="submitSortForm('equipmentsSortForm', 'equipmentsSortingHiddenField', 'ascending');">
+                <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" id="descendBtn" onclick="submitSortForm('equipmentsSortForm', 'equipmentsSortingHiddenField', 'descending');">
             </form>
-            <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
-            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
-                <div id="menuItems">
-                    {% for obj in currentEquipmentArray %}
-                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
-                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Price: {{ obj.price }}</a>
-                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Category: {{ obj.equipmentCategory }}</a>
-                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Seller Location: {{ obj.location }}</a>
-                    {% endfor %}
+
+            <!--Search Bar-->
+            <div class="dropdown d-inline-block">
+                <form id="equipmentsSearchForm" action="{{ url_for('equipments', pageNumber=1, currentArray=currentEquipmentArray, operationUsed='Search') }}" method="post" style="display: none;">
+                    <input id="equipmentsSearchItems" name="equipmentsSearchItems">
+                </form>
+                <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
+                <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
+                    <div id="menuItems">
+                        {% for obj in currentEquipmentArray %}
+                            <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
+                            <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Price: {{ obj.price }}</a>
+                            <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Category: {{ obj.equipmentCategory }}</a>
+                            <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Seller Location: {{ obj.location }}</a>
+                        {% endfor %}
+                    </div>
+                    <div id="empty" class="dropdown-header">No items found</div>
+                    <div id="menuLinks"></div>
                 </div>
-                <div id="empty" class="dropdown-header">No items found</div>
-                <div id="menuLinks"></div>
             </div>
-        </div>
+        {% endif %}
         <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn" onclick="resetFreshState()">Reset All</button>
     </div>
     

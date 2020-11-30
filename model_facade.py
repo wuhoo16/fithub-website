@@ -27,9 +27,8 @@ class ModelFacade:
     def get_channel_array(self):
         return self.CHANNEL_ARRAY
 
-    # TODO: WE CAN TECHNICALLY REMOVE BOTH DATABASE METHODS BELOW... REDUNDANT CODE AS OUR MONGODB DRIVER
     # All methods to communicate with the mongoDB remote database is defined below including:
-    # 1.) setup_database(db, *args): Used to call the APIs and initialize all 3 model collections
+    # 1.) setup_database(db, modelType=Hone): Used to call the APIs and initialize all 3 model collections
     # 2.) clean_database(db):
     # ======================================================================================================
     @staticmethod

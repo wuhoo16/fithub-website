@@ -89,46 +89,48 @@
     {% endfor %}
     <meta id="currentChannelArrayData" data-arr='{{dataArr}}'/>
     <div class="container-fluid" style="display: inline-block;">
-        <button class="filter-open-button" onclick="openNav()">Filter ></button>
+        {% if currentChannelArray | length != 0 %}
+            <button class="filter-open-button" onclick="openNav()">Filter ></button>
 
-        <!-- Sorting Dropdown -->
-        <form class="d-inline-block sorting-form" id="channelsSortForm" action="{{ url_for('channels', pageNumber=1, currentArray=currentChannelArray, operationUsed='Sort') }}" method="post">
-            <label for="channelsSortCriteriaMenu" id="channelsSortMenuLabel" style="color: white; margin-top: 1rem;"></label>
-            <select class="sort-form-style" id="channelsSortCriteriaMenu" name="channelsSortCriteriaMenu">
-                <option value="select" id="select" selected disabled>Sort by</option>
-                <option class="select-option" value="name">Name</option>
-                <option class="select-option" value="subscriberCount">Subscriber Count</option>
-                <option class="select-option" value="viewCount">View Count</option>
-                <option class="select-option" value="videoCount">Video Count</option>
-            </select>
-            <input type="hidden" id='channelsSortingHiddenField' name='channelsSortingHiddenField' value="">
-            <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="sortAscending()">
-            <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending"id="descendBtn" onclick="sortDescending()">
-        </form>
-
-        <!--Search Bar-->
-        <div id="searchBarContainer" class="dropdown d-inline-block" tabindex="-1">
-            <form id="channelsSearchForm" action="{{ url_for('channels', pageNumber=1, currentArray=currentChannelArray, operationUsed='Search') }}" method="post" style="display: none;">
-                <input id="channelsSearchItems" name="channelsSearchItems">
+            <!-- Sorting Dropdown -->
+            <form class="d-inline-block sorting-form" id="channelsSortForm" action="{{ url_for('channels', pageNumber=1, currentArray=currentChannelArray, operationUsed='Sort') }}" method="post">
+                <label for="channelsSortCriteriaMenu" id="channelsSortMenuLabel" style="color: white; margin-top: 1rem;"></label>
+                <select class="sort-form-style" id="channelsSortCriteriaMenu" name="channelsSortCriteriaMenu">
+                    <option id="select" value="select" selected disabled>Sort by</option>
+                    <option class="select-option" value="name">Name</option>
+                    <option class="select-option" value="subscriberCount">Subscriber Count</option>
+                    <option class="select-option" value="viewCount">View Count</option>
+                    <option class="select-option" value="videoCount">Video Count</option>
+                </select>
+                <input type="hidden" id='channelsSortingHiddenField' name='channelsSortingHiddenField' value="">
+            <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'ascending');">
+            <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending"id="descendBtn" onclick="submitSortForm('channelsSortForm', 'channelsSortingHiddenField', 'descending');">
             </form>
-            <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" name="searchBar" type="search" placeholder="Search"/>
-            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
-                <div id="menuItems">
-                    {% for obj in currentChannelArray %}
-                        <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
-                        {% if obj.description|length == 0 %}
-                            <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: No description provided.</a>
-                        {% else %}
-                            <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: {{ obj.description }}</a>
-                        {% endif %}
-                        <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Subscribers: {{ obj.subscriberCount }}</a>
-                        <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Total Views: {{ obj.viewCount }}</a>
-                        <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Videos: {{ obj.videoCount }}</a>
-                    {% endfor %}
+
+            <!--Search Bar-->
+            <div id="searchBarContainer" class="dropdown d-inline-block" tabindex="-1">
+                <form id="channelsSearchForm" action="{{ url_for('channels', pageNumber=1, currentArray=currentChannelArray, operationUsed='Search') }}" method="post" style="display: none;">
+                    <input id="channelsSearchItems" name="channelsSearchItems">
+                </form>
+                <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" name="searchBar" type="search" placeholder="Search"/>
+                <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
+                    <div id="menuItems">
+                        {% for obj in currentChannelArray %}
+                            <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
+                            {% if obj.description|length == 0 %}
+                                <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: No description provided.</a>
+                            {% else %}
+                                <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: {{ obj.description }}</a>
+                            {% endif %}
+                            <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Subscribers: {{ obj.subscriberCount }}</a>
+                            <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Total Views: {{ obj.viewCount }}</a>
+                            <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Videos: {{ obj.videoCount }}</a>
+                        {% endfor %}
+                    </div>
+                    <div id="empty" class="dropdown-header">No items found</div>
                 </div>
-                <div id="empty" class="dropdown-header">No items found</div>
             </div>
-        </div>
+        {% endif %}
          <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn" onclick="resetFreshState()">Reset All</button>
     </div>
 
@@ -227,12 +229,6 @@
         let items = document.getElementsByClassName("dropdown-item");
         var data = $('#currentChannelArrayData').data().arr;
         var dataArr = processData(); //holds current array
-        
-        function setup() {
-             console.log(dataArr);
-            $("#noInstances").hide();
-        }
-        setup();
 
         function filterSearchDropdown() {
             console.log("entering filter");
@@ -302,7 +298,7 @@
                         if ($(items[i]).is(":visible")) {
                             currVal = $("#channelsSearchItems").val();
                             if (currVal.length != 0) currVal = currVal + "|";
-                            $("#channelsSearchItems").val(currVal + (items[i].innerHTML.split("</b>")[0]).replace("<b>", ""));
+                            $("#channelsSearchItems").val(currVal + (items[i].innerHTML.split("</b>")[0].replace(/&amp;/g, "&")).replace("<b>", ""));
                         }
                     }
                     $("#channelsSearchForm").submit();

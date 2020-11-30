@@ -76,10 +76,10 @@
     <meta id="currentExercisesArrayData" data-arr='{{dataArr}}'/>
     <div class="container-fluid" style="display: inline-block;">
         <!-- Use any element to open the sidenav -->
-        <button class="filter-open-button" onclick="openNav()">Filter ></button>
+        {% if currentExercisesArray | length != 0 %}
+             <button class="filter-open-button" onclick="openNav()">Filter ></button>
 
         <!-- Sorting Dropdown -->
-        {% if currentExercisesArray|length != 0 %}
         <form class="d-inline-block sorting-form" id="exercisesSortForm" action="{{ url_for('exercises', pageNumber=1, currentArray=currentExercisesArray, operationUsed='Sort') }}" method="post">
             <label for="exercisesSortCriteriaMenu" id="exercisesSortMenuLabel" style="color: white; margin-top: 1rem;"></label>
             <select class="sort-form-style" id="exercisesSortCriteriaMenu" name="exercisesSortCriteriaMenu">
@@ -92,7 +92,6 @@
             <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="submitSortForm('exercisesSortForm', 'exercisesSortingHiddenField', 'ascending');">
             <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" id="descendBtn" onclick="submitSortForm('exercisesSortForm', 'exercisesSortingHiddenField', 'descending');">
         </form>
-        {% endif %}
 
         <!--Search Bar-->
         <div class="dropdown d-inline-block">
@@ -113,6 +112,7 @@
                 <div id="menuLinks"></div>
             </div>
         </div>
+        {% endif %}
         <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn" onclick="resetFreshState()">Reset All</button>
     </div>
     

@@ -7,9 +7,9 @@ SEARCH_ENGINE_ID = '598e742e6c308d255'
 
 BLACKLIST = {'Axe Hold', 'Cycling', 'Upper Body', 'Upper External Oblique', 'Chin-ups', 'Wall Pushup'}
 RENAME_DICT = {'Pushups': 'Chest Push-ups', 'Push Ups': 'Push-ups', 'Snach': 'Snatch',
-                        "Squat Thrust": "Burpee", 'Thruster': 'Barbell Thruster Squats'}
+               "Squat Thrust": "Burpee", 'Thruster': 'Barbell Thruster Squats'}
 SZ_BAR_TYPOS = {'French Press (skullcrusher) SZ-bar', 'Biceps Curls With SZ-bar', 'Upright Row, SZ-bar',
-                        'Reverse Bar Curl'}
+                'Reverse Bar Curl'}
 GYM_MAT_SET = {'Leg Raises, Lying', 'Side Crunch', 'Superman'}
 DESCRIPTION = {
     'Dumbbell Lunges Standing': "Stand up straight with a dumbbell in each hand. Hand your arms at your sides. Palms should face the thighs (hammer grip). Feet should be a little less than shoulder-width apart. Take a big step forward with either leg, bending at the knee until the front thigh approaches parallel to the ground, landing on the heel. Inhale as you go down. The rear leg is bent at the knee and balanced on the toes. For the leg you step forward with, don't let the knee go past the tip of the toes. Step back to your standing starting position while exhaling. Repeat the motion with the other leg.",
@@ -56,13 +56,14 @@ class ExerciseAPI:
         image_URL = 'https://wger.de/api/v2/exerciseimage/?limit=204'
         comment_URL = 'https://wger.de/api/v2/exercisecomment/?limit=113'
 
-        exercise_data, category_data, muscle_data, equipment_data, image_data, comment_data = ExerciseAPI.__get_json(exercise_URL,
-                                                                                                    category_URL,
-                                                                                                    muscle_URL,
-                                                                                                    equipment_URL,
-                                                                                                    image_URL,
-                                                                                                    comment_URL, data,
-                                                                                                    headers)
+        exercise_data, category_data, muscle_data, equipment_data, image_data, comment_data = ExerciseAPI.__get_json(
+            exercise_URL,
+            category_URL,
+            muscle_URL,
+            equipment_URL,
+            image_URL,
+            comment_URL, data,
+            headers)
         results = exercise_data["results"]
         for x in results:
             if x["name"] and x["description"] and x["category"] and x["equipment"]:  # only exercises with complete info
@@ -111,7 +112,8 @@ class ExerciseAPI:
                         if result["id"] == e:
                             equipmentName = result["name"]
                             equipment_list.append(equipmentName)
-                if len(equipment_list) == 0:  # default equipment is Exercise mat if there is no equipment attribute returned by API
+                if len(
+                        equipment_list) == 0:  # default equipment is Exercise mat if there is no equipment attribute returned by API
                     equipment_list.append(DEFAULT_EXERCISE_MAT_STRING)
 
                 # get image URL using exercise
@@ -142,16 +144,16 @@ class ExerciseAPI:
                     subcategory = ExerciseAPI.__return_legs_subcategory(x['name'])
 
                 exercise = Exercise(**{
-                    "exercise_id": exerciseID, 
-                    "arrayIndex": exercise_counter, 
-                    "name": x["name"], 
-                    "description": description, 
-                    "category": category_name, 
+                    "exercise_id": exerciseID,
+                    "arrayIndex": exercise_counter,
+                    "name": x["name"],
+                    "description": description,
+                    "category": category_name,
                     "subcategory": subcategory,
                     "muscles": muscles_string,
-                    "muscles_secondary": sec_muscles_string, 
+                    "muscles_secondary": sec_muscles_string,
                     "equipment": equipment_list,
-                    "images": images, 
+                    "images": images,
                     "comments": comments
                 })
 
@@ -170,7 +172,6 @@ class ExerciseAPI:
                     db.exercises.insert_one(exercise.to_dictionary())
                     exercise_counter += 1
 
-
     # All helper methods for creating HTTP requests, cleaning, filtering, or executing APIs defined below
     # ======================================================================================================================
     @staticmethod
@@ -186,7 +187,6 @@ class ExerciseAPI:
         image = requests.get(url=image_URL, data=data, headers=headers).json()
         comment = requests.get(url=comment_URL, data=data, headers=headers).json()
         return exercise, category, muscle, equipment, image, comment
-
 
     @staticmethod
     def __should_add_exercise(exercise):
@@ -210,7 +210,6 @@ class ExerciseAPI:
         else:
             return True
 
-
     @staticmethod
     def __fix_SZ_bar_typo(exercise):
         """
@@ -230,7 +229,6 @@ class ExerciseAPI:
                 new_equipment_list.append(e)
         exercise.equipment = new_equipment_list
 
-
     @staticmethod
     def __convert_gym_mat_to_exercise_mat(exercise):
         """
@@ -240,7 +238,6 @@ class ExerciseAPI:
         :return: None
         """
         exercise.equipment = ['Exercise mat']
-
 
     @staticmethod
     def __return_arms_subcategory(exerciseName, muscles_string, sec_muscles_string):
@@ -261,7 +258,6 @@ class ExerciseAPI:
                 else:  # If exercise fits neither subcategory, return None
                     return None
 
-
     @staticmethod
     def __return_legs_subcategory(exerciseName):
         if 'Squat' in exerciseName:
@@ -271,7 +267,6 @@ class ExerciseAPI:
         else:  # There are 5 specific exercises that don't fall under Squats or Deadlift subcategory... check <https://github.com/UT-SWLab/TeamA13/issues/47> for more details
             return None
 
-
     @staticmethod
     def __clean_html(raw_html):
         """
@@ -280,7 +275,6 @@ class ExerciseAPI:
         clean = re.compile('<.*?>')
         clean_text = re.sub(clean, '', raw_html)
         return clean_text
-
 
     @staticmethod
     def __get_google_images(search_string, file_type=None):
@@ -304,7 +298,6 @@ class ExerciseAPI:
                 if ExerciseAPI.__imageURL_exists(image_link):
                     images.append(image_link)
         return images
-
 
     @staticmethod
     def __imageURL_exists(path):
