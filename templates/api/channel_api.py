@@ -14,7 +14,8 @@ BANNER_BLACKLIST = {'Jeremy Ethier', 'Squat University', 'Squat Bench Deadlift',
                             'Fit Now Official',
                             'Stephi Nguyen', 'Juicy Calves Fitness'}
 
-class ChannelAPI(APIInterface):
+
+class ChannelAPI:
     @staticmethod
     def initialize_mongoDB_collection(db):
         db.channels.drop()  # drop the old collection so we initialize a fresh collection

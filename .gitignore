@@ -17,5 +17,4 @@
 # Other local-testing or project-specific files
 /apiTesting.py
 /testMongoDB.py
-/dummy_pymongo.py
 /.gcloudignore
