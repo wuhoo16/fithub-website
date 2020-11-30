@@ -4,7 +4,6 @@ from templates.api.channel_api import ChannelAPI
 from templates.backend.exercise_backend import ExerciseBackend
 from templates.backend.equipment_backend import EquipmentBackend
 from templates.backend.channel_backend import ChannelBackend
-from templates.backend.model_backend import ModelBackend
 
 from flask import render_template
 
@@ -28,11 +27,12 @@ class ModelFacade:
     def get_channel_array(self):
         return self.CHANNEL_ARRAY
 
+    # TODO: WE CAN TECHNICALLY REMOVE BOTH DATABASE METHODS BELOW... REDUNDANT CODE AS OUR MONGODB DRIVER
     # All methods to communicate with the mongoDB remote database is defined below including:
     # 1.) setup_database(db, *args): Used to call the APIs and initialize all 3 model collections
     # 2.) clean_database(db):
     # ======================================================================================================
-    # @staticmethod
+    @staticmethod
     def setup_database(db, modelType=None):
         """
         Setup the remote mongoDB by initializing all the model collections passed into args argument. Note that if the 2nd parameter
@@ -56,7 +56,7 @@ class ModelFacade:
                 raise NameError("ERROR: " + modelType + " is not a valid model type! "
                                                         "Only 'exercises', 'equipments', or 'channels' are supported parameters to pass in.")
 
-    # @staticmethod
+    @staticmethod
     def clean_database(db):
         """
         Cleans the current phase's database by dropping all 3 model collections.

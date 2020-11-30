@@ -1,21 +1,12 @@
 from flask import render_template
 from templates.backend.model_backend import ModelBackend
 from templates.models.equipment import Equipment
-import numpy as np
 
 
 class EquipmentBackend(ModelBackend, Equipment):
-    # filterIsActive = False
-    # searchIsActive = False
-    # sortIsActive = False
-    # sortingAttribute = ""
-    # sortingDirection = ""
-
     searchItemsKey = 'equipmentsSearchItems'
     sortingHiddenFieldKey = 'equipmentsSortingHiddenField'
     sortCriteriaMenuKey = 'equipmentsSortCriteriaMenu'
-
-    # modifiedArray = []
 
     @staticmethod
     def load_and_return_model_array_from_db(db):
@@ -39,7 +30,7 @@ class EquipmentBackend(ModelBackend, Equipment):
                 "viewItemURL": equipmentDocument['linkToItem'],
                 "equipmentCategory": equipmentDocument['equipmentCategory']
             }))
-        # Refactor this later, but try to ensure ModelBackend global arrays are intialized for now
+        # TODO: Refactor this later, but try to ensure ModelBackend global arrays are initialized for now
         ModelBackend.EQUIPMENT_ARRAY = equipment_array
         return equipment_array
 
@@ -49,37 +40,12 @@ class EquipmentBackend(ModelBackend, Equipment):
         EquipmentBackend.sortIsActive = False
         EquipmentBackend.searchIsActive = False
 
-    @staticmethod
-    def initialize_array_from_mongo_database(db):
-        """
-        Return a python list of all Equipment objects.
-        :param db: The database to load all equipments from
-        :return: A python list of Equipment objects
-        """
-        equipment_array = []
-        equipmentsCursor = db.equipments.find()
-        for equipmentDocument in equipmentsCursor:
-            equipment_array.append(Equipment(**{
-                "itemId": equipmentDocument['id'],
-                "arrayIndex": equipmentDocument['arrayIndex'],
-                "title": equipmentDocument['name'],
-                "value": equipmentDocument['price'],
-                "categoryName": equipmentDocument['category'],
-                "location": equipmentDocument['location'],
-                "replacePictureFlag": equipmentDocument['replacePictureFlag'],
-                "galleryURL": equipmentDocument['picture'],
-                "viewItemURL": equipmentDocument['linkToItem'],
-                "equipmentCategory": equipmentDocument['equipmentCategory']
-            }))
-        
-        ModelBackend.EQUIPMENT_ARRAY = equipment_array
-
     @staticmethod    
     def get_related_objects_for_instance(id, db):
-        attributes = ModelBackend.find_current_instance_object(id, db.equipments, ['equipmentCategory'])
+        attributes = ModelBackend.get_current_instance_object_attributes(id, db.equipments, ['equipmentCategory'])
         equipmentCategory = attributes[0]
 
-        relatedExercises = ModelBackend.find_related_objects(db.exercises.find({'equipment': equipmentCategory}), ModelBackend.EXERCISES_ARRAY)
+        relatedExercises = ModelBackend.find_related_objects(db.exercises.find({'equipment': equipmentCategory}), ModelBackend.EXERCISES_ARRAY,  ModelBackend.EXERCISES_ARRAY)
 
         # Use the first related exercise object to determine what exercise category/subcategory to use when querying channels collection
         topExerciseDoc = db.exercises.find_one({'_id': relatedExercises[0].id})
@@ -123,6 +89,8 @@ class EquipmentBackend(ModelBackend, Equipment):
                                numPages=numPages,
                                resetLocalStorageFlag=resetLocalStorageFlag)
 
+    # TODO: IF ALL INSTANCE HTML PAGES HAVE THE SAME RED PARAM NAME, CAN PULL OUT THIS METHOD OUT FROM ALL MODEL TYPES INTO MODEL_BACKEND TO REDUCE REDUNDANT CODE (as of now fails since equipmentInstance.html uses equipmentObject instead of instanceObject)
+    # TODO: NEED TO ADD A 'modelType' string parameter to form the html file name DYNAMICALLY BEFORE PULLING IT OUT
     @staticmethod
-    def render_instance_page(instance_obj, related_objects):
-        return render_template('equipmentInstance.html', equipmentObject=instance_obj, relatedObjects=related_objects)
+    def render_instance_page(instanceObject, relatedObjects):
+        return render_template('equipmentInstance.html', equipmentObject=instanceObject, relatedObjects=relatedObjects)

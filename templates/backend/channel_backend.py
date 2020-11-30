@@ -1,7 +1,6 @@
 from flask import render_template
 from templates.backend.model_backend import ModelBackend
 from templates.models.channel import Channel
-import numpy as np
 
 
 class ChannelBackend(ModelBackend, Channel):
@@ -31,7 +30,7 @@ class ChannelBackend(ModelBackend, Channel):
                 "keywords": channelDocument['keywords'],
                 "exerciseSubcategory": channelDocument['exerciseSubcategory']
             }))
-        # Refactor this later, but try to ensure ModelBackend global arrays are intialized for now
+        # TODO: Refactor this later, but try to ensure ModelBackend global arrays are initialized for now
         ModelBackend.CHANNEL_ARRAY = channel_array
         return channel_array
 
@@ -42,33 +41,8 @@ class ChannelBackend(ModelBackend, Channel):
         ChannelBackend.searchIsActive = False
 
     @staticmethod
-    def initialize_array_from_mongo_database(db):
-        channel_array = []
-        channelCursor = db.channels.find()
-        for channelDocument in channelCursor:
-            channel_array.append(Channel(**{
-                "id": channelDocument['id'],
-                "arrayIndex": channelDocument['arrayIndex'],
-                "name": channelDocument['name'],
-                "description": channelDocument['description'],
-                "thumbnailURL": channelDocument['thumbnailURL'],
-                "subscriberCount": channelDocument['subscriberCount'],
-                "viewCount": channelDocument['viewCount'],
-                "videoCount": channelDocument['videoCount'],
-                "playlist": channelDocument['playlist'],
-                "topicIdCategories": channelDocument['topicIdCategories'],
-                "exerciseCategory": channelDocument['exerciseCategory'],
-                "unsubscribedTrailer": channelDocument['unsubscribedTrailer'],
-                "bannerUrl": channelDocument['bannerUrl'],
-                "keywords": channelDocument['keywords'],
-                "exerciseSubcategory": channelDocument['exerciseSubcategory']
-            }))
-        
-        ModelBackend.CHANNEL_ARRAY = channel_array
-
-    @staticmethod
     def get_related_objects_for_instance(id, db):
-        attributes = ModelBackend.find_current_instance_object(id, db.channels, ('exerciseCategory', 'exerciseSubcategory'))
+        attributes = ModelBackend.get_current_instance_object_attributes(id, db.channels, ('exerciseCategory', 'exerciseSubcategory'))
         category = attributes[0]
         subcategory = attributes[1]
 
@@ -125,6 +99,8 @@ class ChannelBackend(ModelBackend, Channel):
                                numPages=numPages,
                                resetLocalStorageFlag=resetLocalStorageFlag)
 
+    # TODO: IF ALL INSTANCE HTML PAGES HAVE THE SAME RED PARAM NAME, CAN PULL OUT THIS METHOD OUT FROM ALL MODEL TYPES INTO MODEL_BACKEND TO REDUCE REDUNDANT CODE (as of now fails since channelInstance.html uses channelObject instead of instanceObject)
+    # TODO: NEED TO ADD A 'modelType' string parameter to form the html file name DYNAMICALLY BEFORE PULLING IT OUT
     @staticmethod
-    def render_instance_page(instance_obj, related_objects):
-        return render_template('channelInstance.html', channelObj=instance_obj, relatedObjects=related_objects)
+    def render_instance_page(instanceObject, relatedObjects):
+        return render_template('channelInstance.html', channelObj=instanceObject, relatedObjects=relatedObjects)

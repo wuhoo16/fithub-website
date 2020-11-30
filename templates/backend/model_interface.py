@@ -1,8 +1,8 @@
-import math
 from abc import ABC, abstractmethod
 
 
 # Note that ModelInterface is an abstract base class = Python's version of an interface
+# This helps us give all of the method signatures that we want ALL ModelBackend class to implement no matter the model type
 class ModelBackendInterface(ABC):
     # All are initialized from our mongoDB the first time the homepage is visited
     EXERCISES_ARRAY = []
@@ -11,7 +11,7 @@ class ModelBackendInterface(ABC):
 
     @staticmethod
     @abstractmethod
-    def initialize_array_from_mongo_database(db):
+    def load_and_return_model_array_from_db(db):
         """
         Method for loading from the remote MongoDB to initialize model global array
         NOTE THAT ANY CHANGES TO THE OBJECT CONSTRUCTORS MUST BE CHANGED HERE TO MATCH!
@@ -56,5 +56,4 @@ class ModelBackendInterface(ABC):
     @staticmethod
     def render_instance_page(instance_obj, related_objects):
         pass
-        
 

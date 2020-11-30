@@ -1,21 +1,12 @@
 from flask import render_template
-import numpy as np
 from templates.backend.model_backend import ModelBackend
 from templates.models.exercise import Exercise
 
 
 class ExerciseBackend(ModelBackend, Exercise):
-    # filterIsActive = False
-    # sortIsActive = False
-    # searchIsActive = False
-    # sortingAttribute = ""
-    # sortingDirection = ""
-
     searchItemsKey = 'exercisesSearchItems'
     sortingHiddenFieldKey = 'exercisesSortingHiddenField'
     sortCriteriaMenuKey = 'exercisesSortCriteriaMenu'
-
-    # modifiedArray = []
 
     @staticmethod
     def load_and_return_model_array_from_db(db):
@@ -41,13 +32,13 @@ class ExerciseBackend(ModelBackend, Exercise):
                     "images": exerciseDocument['images'],
                     "comments": exerciseDocument['comments']
                 }))
-        # Refactor this later, but try to ensure ModelBackend global arrays are intialized for now
+        # TODO: Refactor this later, but try to ensure ModelBackend global arrays are initialized for now
         ModelBackend.EXERCISES_ARRAY = exercise_array
         return exercise_array
 
     @staticmethod
     def get_related_objects_for_instance(id, db):
-        attributes = ModelBackend.find_current_instance_object(id, db.exercises, ('category', 'subcategory', 'equipment'))
+        attributes = ModelBackend.get_current_instance_object_attributes(id, db.exercises, ('category', 'subcategory', 'equipment'))
         category = attributes[0]
         subcategory = attributes[1]
         equipmentCategoryList = attributes[2]
@@ -92,6 +83,8 @@ class ExerciseBackend(ModelBackend, Exercise):
                                numPages=numPages,
                                resetLocalStorageFlag=resetLocalStorageFlag)
 
+    # TODO: IF ALL INSTANCE HTML PAGES HAVE THE SAME RED PARAM NAME, CAN PULL OUT THIS METHOD OUT FROM ALL MODEL TYPES INTO MODEL_BACKEND TO REDUCE REDUNDANT CODE (as of now fails since exerciseInstance.html uses e instead of instanceObject)
+    # TODO: NEED TO ADD A 'modelType' string parameter to form the html file name DYNAMICALLY BEFORE PULLING IT OUT
     @staticmethod
-    def render_instance_page(instance_obj, related_objects):
-        return render_template('exerciseInstance.html', e=instance_obj, relatedObjects=related_objects)
+    def render_instance_page(instanceObject, relatedObjects):
+        return render_template('exerciseInstance.html', e=instanceObject, relatedObjects=relatedObjects)

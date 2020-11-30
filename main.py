@@ -5,12 +5,16 @@ from werkzeug.routing import BaseConverter
 from model_facade import ModelFacade
 
 
+# Necessary utility class to help support passing a list variable dynamically to a Flask view function. It encodes an array of Objects into a long '+%+' delimited string for view function's
+# route URL to render correctly. In addition, it also converts from a long '+%+' delimited string back to either a array containing 'INITIALIZE' keyword as the first element or convert into an
+# array of INTEGERS representing the arrayIndices instead of an array of STRINGS of numbers
+# NOTE THAT THIS IS NECESSARY TO COMMUNICATE BETWEEN FRONTEND AND BACKEND!!! (The currentArray variable matches the last state)
+# TODO: Can pull this out into another file and import it AFTER the Flask app is set on line 52
 class ListConverter(BaseConverter):
     def to_python(self, value):
         splitStringArray = value.split('+%+')
         if len(splitStringArray) == 0:
-            print(
-                'While converting the list parameter from frontend to backed with the ListConverter, empty array given.')
+            print('In to_python() method, empty string passed in from frontend to backend...')
             return []
         elif splitStringArray[0] == 'INITIALIZE':
             print('In elif branch...')
@@ -23,52 +27,66 @@ class ListConverter(BaseConverter):
 
     def to_url(self, values):
         if len(values) == 0:
+            print('Warning! In to_url() method, the values parameter passed in was an empty list!')
             pass
             # Might need to handle case where the list is empty
         return '+%+'.join(super(ListConverter, self).to_url(value) for value in values)
 
 
+# GLOBAL VARIABLES
 EXERCISE_INSTANCE_URL_TEMPLATE = '/exerciseinstance/{}'
 EQUIPMENT_INSTANCE_URL_TEMPLATE = '/equipmentinstance/{}'
 CHANNEL_INSTANCE_URL_TEMPLATE = '/channelinstance/{}'
-
-# client = MongoClient("mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase3Database?retryWrites=true&w=majority")
-# INITIALIZE_DATABASE = client.phase3Database
-
 client = MongoClient(
     "mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase2Database?retryWrites=true&w=majority")
 DATABASE = client.phase2Database
-
-# GLOBAL ARRAYS AND MODEL_FACADE_INSTANCE (should only have 1)
-EXERCISES_ARRAY = []
-EQUIPMENT_ARRAY = []
-CHANNEL_ARRAY = []
+EXERCISES_ARRAY = None
+EQUIPMENT_ARRAY = None
+CHANNEL_ARRAY = None
 MODEL_FACADE_INSTANCE = None
 
-# Flask and view methods for home, models, model instances, and about pages below
-# ====================================================================================================================
+
+# Helper function to setup global variables once per server session. Note that this should be called at the beginning of
+# EVERY view function. The function will check if every global var is still None before initializing
+# TODO: Note that we should enforce the Singleton Pattern on the ModelFacade (and all Backend objects if we refactor to use composition to not be static classes)
+def setup():
+    # Ensure main.py has an accessible global arrays for all 3 model types
+    global EXERCISES_ARRAY, EQUIPMENT_ARRAY, CHANNEL_ARRAY, MODEL_FACADE_INSTANCE
+    if MODEL_FACADE_INSTANCE is None and EXERCISES_ARRAY is None and EQUIPMENT_ARRAY is None and CHANNEL_ARRAY is None:
+        MODEL_FACADE_INSTANCE = ModelFacade(DATABASE)  # This ModelFacade instance initializes 3 model arrays from the mongoDB
+        EXERCISES_ARRAY = MODEL_FACADE_INSTANCE.get_exercises_array()
+        EQUIPMENT_ARRAY = MODEL_FACADE_INSTANCE.get_equipment_array()
+        CHANNEL_ARRAY = MODEL_FACADE_INSTANCE.get_channel_array()
+    else:
+        print('THE GLOBAL ARRAYS AND MODEL_FACADE_INSTANCE ARE ALREADY INITIALIZED! Skipping setup() method...')
+
+
+# Set the Flask application and enable 'list' as a supported routing rule/URL variable type
+# ==========================================================================================================
 app = Flask("__name__")
 app.url_map.converters['list'] = ListConverter
 
 
+# Flask and view methods for home, models, model instances, and about pages below
+# ====================================================================================================================
 # homepage
 @app.route("/", methods=['GET'])
 def index():
     setup()
-    global EXERCISES_ARRAY, EQUIPMENT_ARRAY, CHANNEL_ARRAY
-    print(EXERCISES_ARRAY)
     return MODEL_FACADE_INSTANCE.render_homepage()
 
 
 # about page
 @app.route("/about", methods=['GET'])
 def about():
+    setup()
     return MODEL_FACADE_INSTANCE.render_about_page()
 
 
 # exercises model page
 @app.route("/exercises/<int:pageNumber>/<list:currentArray>/<string:operationUsed>", methods=['GET', 'POST'])
 def exercises(pageNumber, currentArray, operationUsed):
+    setup()
     global EXERCISES_ARRAY
     if currentArray[0] == 'INITIALIZE':
         currentArray = EXERCISES_ARRAY
@@ -84,6 +102,7 @@ def exercises(pageNumber, currentArray, operationUsed):
 # equipments model page
 @app.route("/equipment/<int:pageNumber>/<list:currentArray>/<string:operationUsed>", methods=['GET', 'POST'])
 def equipments(pageNumber, currentArray, operationUsed):
+    setup()
     global EQUIPMENT_ARRAY
     if currentArray[0] == 'INITIALIZE':
         currentArray = EQUIPMENT_ARRAY
@@ -98,6 +117,7 @@ def equipments(pageNumber, currentArray, operationUsed):
 # channels model page
 @app.route("/channels/<int:pageNumber>/<list:currentArray>/<string:operationUsed>", methods=['GET', 'POST'])
 def channels(pageNumber, currentArray, operationUsed):
+    setup()
     global CHANNEL_ARRAY
     if currentArray[0] == 'INITIALIZE':
         currentArray = CHANNEL_ARRAY
@@ -129,27 +149,32 @@ def channel_instance(arrayIndex):
     return MODEL_FACADE_INSTANCE.render_model_instance_page("channel", arrayIndex, DATABASE)
 
 
-def setup():
-    # Ensure main.py has a initialized version of the 3 global model arrays
-    global EXERCISES_ARRAY, EQUIPMENT_ARRAY, CHANNEL_ARRAY, MODEL_FACADE_INSTANCE
-    MODEL_FACADE_INSTANCE = ModelFacade(DATABASE)
-    print(
-        f'In setup(), instance method to get the instance EXERCISE ARRAY: {MODEL_FACADE_INSTANCE.get_exercises_array()}')
-    EXERCISES_ARRAY = MODEL_FACADE_INSTANCE.get_exercises_array()
-    EQUIPMENT_ARRAY = MODEL_FACADE_INSTANCE.get_equipment_array()
-    CHANNEL_ARRAY = MODEL_FACADE_INSTANCE.get_channel_array()
-
-
 # Start the Flask web-application when main.py file is run
 if __name__ == "__main__":
-    # ONLY UNCOMMENT THE LINE BELOW IF YOU WANT TO COMPLETELY RE-INITIALIZE OUR MONGODB
-    # Array passed should have "exercise", "equipment", "or channel" based on which of them
-    # you want to initialize
-    # Requires 1-2 minutes to call APIs and setup all 3 collections.
-    # ================================================================================
-    # MODEL_FACADE_INSTANCE.initialize_clusters(INITIALIZE_DATABASE, ["exercise", "equipment", "channel"])
+    # SEE mongodb_initialization_driver.py for all code to initialize the mongoDB collections # TODO: We can remove all of this code below and just import setup/clean if we need it
+    # ONLY UNCOMMENT THE CORRESPONDING LINES BELOW IF YOU WANT TO COMPLETELY RE-INITIALIZE SPECIFIC MONGODB COLLECTIONS
+    # modelType is an optional param passed should have "exercises", "equipments", "or channels" based on which collection
+    # you want to reinitialize.
 
-    # ONLY UNCOMMENT THE LINE BELOW IF YOU WANT TO COMPLETELY CLEAR OUR MONGODB
-    # ================================================================================
+    # EXERCISES
+    # ================================================================
+    # ModelFacade.setup_database(DATABASE, modelType="exercises")
+
+    # EQUIPMENTS
+    # ==============================================================
+    # ModelFacade.setup_database(DATABASE, modelType="equipments")
+
+    # CHANNELS
+    # ==============================================================
+    # ModelFacade.setup_database(DATABASE, modelType="channels")
+
+    # ONLY UNCOMMENT THE LINE BELOW IF YOU WANT TO COMPLETELY RE-INITIALIZE ALL 3 MONGODB COLLECTIONS
+    # =================================================================================================
+    # ModelFacade.setup_database(DATABASE)
+
+    # ONLY UNCOMMENT THE LINE BELOW IF YOU WANT TO COMPLETELY DROP ALL 3 MONGODB COLLECTIONS
+    # =========================================================================================
     # MODEL_FACADE_INSTANCE.clean_database(INITIALIZE_DATABASE)
+
+    # Start the Flask app server
     app.run(host="localhost", port=8080, debug=True, use_reloader=True)
