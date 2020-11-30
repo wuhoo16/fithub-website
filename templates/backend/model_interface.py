@@ -1,6 +1,7 @@
 import math
 from abc import ABC, abstractmethod
 
+
 # Note that ModelInterface is an abstract base class = Python's version of an interface
 class ModelBackendInterface(ABC):
     # All are initialized from our mongoDB the first time the homepage is visited
@@ -48,53 +49,12 @@ class ModelBackendInterface(ABC):
         """
         pass
 
-<<<<<<< HEAD
-=======
-    # Helper functions for get_related_objects_for_instance functions
-    @staticmethod
-    def find_current_instance_object(id, currentCollection, keys):
-        """
-        Find the current instance object in the database and store important attributes
-        """
-        attributes = []
-        currentDoc = currentCollection.find_one({'_id': id})
-
-        if currentDoc:
-            for key in keys:
-                attributes.append(currentDoc[key])
-        
-        return attributes
->>>>>>> origin/dev
-
     @staticmethod
     def render_model_page(page_number, arr):
         pass
-
-<<<<<<< HEAD
 
     @staticmethod
     def render_instance_page(instance_obj, related_objects):
         pass
         
-=======
-        return ModelInterface.find_related_objects(relatedCursor, ARRAY)
 
-    @staticmethod
-    def find_related_objects(relatedCursor, ARRAY):
-        relatedInstances = []
-        for relatedDoc in relatedCursor:
-            relatedInstances.append(ARRAY[relatedDoc['arrayIndex']])
-        return relatedInstances
-
-    @staticmethod
-    def paginate(page_number, array):
-        """
-        Pagination on Model Pages - assumes 9 instances per page
-        """
-        startIndex = (page_number - 1) * 9
-        endIndex = (page_number * 9) - 1
-        if endIndex >= len(array):
-            endIndex = len(array) - 1
-        num_pages = math.ceil(len(array) / 9)
-        return startIndex, endIndex, num_pages
->>>>>>> origin/dev

@@ -50,21 +50,21 @@
             <a
               class="nav-link"
               id="navExercises"
-              href="{{ url_for('exercises', page_number=1) }}"
+              href="{{ url_for('exercises', pageNumber=1, currentArray=['INITIALIZE'], operationUsed='None') }}"
               >Exercises</a
             >
           </li>
           <li class="nav-item">
             <a
               class="nav-link"
-              href="{{ url_for('equipments', page_number=1) }}"
+              href="{{ url_for('equipments', pageNumber=1, currentArray=['INITIALIZE'], operationUsed='None') }}"
               >Equipment</a
             >
           </li>
           <li class="nav-item">
             <a
               class="nav-link"
-              href="{{ url_for('channels', page_number=1, currentArray=channelArray, operationUsed='none') }}"
+              href="{{ url_for('channels', pageNumber=1, currentArray=['INITIALIZE'], operationUsed='None') }}"
               >Youtube Channels</a
             >
           </li>

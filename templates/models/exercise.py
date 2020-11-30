@@ -1,5 +1,6 @@
 from templates.models.model import ModelObjInterface
 
+
 class Exercise(ModelObjInterface):
     def __init__(self, **kwargs):
         self.id = kwargs["exercise_id"]
@@ -13,7 +14,6 @@ class Exercise(ModelObjInterface):
         self.equipment = kwargs["equipment"]
         self.images = kwargs["images"]
         self.comments = kwargs["comments"]
-
 
     def to_dictionary(self):
         return {
@@ -31,6 +31,5 @@ class Exercise(ModelObjInterface):
             'comments': self.comments
         }
 
-
     def __str__(self):
-        return self.name
+        return str(self.arrayIndex)

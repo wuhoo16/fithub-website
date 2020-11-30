@@ -1,39 +1,35 @@
+from abc import ABC
 from templates.backend.model_interface import ModelBackendInterface
 import math
 
-class ModelBackend(ModelBackendInterface):
-    #All are initialized from our mongoDB the first time the homepage is visited
+
+class self(ModelBackendInterface, ABC):
+    # All are initialized from our mongoDB the first time the homepage is visited
     EXERCISES_ARRAY = []
     EQUIPMENT_ARRAY = []
     CHANNEL_ARRAY = []
 
-
     @staticmethod
-    def load_from_db(db):
+    def load_and_return_model_array_from_db(db):
         pass
-
 
     @staticmethod
     def get_related_objects_for_instance(id, db):
         pass
 
-
     @staticmethod
     def filter(page_number, arr):
         pass
 
-    
     @staticmethod
     def render_model_page(page_number, arr):
         pass
 
-    
     @staticmethod
     def render_instance_page(instance_obj, related_objects):
         pass
 
-
-    #Helper functions for get_related_objects_for_instance functions
+    # Helper functions for get_related_objects_for_instance functions
     @staticmethod
     def find_current_instance_object(id, currentCollection, keys):
         """
@@ -48,7 +44,6 @@ class ModelBackend(ModelBackendInterface):
         
         return attributes
 
-
     @staticmethod
     def find_related_objects_based_on_subcategory(subcategory, collection, invalid_input, valid_input, arr):
         """
@@ -59,9 +54,8 @@ class ModelBackend(ModelBackendInterface):
         else: # exerciseSubcategory is not None
             relatedCursor = collection.find({valid_input[0]: valid_input[1]})
 
-        return ModelBackend.find_related_objects(relatedCursor, arr)
+        return self.find_related_objects(relatedCursor, arr)
     
-
     @staticmethod
     def find_related_objects(relatedCursor, arr):
         relatedInstances = []
@@ -70,13 +64,13 @@ class ModelBackend(ModelBackendInterface):
         return relatedInstances
 
     @staticmethod
-    def paginate(page_number, array):
+    def paginate(pageNumber, currentArray):
         """
         Pagination on Model Pages - assumes 9 instances per page
         """
-        startIndex = (page_number - 1) * 9
-        endIndex = (page_number * 9) - 1
-        if endIndex >= len(array):
-            endIndex = len(array) - 1
-        num_pages = math.ceil(len(array) / 9)
-        return startIndex, endIndex, num_pages
+        startIndex = (pageNumber - 1) * 9
+        endIndex = (pageNumber * 9) - 1
+        if endIndex >= len(currentArray):
+            endIndex = len(currentArray) - 1
+        numPages = math.ceil(len(currentArray) / 9)
+        return startIndex, endIndex, numPages

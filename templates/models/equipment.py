@@ -1,5 +1,6 @@
 from templates.models.model import ModelObjInterface
 
+
 class Equipment(ModelObjInterface):
     def __init__(self, **kwargs):
         self.id = kwargs["itemId"]
@@ -12,7 +13,6 @@ class Equipment(ModelObjInterface):
         self.picture = kwargs["galleryURL"]
         self.linkToItem = kwargs["viewItemURL"]
         self.equipmentCategory = kwargs["equipmentCategory"]
-
 
     def to_dictionary(self):
         return {
@@ -29,6 +29,5 @@ class Equipment(ModelObjInterface):
             'equipmentCategory': self.equipmentCategory
         }
 
-
     def __str__(self):
-        return self.name
+        return str(self.arrayIndex)

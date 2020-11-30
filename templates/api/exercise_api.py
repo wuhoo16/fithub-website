@@ -1,4 +1,3 @@
-from templates.api.api_interface import APIInterface
 from templates.models.exercise import Exercise
 import requests
 import re

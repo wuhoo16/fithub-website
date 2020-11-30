@@ -1,4 +1,3 @@
-from templates.api.api_interface import APIInterface
 from templates.models.equipment import Equipment
 from ebaysdk.finding import Connection
 

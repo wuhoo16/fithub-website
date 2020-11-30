@@ -76,10 +76,7 @@ body {
   width: 360px;
   height: 270px;
 }
-#modelGrid {
-  display: grid;
-  grid-template-columns: 30% 30% 30%;
-}
+
 .centered {
   text-align: center;
   display: block;
