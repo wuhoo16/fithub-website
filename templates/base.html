@@ -62,7 +62,9 @@
             >
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('channels', page_number=1) }}"
+            <a
+              class="nav-link"
+              href="{{ url_for('channels', page_number=1, currentArray=channelArray, operationUsed='none') }}"
               >Youtube Channels</a
             >
           </li>

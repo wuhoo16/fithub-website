@@ -1,9 +1,8 @@
 import math
 from abc import ABC, abstractmethod
 
-
 # Note that ModelInterface is an abstract base class = Python's version of an interface
-class ModelInterface(ABC):
+class ModelBackendInterface(ABC):
     # All are initialized from our mongoDB the first time the homepage is visited
     EXERCISES_ARRAY = []
     EQUIPMENT_ARRAY = []
@@ -49,6 +48,8 @@ class ModelInterface(ABC):
         """
         pass
 
+<<<<<<< HEAD
+=======
     # Helper functions for get_related_objects_for_instance functions
     @staticmethod
     def find_current_instance_object(id, currentCollection, keys):
@@ -63,17 +64,19 @@ class ModelInterface(ABC):
                 attributes.append(currentDoc[key])
         
         return attributes
+>>>>>>> origin/dev
 
     @staticmethod
-    def find_related_objects_based_on_subcategory(subcategory, collection, invalid_input, valid_input, ARRAY):
-        """
-        Query a collection for all instances that match current exerciseCategory/Subcategory based on if the subcategory is None
-        """
-        if subcategory is None:
-            relatedCursor = collection.find({invalid_input[0]: invalid_input[1]})
-        else: # exerciseSubcategory is not None
-            relatedCursor = collection.find({valid_input[0]: valid_input[1]})
+    def render_model_page(page_number, arr):
+        pass
 
+<<<<<<< HEAD
+
+    @staticmethod
+    def render_instance_page(instance_obj, related_objects):
+        pass
+        
+=======
         return ModelInterface.find_related_objects(relatedCursor, ARRAY)
 
     @staticmethod
@@ -94,3 +97,4 @@ class ModelInterface(ABC):
             endIndex = len(array) - 1
         num_pages = math.ceil(len(array) / 9)
         return startIndex, endIndex, num_pages
+>>>>>>> origin/dev
