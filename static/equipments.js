@@ -7,18 +7,17 @@ if (checkboxValues === null) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  // On DOM load, check the metadata with id resetLocalStorageFlag. If set to 1 then call the resetFreshState() js function
+  if($('#resetLocalStorageFlag').data().flag == 1) {
+    resetLocalStorage();
+  }
+
   // For each checkbox, persist the checkbox state based on the previous state stored in local storage
   $.each(checkboxValues, function (key, value) {
     $("#" + key).prop("checked", value);
   });
 });
 
-//  Draft of storing sort in localStorage - may not even need to implement, we'll see
-//var sortValue = JSON.parse(localStorage.getItem("equipmentsSortForm"));
-//document.addEventListener("DOMContentLoaded", () => {
-//    $("#equipmentsSortCriteriaMenu")
-//});
-//});
 
 // Before form submission, save all checkbox's state to local storage
 function saveCheckBoxStateToLocalStorage() {
@@ -33,18 +32,28 @@ function saveCheckBoxStateToLocalStorage() {
 }
 
 // If Reset button used for submission, reset all the checkboxes' checked attributes to false
-function resetCheckboxState(formID, resetHiddenFieldID) {
+function resetFreshState() {
   resetSearchSort();
-
   let checkboxes = $(":checkbox");
-  let form = document.getElementById(formID);
-
   checkboxes.each(function () {
     this.checked = false; // Set every checked attribute to 'false' for each checkbox element
   });
   saveCheckBoxStateToLocalStorage();
-  document.getElementById(resetHiddenFieldID).value = "resetClicked";
-  form.submit();
+  resetArrayState();
+}
+
+function resetLocalStorage() {
+  resetSearchSort();
+  let checkboxes = $(":checkbox");
+  checkboxes.each(function () {
+    this.checked = false; // Set every checked attribute to 'false' for each checkbox element
+  });
+  saveCheckBoxStateToLocalStorage();
+}
+
+function resetArrayState() {
+  // This will reload the model page with a fresh array
+  $('#navEquipments')[0].click();
 }
 
 // If filter button used for submission, check if at least 1 checkbox is selected before submitting the form. Else, alert and do not submit
@@ -73,8 +82,8 @@ function verifyCheckBoxes(formID) {
 
 function resetSearchSort() {
   localStorage.setItem("equipmentsSearchPhrase", "");
-  console.log('In resetSearchSort() javascript function and just reset the key "equipmentsSearchPhrase" to an empty string!')
   localStorage.setItem("equipmentsSortPhrase", "select");
   $("#menu").hide();
   $("#equipmentsSearchItems").val("");
+  $('#searchBar').val("");
 }

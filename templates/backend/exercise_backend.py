@@ -1,29 +1,15 @@
 from flask import render_template
-import numpy as np
 from templates.backend.model_backend import ModelBackend
 from templates.models.exercise import Exercise
 
-class ExerciseBackend(ModelBackend, Exercise):
-    filterIsActive = False
-    sortIsActive = False
-    searchIsActive = False
-    sortingAttribute = ""
-    sortingDirection = ""
 
+class ExerciseBackend(ModelBackend, Exercise):
     searchItemsKey = 'exercisesSearchItems'
     sortingHiddenFieldKey = 'exercisesSortingHiddenField'
     sortCriteriaMenuKey = 'exercisesSortCriteriaMenu'
 
-    modifiedArray = []
-
     @staticmethod
-    def reset_all_flags():
-        ExerciseBackend.filterIsActive = False
-        ExerciseBackend.sortIsActive = False
-        ExerciseBackend.searchIsActive = False
-
-    @staticmethod
-    def initialize_array_from_mongo_database(db):
+    def load_and_return_model_array_from_db(db):
         """
         Return a python list of all Exercise objects.
         :param db: The database to load all exercises from
@@ -46,12 +32,13 @@ class ExerciseBackend(ModelBackend, Exercise):
                     "images": exerciseDocument['images'],
                     "comments": exerciseDocument['comments']
                 }))
-        
+        # TODO: Refactor this later, but try to ensure ModelBackend global arrays are initialized for now
         ModelBackend.EXERCISES_ARRAY = exercise_array
+        return exercise_array
 
     @staticmethod
     def get_related_objects_for_instance(id, db):
-        attributes = ModelBackend.find_current_instance_object(id, db.exercises, ('category', 'subcategory', 'equipment'))
+        attributes = ModelBackend.get_current_instance_object_attributes(id, db.exercises, ('category', 'subcategory', 'equipment'))
         category = attributes[0]
         subcategory = attributes[1]
         equipmentCategoryList = attributes[2]
@@ -60,44 +47,44 @@ class ExerciseBackend(ModelBackend, Exercise):
         
         relatedEquipments = []
         for equipmentCategory in equipmentCategoryList:
-            relatedEquipments = np.append(np.array(relatedEquipments), np.array(ModelBackend.find_related_objects(db.equipments.find({'equipmentCategory': equipmentCategory}), ModelBackend.EQUIPMENT_ARRAY)))
+            relatedEquipments += ModelBackend.find_related_objects(db.equipments.find({'equipmentCategory': equipmentCategory}), ModelBackend.EQUIPMENT_ARRAY, ModelBackend.EXERCISES_ARRAY)
 
         relatedChannels = ModelBackend.find_related_objects_based_on_subcategory(subcategory, db.channels, ['exerciseCategory', category], ['exerciseSubcategory', subcategory], ModelBackend.CHANNEL_ARRAY)
 
         return [relatedExercises, relatedEquipments, relatedChannels]
 
     @staticmethod
-    def filter(db, requestForm):
+    def filter(db, filterRequestForm, currentArray):
         # setting up to filter
-        selectedExerciseCategories = requestForm.getlist("checkedExerciseCategories")
-        selectedEquipmentCategories = requestForm.getlist("checkedEquipmentCategories")
-
-        if len(selectedExerciseCategories) == 0 and len(selectedEquipmentCategories) == 0:
-            ExerciseBackend.searchIsActive = True
-
-        tempModifiedArray = []
-        if ExerciseBackend.searchIsActive:
-            tempModifiedArray = ExerciseBackend.modifiedArray
-        
-        # beginning to filter
-        filteredExercises = []
+        selectedExerciseCategories = filterRequestForm.getlist("checkedExerciseCategories")
+        selectedEquipmentCategories = filterRequestForm.getlist("checkedEquipmentCategories")
 
         # Query the entire exercises collection on each of the selected exercise category terms and append matching Exercise objects
+        filteredExercises = []
         for exerciseCategory in selectedExerciseCategories:
-            filteredExercises = np.array(ModelBackend.find_related_objects(db.exercises.find({'category': exerciseCategory}), ModelBackend.EXERCISES_ARRAY))
+            filteredExercises += ModelBackend.find_related_objects(db.exercises.find({'category': exerciseCategory}), currentArray, ModelBackend.EXERCISES_ARRAY)
 
         # Query the entire exercises collection on each of the selected equipment category terms and append matching Exercise objects
+        # NOTE THAT WE ARE TAKING THE UNION OF SELECTED FILTERING CHECKBOXES NOT THE INTERSECTION
         for equipmentCategory in selectedEquipmentCategories:
-            filteredExercises = np.append(filteredExercises, np.array(ModelBackend.find_related_objects(db.exercises.find({'equipment': equipmentCategory}), ModelBackend.EXERCISES_ARRAY)))
+            filteredExercises += ModelBackend.find_related_objects(db.exercises.find({'equipment': equipmentCategory}), currentArray, ModelBackend.EXERCISES_ARRAY)
 
-        # Return all of filtered Exercise objects
-        return tempModifiedArray, filteredExercises
-
-    @staticmethod
-    def render_model_page(page_number, arr):
-        start, end, num_pages = ModelBackend.paginate(page_number, arr)
-        return render_template('exercises.html', exercisesArray=arr, start=start, end=end, page_number=page_number, num_pages=num_pages)
+        # Return all of matching Exercise objects after filtering on the currentArray
+        return list(set(filteredExercises))
 
     @staticmethod
-    def render_instance_page(instance_obj, related_objects):
-        return render_template('exerciseInstance.html', e=instance_obj, relatedObjects=related_objects)
+    def render_model_page(pageNumber, currentArray, resetLocalStorageFlag):
+        start, end, numPages = ModelBackend.paginate(pageNumber, currentArray)
+        return render_template('exercises.html',
+                               currentExercisesArray=currentArray,
+                               start=start,
+                               end=end,
+                               pageNumber=pageNumber,
+                               numPages=numPages,
+                               resetLocalStorageFlag=resetLocalStorageFlag)
+
+    # TODO: IF ALL INSTANCE HTML PAGES HAVE THE SAME RED PARAM NAME, CAN PULL OUT THIS METHOD OUT FROM ALL MODEL TYPES INTO MODEL_BACKEND TO REDUCE REDUNDANT CODE (as of now fails since exerciseInstance.html uses e instead of instanceObject)
+    # TODO: NEED TO ADD A 'modelType' string parameter to form the html file name DYNAMICALLY BEFORE PULLING IT OUT
+    @staticmethod
+    def render_instance_page(instanceObject, relatedObjects):
+        return render_template('exerciseInstance.html', e=instanceObject, relatedObjects=relatedObjects)

@@ -1,6 +1,6 @@
-# TeamA13
+# TeamA13: Fithub
 
-This is the master branch for TeamA13's IMBD web application project for EE461L. Note that all code in this repo is production-ready and should match the current deployed, functional state. The buildfiles for this project to run on Google App Engine include requirements.txt and app.yaml. Requirements.txt lists all of the python libraries and dependencies that our web app needs to deploy.
+Welcome to the Github Repository for TeamA13's IMBD web application project! Note that all code in this repo is production-ready and should match the current deployed, functional state. The buildfiles for this project to run on Google App Engine includes the requirements.txt and app.yaml files. Requirements.txt lists all of the python libraries and dependencies that our web app needs to deploy.
 
 Website Link: [FitHub](https://imbdproject.wn.r.appspot.com/)
 
@@ -58,6 +58,9 @@ Website Link: [FitHub](https://imbdproject.wn.r.appspot.com/)
         - Sorting Implementation for all 3 model pages: Actual Completion Hours: 3
         - Selenium Testing for filtering functionality and final deployment: Estimated Completion Hours: 5
         - Selenium Testing for filtering functionality and final deployment: Actual Completion Hours: 5
+       - Phase 4:
+        - Full code refactor to improve website stability, remove backend server logic, and support multi-client usage: Estimated Completion Hours: 5
+        - Full code refactor to improve website stability, remove backend server logic, and support multi-client usage: Actual Completion Hours: 16
   
   Kaylee N Trevino
    - EID: knt658

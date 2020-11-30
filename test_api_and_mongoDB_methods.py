@@ -10,7 +10,7 @@ from templates.backend.model_interface import ModelInterface
 from templates.backend.exercise_backend import ExerciseBackend
 from templates.backend.equipment_backend import EquipmentBackend
 from templates.backend.channel_backend import ChannelBackend
-from templates.api.mongodb_driver import clean_database
+from templates.api.mongodb_initialization_driver import clean_database
 unittest.TestLoader.sortTestMethodsUsing = None
 
 
@@ -140,7 +140,7 @@ class TestMongoDBCommunication(TestCase):
             self.test_initialize_mongoDB_exercises_collection()
 
         # Call method from main.py to initialize the exerciseArray
-        ExerciseBackend.initialize_array_from_mongo_database(TestMongoDBCommunication.TEST_DATABASE)
+        ExerciseBackend.load_and_return_model_array_from_db(TestMongoDBCommunication.TEST_DATABASE)
         TEST_EXERCISE_ARRAY = ModelInterface.TEST_EXERCISE_ARRAY
 
         # Assert loaded exercise array has 100 or more objects
@@ -172,7 +172,7 @@ class TestMongoDBCommunication(TestCase):
             self.test_initialize_mongoDB_equipment_collection()
 
         # Call method from main.py to initialize the equipment array
-        EquipmentBackend.initialize_array_from_mongo_database(TestMongoDBCommunication.TEST_DATABASE)
+        EquipmentBackend.load_and_return_model_array_from_db(TestMongoDBCommunication.TEST_DATABASE)
         TEST_EQUIPMENT_ARRAY = ModelInterface.EQUIPMENT_ARRAY
 
         # Assert loaded equipment array has 40 or more objects
@@ -204,7 +204,7 @@ class TestMongoDBCommunication(TestCase):
             self.test_initialize_mongoDB_channel_collection()
 
         # Call method from main.py to initialize the channels array
-        ChannelBackend.initialize_array_from_mongo_database(TestMongoDBCommunication.TEST_DATABASE)
+        ChannelBackend.load_and_return_model_array_from_db(TestMongoDBCommunication.TEST_DATABASE)
         TEST_CHANNEL_ARRAY = ModelInterface.CHANNEL_ARRAY
 
         # Assert loaded channel array has 40 or more objects
@@ -236,7 +236,7 @@ class TestMongoDBCommunication(TestCase):
         if TestMongoDBCommunication.CHANNEL_COLLECTION_NAME not in EXISTING_COLLECTIONS_BEFORE:
             self.test_initialize_mongoDB_channel_collection()
 
-        # Call method from mongodb_driver.py to drop all 3 collections
+        # Call method from mongodb_initialization_driver.py to drop all 3 collections
         clean_database(TestMongoDBCommunication.TEST_DATABASE)
 
         # Verify all 3 collections have been dropped successfully

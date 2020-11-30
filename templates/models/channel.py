@@ -1,5 +1,6 @@
 from templates.models.model import ModelObjInterface
 
+
 class Channel(ModelObjInterface):
     def __init__(self, **kwargs):
         self.id = kwargs["id"]  # unique channelId string passed in from the JSON response
@@ -18,7 +19,6 @@ class Channel(ModelObjInterface):
         self.bannerUrl = kwargs["bannerUrl"]
         self.keywords = kwargs["keywords"]
         self.exerciseSubcategory = kwargs["exerciseSubcategory"]
-
 
     def to_dictionary(self):
         return {
@@ -40,6 +40,5 @@ class Channel(ModelObjInterface):
             'exerciseSubcategory': self.exerciseSubcategory
         }
 
-
     def __str__(self):
-        return self.name
+        return str(self.arrayIndex)

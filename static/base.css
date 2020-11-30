@@ -76,10 +76,7 @@ body {
   width: 360px;
   height: 270px;
 }
-#modelGrid {
-  display: grid;
-  grid-template-columns: 30% 30% 30%;
-}
+
 .centered {
   text-align: center;
   display: block;
@@ -524,4 +521,5 @@ body {
   float: right;
   margin-top: 1.5rem;
   margin-right: 0.5rem;
+  color: white;
 }

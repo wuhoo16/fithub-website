@@ -1,20 +1,22 @@
+<!-- Variables accessible with Jinja 2: currentEquipmentArray, start, end, pageNumber, numPages, resetLocalStorageFlag-->
+
 {% extends 'base.html' %}
 
 {% block head %}
-    <!-- Vars: equipmentArray, start, end, page_number, num_pages-->
     <title>Equipment Model Page</title>
     <script type="text/javascript" src="/static/equipments.js"></script>
 {% endblock %}
 
 {% block body %}
 <div class="exercise-div container-fluid">
+    <meta id="resetLocalStorageFlag" data-flag="{{ resetLocalStorageFlag }}">
     <div class="jumbotron-exercise jumbotron jumbotron-fluid text-center">
         <h1 class="modelHeader">Find your gear</h1>
         <p class="modelDescription">Check out our selection of fitness equipment.</p>
     </div>
     <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" id="closeNavButton" class="closebtn" onclick="closeNav()">&times;</a>
-        <form id="equipmentsFilterForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
+        <form id="equipmentsFilterForm" action="{{ url_for('equipments', pageNumber=1, currentArray=currentEquipmentArray, operationUsed='Filter') }}" method="post">
             <ul class="checkbox-menu">
                 <li class="dropdown-header">Price</li>
                 <li>
@@ -46,7 +48,6 @@
                     <label><input type="checkbox" id='equipmentsOption9' name='checkedEquipmentCategories' value="Kettlebell"> Kettlebell </label>
                 </li>
                 <li style="text-align: center; margin-top: 1rem; margin-bottom: 110px;">
-                    <input type="hidden" id='equipmentsResetHiddenField' name='resetHiddenField' value="">
                     <button class="filter-button btn btn-outline-light" id="filterButton" type="button" name="Filter" onclick="verifyCheckBoxes('equipmentsFilterForm')">Filter</button>
                 </li>
             </ul>
@@ -55,49 +56,49 @@
 
     <!-- Sorting Dropdown and Search Bar-->
     {% set dataArr = [] %}
-    {% for obj in equipmentArray %} 
+    {% for obj in currentEquipmentArray %}
         {% set dataArr = dataArr.append({"name": obj.name, "price": obj.price, "category": obj.equipmentCategory, "location": obj.location}) %}
     {% endfor %}
-    <meta id="equipmentArrayData" data-arr='{{dataArr}}'/>
+    <meta id="currentEquipmentArrayData" data-arr='{{dataArr}}'/>
     <div class="container-fluid" style="display: inline-block;">
-        <button class="filter-open-button" id="openNavButton" onclick="openNav()">Filter ></button>
+        {% if currentEquipmentArray | length != 0 %}
+            <button class="filter-open-button" id="openNavButton" onclick="openNav()">Filter ></button>
 
-        <!-- Sorting Dropdown -->
-        {% if equipmentArray|length > 0 %}
-        <form class="d-inline-block sorting-form" id="equipmentsSortForm" action="{{ url_for('equipments', page_number=1) }}" method="post">
-            <label for="equipmentsSortCriteriaMenu" id="equipmentsSortMenuLabel" style="color: white; margin-top: 1rem;"></label>
-            <select class="sort-form-style" id="equipmentsSortCriteriaMenu" name="equipmentsSortCriteriaMenu">
-                <option value="select" id="select" selected disabled>Sort by</option>
-                <option class="select-option" value="name">Name</option>
-                <option class="select-option" value="price">Price</option>
-                <option class="select-option" value="category">Category</option>
-            </select>
-            <input type="hidden" id='equipmentsSortingHiddenField' name='equipmentsSortingHiddenField' value="">
-            <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="submitSortForm('equipmentsSortForm', 'equipmentsSortingHiddenField', 'ascending');">
-            <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" id="descendBtn" onclick="submitSortForm('equipmentsSortForm', 'equipmentsSortingHiddenField', 'descending');">
-        </form>
-        {% endif %}
-
-        <!--Search Bar-->
-        <div class="dropdown d-inline-block">
-            <form id="equipmentsSearchForm" action="{{ url_for('equipments', page_number=1) }}" method="post" style="display: none;">
-                <input id="equipmentsSearchItems" name="equipmentsSearchItems">
+            <!-- Sorting Dropdown -->
+            <form class="d-inline-block sorting-form" id="equipmentsSortForm" action="{{ url_for('equipments', pageNumber=1, currentArray=currentEquipmentArray, operationUsed='Sort') }}" method="post">
+                <label for="equipmentsSortCriteriaMenu" id="equipmentsSortMenuLabel" style="color: white; margin-top: 1rem;"></label>
+                <select class="sort-form-style" id="equipmentsSortCriteriaMenu" name="equipmentsSortCriteriaMenu">
+                    <option value="select" id="select" selected disabled>Sort by</option>
+                    <option class="select-option" value="name">Name</option>
+                    <option class="select-option" value="price">Price</option>
+                    <option class="select-option" value="category">Category</option>
+                </select>
+                <input type="hidden" id='equipmentsSortingHiddenField' name='equipmentsSortingHiddenField' value="">
+                <img class="ascending-button" src="/static/ascendingSortIcon.png" alt="Ascending" id="ascendBtn" onclick="submitSortForm('equipmentsSortForm', 'equipmentsSortingHiddenField', 'ascending');">
+                <img class="descending-button" src="/static/descendingSortIcon.png" alt="Descending" id="descendBtn" onclick="submitSortForm('equipmentsSortForm', 'equipmentsSortingHiddenField', 'descending');">
             </form>
-            <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
-            <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
-                <div id="menuItems">
-                    {% for obj in equipmentArray %}
-                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
-                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Price: {{ obj.price }}</a>
-                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Category: {{ obj.equipmentCategory }}</a>
-                        <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Seller Location: {{ obj.location }}</a>
-                    {% endfor %}
+
+            <!--Search Bar-->
+            <div class="dropdown d-inline-block">
+                <form id="equipmentsSearchForm" action="{{ url_for('equipments', pageNumber=1, currentArray=currentEquipmentArray, operationUsed='Search') }}" method="post" style="display: none;">
+                    <input id="equipmentsSearchItems" name="equipmentsSearchItems">
+                </form>
+                <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
+                <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
+                    <div id="menuItems">
+                        {% for obj in currentEquipmentArray %}
+                            <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
+                            <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Price: {{ obj.price }}</a>
+                            <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Category: {{ obj.equipmentCategory }}</a>
+                            <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Seller Location: {{ obj.location }}</a>
+                        {% endfor %}
+                    </div>
+                    <div id="empty" class="dropdown-header">No items found</div>
+                    <div id="menuLinks"></div>
                 </div>
-                <div id="empty" class="dropdown-header">No items found</div>
-                <div id="menuLinks"></div>
             </div>
-        </div>
-        <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn" onclick="resetCheckboxState('equipmentsFilterForm', 'equipmentsResetHiddenField')">Reset All</button>
+        {% endif %}
+        <button class="reset-button btn btn-outline-light" type="button" name="Reset" id="resetBtn" onclick="resetFreshState()">Reset All</button>
     </div>
     
     <!-- Add all page content inside this div if you want the side nav to push page content to the right (not used if you only want the sidenav to sit on top of the page -->
@@ -110,21 +111,21 @@
             {% for offset in range(3) %}
                 <div class="col-md-4 p-4">
                     <div class="card card-style h-100 pt-4">
-                    {% if equipmentArray[start + 3*i+offset].replacePictureFlag %}
-                        <img class="card-img-top card-image-style img-fluid mx-auto" src="/../static/{{ equipmentArray[start+3*i+offset].picture }}" alt="{{ equipmentArray[start + 3*i+offset].name }}">
+                    {% if currentEquipmentArray[start + 3*i+offset].replacePictureFlag %}
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="/../static/{{ currentEquipmentArray[start+3*i+offset].picture }}" alt="{{ currentEquipmentArray[start + 3*i+offset].name }}">
                     {% else %}
-                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ equipmentArray[start+3*i+offset].picture }}" onerror="this.onerror=null; this.src='{{ equipmentArray[start + 3*i+offset].picture }}'"; alt="{{ equipmentArray[start + 3*i+offset].name }}">
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ currentEquipmentArray[start+3*i+offset].picture }}" onerror="this.onerror=null; this.src='{{ currentEquipmentArray[start + 3*i+offset].picture }}'"; alt="{{ currentEquipmentArray[start + 3*i+offset].name }}">
                     {% endif %}
                         <div class="card-body">
-                            <h2 id="name_{{ start + 3*i+offset }}" class="card-title text-center">{{ equipmentArray[start + 3*i+offset].name }}</h2>
+                            <h2 id="name_{{ start + 3*i+offset }}" class="card-title text-center">{{ currentEquipmentArray[start + 3*i+offset].name }}</h2>
                             <p class="card-text">
                                 <ul class="equipmentData list-unstyled">
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ start + 3*i+offset }}"><b>Price: </b>{{ equipmentArray[start + 3*i+offset].price }} USD</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="categoryText_{{ start + 3*i+offset }}"><b>Category: </b>{{ equipmentArray[start + 3*i+offset].equipmentCategory }}</li>
-                                    <li style="padding-left: 1em;" id="sellerLocationText_{{ start + 3*i+offset }}"><b>Seller Location: </b>{{ equipmentArray[start + 3*i+offset].location }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ start + 3*i+offset }}"><b>Price: </b>{{ currentEquipmentArray[start + 3*i+offset].price }} USD</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="categoryText_{{ start + 3*i+offset }}"><b>Category: </b>{{ currentEquipmentArray[start + 3*i+offset].equipmentCategory }}</li>
+                                    <li style="padding-left: 1em;" id="sellerLocationText_{{ start + 3*i+offset }}"><b>Seller Location: </b>{{ currentEquipmentArray[start + 3*i+offset].location }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('equipment_instance', arrayIndex=equipmentArray[start + 3*i+offset].arrayIndex) }}" class="stretched-link" id="instancePageLink_{{ start + 3*i+offset }}"></a>
+                            <a href="{{ url_for('equipment_instance', arrayIndex=currentEquipmentArray[start + 3*i+offset].arrayIndex) }}" class="stretched-link" id="instancePageLink_{{ start + 3*i+offset }}"></a>
                         </div>
                     </div>
                 </div>
@@ -137,21 +138,21 @@
             {% for i in range(-remainder, 0) %}
                 <div class="col-md-4 p-4">
                     <div class="card card-style h-100 pt-4">
-                        {% if equipmentArray[end + 1 + i].replacePictureFlag %}
-                            <img class="card-img-top card-image-style img-fluid mx-auto" src="/../static/{{ equipmentArray[end + 1 + i].picture }}" alt="{{ equipmentArray[end + 1 + i].name }}">
+                        {% if currentEquipmentArray[end + 1 + i].replacePictureFlag %}
+                            <img class="card-img-top card-image-style img-fluid mx-auto" src="/../static/{{ currentEquipmentArray[end + 1 + i].picture }}" alt="{{ currentEquipmentArray[end + 1 + i].name }}">
                         {% else %}
-                            <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ equipmentArray[end + 1 + i].picture }}" onerror="this.onerror=null; this.src='{{ equipmentArray[end + 1 + i].picture }}'"; alt="{{ equipmentArray[end + 1 + i].name }}">
+                            <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ currentEquipmentArray[end + 1 + i].picture }}" onerror="this.onerror=null; this.src='{{ currentEquipmentArray[end + 1 + i].picture }}'"; alt="{{ currentEquipmentArray[end + 1 + i].name }}">
                         {% endif %}
                         <div class="card-body">
-                            <h2 class="card-title text-center">{{ equipmentArray[end + 1 + i].name }}</h2>
+                            <h2 class="card-title text-center">{{ currentEquipmentArray[end + 1 + i].name }}</h2>
                             <p class="card-text">
                                 <ul class="equipmentData list-unstyled">
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ end + 1 + i }}"><b>Price: </b>{{ equipmentArray[end + 1 + i].price }} USD</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="categoryText_{{ end + 1 + i }}"><b>Category: </b>{{ equipmentArray[end + 1 + i].equipmentCategory }}</li>
-                                    <li style="padding-left: 1em;" id="sellerLocationText_{{ end + 1 + i }}"><b>Seller Location: </b>{{ equipmentArray[end + 1 + i].location }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ end + 1 + i }}"><b>Price: </b>{{ currentEquipmentArray[end + 1 + i].price }} USD</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="categoryText_{{ end + 1 + i }}"><b>Category: </b>{{ currentEquipmentArray[end + 1 + i].equipmentCategory }}</li>
+                                    <li style="padding-left: 1em;" id="sellerLocationText_{{ end + 1 + i }}"><b>Seller Location: </b>{{ currentEquipmentArray[end + 1 + i].location }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('equipment_instance', arrayIndex=equipmentArray[end + 1 + i].arrayIndex) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('equipment_instance', arrayIndex=currentEquipmentArray[end + 1 + i].arrayIndex) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
@@ -160,32 +161,32 @@
         {% endif %}
         </div>
 
-        {% if equipmentArray|length == 0 %}
+        {% if currentEquipmentArray|length == 0 %}
             <h4 style="color: white;">Sorry! No instances meet your set requirements. Please reset the filters to see equipments.</h4>
         {% else %}
             <ul class="pagination justify-content-center" style="margin: 20px;">
                 <!--Previous Page Button-->
-                {% if page_number == 1 %}
+                {% if pageNumber == 1 %}
                     <li class="page-item disabled"><a class="page-link" href="">Previous</a></li>
                 {% else %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('equipments', page_number=page_number-1) }}">Previous</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ url_for('equipments', pageNumber=pageNumber-1, currentArray=currentEquipmentArray, operationUsed='Pagination') }}">Previous</a></li>
                 {% endif %}
 
 
                 <!--All Pages Buttons-->
-                {% for i in range(1, num_pages+1) %}
-                    {% if i == page_number %}
-                        <li class="page-item active"><a class="page-link" href="{{ url_for('equipments', page_number=i) }}">{{i}}</a></li>
+                {% for i in range(1, numPages+1) %}
+                    {% if i == pageNumber %}
+                        <li class="page-item active"><a class="page-link" href="{{ url_for('equipments', pageNumber=i, currentArray=currentEquipmentArray, operationUsed='Pagination') }}">{{i}}</a></li>
                     {% else %}
-                        <li class="page-item"><a class="page-link" href="{{ url_for('equipments', page_number=i) }}">{{i}}</a></li>
+                        <li class="page-item"><a class="page-link" href="{{ url_for('equipments', pageNumber=i, currentArray=currentEquipmentArray, operationUsed='Pagination') }}">{{i}}</a></li>
                     {% endif %}    
                 {% endfor %}
 
                 <!--Next Page Button-->
-                {% if page_number == num_pages %}
+                {% if pageNumber == numPages %}
                     <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
                 {% else %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('equipments', page_number=page_number+1) }}">Next</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ url_for('equipments', pageNumber=pageNumber+1, currentArray=currentEquipmentArray, operationUsed='Pagination') }}">Next</a></li>
                 {% endif %}
             </ul>
         {% endif %}
@@ -197,7 +198,7 @@
     else $("#equipmentsSortCriteriaMenu").val(localStorage.getItem("equipmentsSortPhrase"));
 
     let items = document.getElementsByClassName("dropdown-item");
-    var data = $('#equipmentArrayData').data().arr;
+    var data = $('#currentEquipmentArrayData').data().arr;
     var dataArr = processData();
 
     function filter() {

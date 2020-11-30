@@ -1,4 +1,3 @@
-from templates.api.api_interface import APIInterface
 from templates.models.channel import Channel
 from googleapiclient.discovery import build
 import os
@@ -132,7 +131,6 @@ class ChannelAPI:
                     ID_SET.add(channel.id)
                     channel_counter += 1
 
-
     @staticmethod
     def __execute_youtube_search_API(youtubeClient, searchTerm, part="snippet", maxResults=3):
         """
@@ -153,7 +151,6 @@ class ChannelAPI:
         )
         return channelSearchRequest.execute()['items']
 
-
     @staticmethod
     def __execute_statistics_API(youtubeClient, channelID):
         """
@@ -167,7 +164,6 @@ class ChannelAPI:
             id=channelID
         )
         return getChannelStatisticsRequest.execute()['items'][0]['statistics']
-
 
     @staticmethod
     def __execute_content_details_API(youtubeClient, channelID):
@@ -190,7 +186,6 @@ class ChannelAPI:
 
         return getPlaylistRequest.execute()['items'][0]
 
-
     @staticmethod
     def __execute_topic_details_API(youtubeClient, channelID):
         """
@@ -208,7 +203,6 @@ class ChannelAPI:
             return getChannelTopicDetailsRequest.execute()['items'][0]['topicDetails']
         except KeyError:
             return None
-
 
     @staticmethod
     def __execute_branding_settings_API(youtubeClient, channelID):
@@ -239,7 +233,6 @@ class ChannelAPI:
 
         return brandingSettings
 
-
     @staticmethod
     def __convert_topic_ids(ids):
         topic_arr = []
@@ -265,7 +258,6 @@ class ChannelAPI:
                 topic_arr.append(id)
 
         return topic_arr
-
 
     @staticmethod
     def __convert_ids_categories(ids, categories):
@@ -298,7 +290,6 @@ class ChannelAPI:
 
         return id_cat_arr
 
-
     @staticmethod
     def __convert_embedded_URL(embeddedTag):
         elements = embeddedTag.split(" ")
@@ -309,7 +300,6 @@ class ChannelAPI:
                 url = el.replace('"', "")
                 break
         return url.replace('http', 'https')
-
 
     @staticmethod
     def __convert_keywords(keywords):
@@ -328,4 +318,3 @@ class ChannelAPI:
 
         return keyword_arr
 
-    

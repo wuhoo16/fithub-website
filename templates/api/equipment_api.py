@@ -1,18 +1,17 @@
-from templates.api.api_interface import APIInterface
 from templates.models.equipment import Equipment
 from ebaysdk.finding import Connection
 
 BLACKLIST = {'NEW CAP Barbell Standard Barbell Weight Lifting Exercise Bar 5 foot ft - NEW',
-                       'NOS BMX Freestyle SKYWAY EZ Bar handlebar decals',
-                       'BUKA GEARS ARNOLD WEIGHT LIFTING BODYBUILDING BICEP ARM BLASTER EZ BAR CURL ARMS',
-                       '9HORN Exercise Mat/Protective Flooring Mats with EVA Foam Interlocking Tiles and',
-                       'HOMELITE SUPER-EZ Bar Guides Inner/Outer Used',
-                       'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bars Pair w EZ Pin Spotlight Pack',
-                       'Chauvet DJ EZ Bar Battery-Powered Pin Spot Light Bars with Carry Case',
-                       'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bar w 3 Independent Pin Spots',
-                       'Chauvet DJ EZ Bar Battery-Powered Pin Spot Light Bar with Carry Case',
-                       'CHAUVET DJ EZBar EZ Bar 3 Pin Spot Battery-Powered Bar Light PROAUDIOSTAR'
-                       }
+             'NOS BMX Freestyle SKYWAY EZ Bar handlebar decals',
+             'BUKA GEARS ARNOLD WEIGHT LIFTING BODYBUILDING BICEP ARM BLASTER EZ BAR CURL ARMS',
+             '9HORN Exercise Mat/Protective Flooring Mats with EVA Foam Interlocking Tiles and',
+             'HOMELITE SUPER-EZ Bar Guides Inner/Outer Used',
+             'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bars Pair w EZ Pin Spotlight Pack',
+             'Chauvet DJ EZ Bar Battery-Powered Pin Spot Light Bars with Carry Case',
+             'Chauvet DJ EZ Bar EZBAR Battery Powered Light Bar w 3 Independent Pin Spots',
+             'Chauvet DJ EZ Bar Battery-Powered Pin Spot Light Bar with Carry Case',
+             'CHAUVET DJ EZBar EZ Bar 3 Pin Spot Battery-Powered Bar Light PROAUDIOSTAR'
+             }
 IMAGE_MAPPER = {
     'Cast Iron Kettlebell 5, 10, 15, 20, 25, 30 35,40,45 50+some PAIRS(Choose Weight': "kettlebell_picture_1.jpg",
     'POWERT Cast Iron Kettlebell Weight Lifting 10-50LB': "kettlebell_picture_2.jpg",
@@ -72,7 +71,7 @@ class EquipmentAPI:
                         "arrayIndex": equipment_counter,
                         "title": result['title'],
                         "value": float(result['sellingStatus']['convertedCurrentPrice']['value']),
-                        "categoryName": result['primaryCategory']['categoryName'], 
+                        "categoryName": result['primaryCategory']['categoryName'],
                         "location": result['location'],
                         "replacePictureFlag": replacePictureFlag,
                         "galleryURL": galleryURL,

@@ -17,7 +17,7 @@
         <a
           class="btn btn-lg btn-outline-light"
           id="exerciseCarouselBtn"
-          href="/exercises/1"
+          href="{{ url_for('exercises', pageNumber=1, currentArray=['INITIALIZE'], operationUsed='None') }}"
           role="button"
           >See Exercises</a
         >
@@ -31,7 +31,7 @@
         <a
           class="btn btn-lg btn-outline-light"
           id="equipmentCarouselBtn"
-          href="/equipment/1"
+          href="{{ url_for('equipments', pageNumber=1, currentArray=['INITIALIZE'], operationUsed='None') }}"
           role="button"
           >See Equipment</a
         >
@@ -45,7 +45,7 @@
         <a
           class="btn btn-lg btn-outline-light"
           id="channelCarouselBtn"
-          href="/channels/1"
+          href="{{ url_for('channels', pageNumber=1, currentArray=['INITIALIZE'], operationUsed='None') }}"
           role="button"
           >See Channels</a
         >
@@ -86,10 +86,4 @@
 >
   <source src="https://storage.googleapis.com/imbdproject.appspot.com/FithubHypeVideoEdited.mp4" type="video/mp4" />
 </video>
-
-<!-- Invoke the javascript function to clear the local storage and sync up with the current flag states-->
-<!-- This ensures that when the server restarts, all checkbox states match up with the original unfiltered arrays-->
-<script>
-  clearLocalStorage({{ exerciseFilterIsActive }}, {{ equipmentFilterIsActive }}, {{ channelFilterIsActive }}, {{ exerciseSearchIsActive }}, {{ equipmentSearchIsActive }}, {{ channelSearchIsActive }}, {{ exerciseSortIsActive }}, {{ equipmentSortIsActive }}, {{ channelSortIsActive }});
-</script>
 {% endblock %}
