@@ -17,6 +17,31 @@ class EquipmentBackend(ModelBackend, Equipment):
     modifiedArray = []
 
     @staticmethod
+    def load_from_db(db):
+        """
+        Return a python list of all Equipment objects.
+        :param db: The database to load all equipments from
+        :return: A python list of Equipment objects
+        """
+        equipment_array = []
+        equipmentsCursor = db.equipments.find()
+        for equipmentDocument in equipmentsCursor:
+            equipment_array.append(Equipment(**{
+                "itemId": equipmentDocument['id'],
+                "arrayIndex": equipmentDocument['arrayIndex'],
+                "title": equipmentDocument['name'],
+                "value": equipmentDocument['price'],
+                "categoryName": equipmentDocument['category'],
+                "location": equipmentDocument['location'],
+                "replacePictureFlag": equipmentDocument['replacePictureFlag'],
+                "galleryURL": equipmentDocument['picture'],
+                "viewItemURL": equipmentDocument['linkToItem'],
+                "equipmentCategory": equipmentDocument['equipmentCategory']
+            }))
+        
+        ModelInterface.EQUIPMENT_ARRAY = equipment_array
+
+    @staticmethod
     def reset_all_flags():
         EquipmentBackend.filterIsActive = False
         EquipmentBackend.sortIsActive = False

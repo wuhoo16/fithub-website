@@ -17,6 +17,33 @@ class ExerciseBackend(ModelBackend, Exercise):
     modifiedArray = []
 
     @staticmethod
+    def load_from_db(db):
+        """
+        Return a python list of all Exercise objects.
+        :param db: The database to load all exercises from
+        :return: A python list of Exercise objects
+        """
+        exercise_array = []
+        exercisesCursor = db.exercises.find()
+        for exerciseDocument in exercisesCursor:
+            exercise_array.append(
+                Exercise(**{
+                    "exercise_id": exerciseDocument['id'],
+                    "arrayIndex": exerciseDocument['arrayIndex'],
+                    "name": exerciseDocument['name'],
+                    "description": exerciseDocument['description'],
+                    "category": exerciseDocument['category'],
+                    "subcategory": exerciseDocument['subcategory'],
+                    "muscles": exerciseDocument['muscles'],
+                    "muscles_secondary": exerciseDocument['muscles_secondary'],
+                    "equipment": exerciseDocument['equipment'],
+                    "images": exerciseDocument['images'],
+                    "comments": exerciseDocument['comments']
+                }))
+        
+        ModelInterface.EXERCISES_ARRAY = exercise_array
+
+    @staticmethod
     def reset_all_flags():
         ExerciseBackend.filterIsActive = False
         ExerciseBackend.sortIsActive = False

@@ -9,6 +9,31 @@ class ChannelBackend(ModelBackend, Channel):
     sortCriteriaMenuKey = 'channelsSortCriteriaMenu'
 
     @staticmethod
+    def load_from_db(db):
+        channel_array = []
+        channelCursor = db.channels.find()
+        for channelDocument in channelCursor:
+            channel_array.append(Channel(**{
+                "id": channelDocument['id'],
+                "arrayIndex": channelDocument['arrayIndex'],
+                "name": channelDocument['name'],
+                "description": channelDocument['description'],
+                "thumbnailURL": channelDocument['thumbnailURL'],
+                "subscriberCount": channelDocument['subscriberCount'],
+                "viewCount": channelDocument['viewCount'],
+                "videoCount": channelDocument['videoCount'],
+                "playlist": channelDocument['playlist'],
+                "topicIdCategories": channelDocument['topicIdCategories'],
+                "exerciseCategory": channelDocument['exerciseCategory'],
+                "unsubscribedTrailer": channelDocument['unsubscribedTrailer'],
+                "bannerUrl": channelDocument['bannerUrl'],
+                "keywords": channelDocument['keywords'],
+                "exerciseSubcategory": channelDocument['exerciseSubcategory']
+            }))
+        
+        ModelInterface.CHANNEL_ARRAY = channel_array
+
+    @staticmethod
     def reset_all_flags():
         ChannelBackend.filterIsActive = False
         ChannelBackend.sortIsActive = False

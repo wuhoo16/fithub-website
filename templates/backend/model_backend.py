@@ -1,8 +1,8 @@
 from templates.backend.model_interface import ModelBackendInterface
 import math
 
-class ModelBackend(ModelBackendInterface):
-    #All are initialized from our mongoDB the first time the homepage is visited
+class ModelBackend(ModelBackendInterface, ABC):
+    # All are initialized from our mongoDB the first time the homepage is visited
     EXERCISES_ARRAY = []
     EQUIPMENT_ARRAY = []
     CHANNEL_ARRAY = []
@@ -33,7 +33,7 @@ class ModelBackend(ModelBackendInterface):
         pass
 
 
-    #Helper functions for get_related_objects_for_instance functions
+    # Helper functions for get_related_objects_for_instance functions
     @staticmethod
     def find_current_instance_object(id, currentCollection, keys):
         """
