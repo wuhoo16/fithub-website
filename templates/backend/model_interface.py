@@ -4,11 +4,6 @@ from abc import ABC, abstractmethod
 # Note that ModelInterface is an abstract base class = Python's version of an interface
 # This helps us give all of the method signatures that we want ALL ModelBackend class to implement no matter the model type
 class ModelBackendInterface(ABC):
-    # All are initialized from our mongoDB the first time the homepage is visited
-    EXERCISES_ARRAY = []
-    EQUIPMENT_ARRAY = []
-    CHANNEL_ARRAY = []
-
     @staticmethod
     @abstractmethod
     def load_and_return_model_array_from_db(db):

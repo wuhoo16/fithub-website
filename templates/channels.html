@@ -1,4 +1,4 @@
-<!-- Variables accessible with Jinja 2: currentChannelArray, start, end, pageNumber, numPages, resetLocalStorageFlag-->
+<!-- Variables accessible with Jinja 2: currentArray, start, end, pageNumber, numPages, resetLocalStorageFlag-->
 
 {% extends 'base.html' %}
 
@@ -6,7 +6,6 @@
     <title>Youtube Channel Model Page</title>
     <script type="text/javascript" src="/static/channels.js"></script>
 {% endblock %}
-
 
 {% block body %}
 <div class="exercise-div container-fluid">
@@ -17,7 +16,7 @@
     </div> 
     <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <form id="channelsFilterForm" action="{{ url_for('channels', pageNumber=1, currentArray=currentChannelArray, operationUsed='Filter') }}" method="post">
+        <form id="channelsFilterForm" action="{{ url_for('channels', pageNumber=1, currentArray=currentArray, operationUsed='Filter') }}" method="post">
             <ul class="checkbox-menu">
                 <li class="dropdown-header">Subscribers</li>
                 <li>
@@ -80,20 +79,20 @@
 
     <!-- Sorting Dropdown and Search Bar-->
     {% set dataArr = [] %}
-    {% for obj in currentChannelArray %}
+    {% for obj in currentArray %}
         {% if obj.description|length == 0 %}
             {% set dataArr = dataArr.append({"name": obj.name, "description": "|No description provided.", "subscriber": obj.subscriberCount, "view": obj.viewCount, "video": obj.videoCount}) %}
         {% else %}
             {% set dataArr = dataArr.append({"name": obj.name, "description": obj.description, "subscriber": obj.subscriberCount, "view": obj.viewCount, "video": obj.videoCount}) %}
         {% endif %}
     {% endfor %}
-    <meta id="currentChannelArrayData" data-arr='{{dataArr}}'/>
+    <meta id="currentArrayData" data-arr='{{dataArr}}'/>
     <div class="container-fluid" style="display: inline-block;">
-        {% if currentChannelArray | length != 0 %}
+        {% if currentArray | length != 0 %}
             <button class="filter-open-button" onclick="openNav()">Filter ></button>
 
             <!-- Sorting Dropdown -->
-            <form class="d-inline-block sorting-form" id="channelsSortForm" action="{{ url_for('channels', pageNumber=1, currentArray=currentChannelArray, operationUsed='Sort') }}" method="post">
+            <form class="d-inline-block sorting-form" id="channelsSortForm" action="{{ url_for('channels', pageNumber=1, currentArray=currentArray, operationUsed='Sort') }}" method="post">
                 <label for="channelsSortCriteriaMenu" id="channelsSortMenuLabel" style="color: white; margin-top: 1rem;"></label>
                 <select class="sort-form-style" id="channelsSortCriteriaMenu" name="channelsSortCriteriaMenu">
                     <option id="select" value="select" selected disabled>Sort by</option>
@@ -109,13 +108,13 @@
 
             <!--Search Bar-->
             <div id="searchBarContainer" class="dropdown d-inline-block" tabindex="-1">
-                <form id="channelsSearchForm" action="{{ url_for('channels', pageNumber=1, currentArray=currentChannelArray, operationUsed='Search') }}" method="post" style="display: none;">
+                <form id="channelsSearchForm" action="{{ url_for('channels', pageNumber=1, currentArray=currentArray, operationUsed='Search') }}" method="post" style="display: none;">
                     <input id="channelsSearchItems" name="channelsSearchItems">
                 </form>
                 <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" name="searchBar" type="search" placeholder="Search"/>
                 <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
                     <div id="menuItems">
-                        {% for obj in currentChannelArray %}
+                        {% for obj in currentArray %}
                             <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
                             {% if obj.description|length == 0 %}
                                 <a class="button dropdown-item" href="{{ url_for('channel_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Description: No description provided.</a>
@@ -144,22 +143,22 @@
                 {% for offset in range(3) %}
                 <div class="col-md-4 p-4">
                     <div class="card card-style h-100 pt-4">
-                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ currentChannelArray[start + 3*i + offset].thumbnailURL }}" alt="{{ currentChannelArray[start + 3*i + offset].name }}">
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ currentArray[start + 3*i + offset].thumbnailURL }}" alt="{{ currentArray[start + 3*i + offset].name }}">
                         <div class="card-body">
-                            <h2 class="card-title text-center">{{ currentChannelArray[start + 3*i + offset].name }}</h2>
+                            <h2 class="card-title text-center">{{ currentArray[start + 3*i + offset].name }}</h2>
                             <p class="card-text">
-                                <ul class="channelAttributesList list-unstyled" id="list_{{currentChannelArray[start + 3*i + offset].arrayIndex}}">
-                                    {% if currentChannelArray[start + 3*i + offset].description|length != 0 %}
-                                        <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="descriptionTxt_{{currentChannelArray[start + 3*i + offset].arrayIndex}}"><b>Description: </b>{{ currentChannelArray[start + 3*i + offset].description }}</li>
+                                <ul class="channelAttributesList list-unstyled" id="list_{{currentArray[start + 3*i + offset].arrayIndex}}">
+                                    {% if currentArray[start + 3*i + offset].description|length != 0 %}
+                                        <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="descriptionTxt_{{currentArray[start + 3*i + offset].arrayIndex}}"><b>Description: </b>{{ currentArray[start + 3*i + offset].description }}</li>
                                     {% else %}
-                                        <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="descriptionTxt_{{currentChannelArray[start + 3*i + offset].arrayIndex}}"><b>Description: </b>No description provided.</li>
+                                        <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="descriptionTxt_{{currentArray[start + 3*i + offset].arrayIndex}}"><b>Description: </b>No description provided.</li>
                                     {% endif %}
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="subscriberTxt_{{currentChannelArray[start + 3*i + offset].arrayIndex}}"><b>Subscribers: </b>{{ currentChannelArray[start + 3*i + offset].subscriberCount }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="viewTxt_{{currentChannelArray[start + 3*i + offset].arrayIndex}}"><b>Total Views: </b>{{ currentChannelArray[start + 3*i + offset].viewCount }}</li>
-                                    <li style="padding-left: 1em;" id="videoTxt_{{currentChannelArray[start + 3*i + offset].arrayIndex}}"><b>Videos: </b>{{ currentChannelArray[start + 3*i + offset].videoCount }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="subscriberTxt_{{currentArray[start + 3*i + offset].arrayIndex}}"><b>Subscribers: </b>{{ currentArray[start + 3*i + offset].subscriberCount }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="viewTxt_{{currentArray[start + 3*i + offset].arrayIndex}}"><b>Total Views: </b>{{ currentArray[start + 3*i + offset].viewCount }}</li>
+                                    <li style="padding-left: 1em;" id="videoTxt_{{currentArray[start + 3*i + offset].arrayIndex}}"><b>Videos: </b>{{ currentArray[start + 3*i + offset].videoCount }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('channel_instance', arrayIndex=currentChannelArray[start + 3*i + offset].arrayIndex) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('channel_instance', arrayIndex=currentArray[start + 3*i + offset].arrayIndex) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
@@ -172,18 +171,18 @@
             {% for i in range(-numLeftOverChannels, 0) %}
                 <div class="col-md-4 p-4">
                     <div class="card card-style h-100 pt-4">
-                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ currentChannelArray[end + 1 + i].thumbnailURL }}" alt="{{ currentChannelArray[end + 1 + i].name }}">
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ currentArray[end + 1 + i].thumbnailURL }}" alt="{{ currentArray[end + 1 + i].name }}">
                         <div class="card-body">
-                            <h2 class="card-title text-center">{{ currentChannelArray[end + 1 + i].name }}</h2>
+                            <h2 class="card-title text-center">{{ currentArray[end + 1 + i].name }}</h2>
                             <p class="card-text">
                                 <ul class="channelAttributesList list-unstyled">
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Description: </b>{{ currentChannelArray[end + 1 + i].description }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Subscribers: </b>{{ currentChannelArray[end + 1 + i].subscriberCount }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Total Views: </b>{{ currentChannelArray[end + 1 + i].viewCount }}</li>
-                                    <li style="padding-left: 1em;"><b>Videos: </b>{{ currentChannelArray[end + 1 + i].videoCount }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Description: </b>{{ currentArray[end + 1 + i].description }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Subscribers: </b>{{ currentArray[end + 1 + i].subscriberCount }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Total Views: </b>{{ currentArray[end + 1 + i].viewCount }}</li>
+                                    <li style="padding-left: 1em;"><b>Videos: </b>{{ currentArray[end + 1 + i].videoCount }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('channel_instance', arrayIndex=currentChannelArray[end + 1 + i].arrayIndex) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('channel_instance', arrayIndex=currentArray[end + 1 + i].arrayIndex) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
@@ -191,7 +190,7 @@
             </div>
         {% endif %}
         </div>
-        {% if currentChannelArray|length == 0 %}
+        {% if currentArray|length == 0 %}
             <h4 id="noInstances" style="color: white;">Sorry! No instances meet your set requirements. Please reset the filters to see channels.</h4>
         {% else %}
             <ul class="pagination justify-content-center" style="margin:20px 0">
@@ -199,21 +198,21 @@
                 {% if pageNumber == 1 %}
                     <li class="page-item disabled"><a class="page-link" href="">Previous</a></li>
                 {% else %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('channels', pageNumber=pageNumber-1, currentArray=currentChannelArray, operationUsed='Pagination') }}">Previous</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ url_for('channels', pageNumber=pageNumber-1, currentArray=currentArray, operationUsed='Pagination') }}">Previous</a></li>
                 {% endif %}
                 <!--All Pages Buttons-->
                 {% for i in range(1, numPages+1) %}
                     {% if i == pageNumber %}
-                        <li class="page-item active"><a class="page-link" href="{{ url_for('channels', pageNumber=i, currentArray=currentChannelArray, operationUsed='Pagination') }}">{{i}}</a></li>
+                        <li class="page-item active"><a class="page-link" href="{{ url_for('channels', pageNumber=i, currentArray=currentArray, operationUsed='Pagination') }}">{{i}}</a></li>
                     {% else %}
-                        <li class="page-item"><a class="page-link" href="{{ url_for('channels', pageNumber=i, currentArray=currentChannelArray, operationUsed='Pagination') }}">{{i}}</a></li>
+                        <li class="page-item"><a class="page-link" href="{{ url_for('channels', pageNumber=i, currentArray=currentArray, operationUsed='Pagination') }}">{{i}}</a></li>
                     {% endif %}
                 {% endfor %}
                 <!--Next Page Button-->
                 {% if pageNumber == numPages %}
                     <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
                 {% else %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('channels', pageNumber=pageNumber+1, currentArray=currentChannelArray, operationUsed='Pagination') }}">Next</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ url_for('channels', pageNumber=pageNumber+1, currentArray=currentArray, operationUsed='Pagination') }}">Next</a></li>
                 {% endif %}
             </ul>
         {% endif %}
@@ -227,7 +226,7 @@
         else $("#channelsSortCriteriaMenu").val(localStorage.getItem("channelsSortPhrase"));
 
         let items = document.getElementsByClassName("dropdown-item");
-        var data = $('#currentChannelArrayData').data().arr;
+        var data = $('#currentArrayData').data().arr;
         var dataArr = processData(); //holds current array
 
         function filterSearchDropdown() {

@@ -1,4 +1,4 @@
-<!-- Variables accessible with Jinja 2: currentExercisesArray, start, end, pageNumber, numPages, resetLocalStorageFlag-->
+<!-- Variables accessible with Jinja 2: currentArray, start, end, pageNumber, numPages, resetLocalStorageFlag-->
 
 {% extends 'base.html' %}
 
@@ -17,7 +17,7 @@
     <div id="sidebar-container">
         <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-            <form id="exercisesFilterForm" action="{{ url_for('exercises', pageNumber=1, currentArray=currentExercisesArray, operationUsed='Filter') }}" method="post">
+            <form id="exercisesFilterForm" action="{{ url_for('exercises', pageNumber=1, currentArray=currentArray, operationUsed='Filter') }}" method="post">
                 <ul class="checkbox-menu">
                     <li class="dropdown-header">Category</li>
                     <li>
@@ -70,17 +70,17 @@
     
     <!-- Sorting Dropdown and Search Bar-->
     {% set dataArr = [] %}
-    {% for obj in currentExercisesArray %}
+    {% for obj in currentArray %}
         {% set dataArr = dataArr.append({"name": obj.name, "category": obj.category, "equipment": obj.equipment|join(', '), "description": obj.description}) %}
     {% endfor %}
-    <meta id="currentExercisesArrayData" data-arr='{{dataArr}}'/>
+    <meta id="currentArrayData" data-arr='{{dataArr}}'/>
     <div class="container-fluid" style="display: inline-block;">
         <!-- Use any element to open the sidenav -->
-        {% if currentExercisesArray | length != 0 %}
+        {% if currentArray | length != 0 %}
              <button class="filter-open-button" onclick="openNav()">Filter ></button>
 
         <!-- Sorting Dropdown -->
-        <form class="d-inline-block sorting-form" id="exercisesSortForm" action="{{ url_for('exercises', pageNumber=1, currentArray=currentExercisesArray, operationUsed='Sort') }}" method="post">
+        <form class="d-inline-block sorting-form" id="exercisesSortForm" action="{{ url_for('exercises', pageNumber=1, currentArray=currentArray, operationUsed='Sort') }}" method="post">
             <label for="exercisesSortCriteriaMenu" id="exercisesSortMenuLabel" style="color: white; margin-top: 1rem;"></label>
             <select class="sort-form-style" id="exercisesSortCriteriaMenu" name="exercisesSortCriteriaMenu">
                 <option value="select" id="select" selected disabled>Sort by</option>
@@ -95,13 +95,13 @@
 
         <!--Search Bar-->
         <div class="dropdown d-inline-block">
-            <form id="exercisesSearchForm" action="{{ url_for('exercises', pageNumber=1, currentArray=currentExercisesArray, operationUsed='Search') }}" method="post" style="display: none;">
+            <form id="exercisesSearchForm" action="{{ url_for('exercises', pageNumber=1, currentArray=currentArray, operationUsed='Search') }}" method="post" style="display: none;">
                 <input id="exercisesSearchItems" name="exercisesSearchItems">
             </form>
             <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
             <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
                 <div id="menuItems">
-                    {% for obj in currentExercisesArray %}
+                    {% for obj in currentArray %}
                         <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
                         <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Category: {{ obj.category }}</a>
                         <a class="button dropdown-item" href="{{ url_for('exercise_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Equipment: {{ obj.equipment|join(', ') }}</a>
@@ -125,18 +125,18 @@
             <div class="row justify-content-center" id="row{{ i|string }}">
             {% for offset in range(3) %}
                 <div class="col-md-4 p-4">
-                    <div class="card card-style h-100 pt-4" id="instanceCard_{{currentExercisesArray[start + 3*i + offset].arrayIndex}}">
-                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ currentExercisesArray[start + 3*i + offset].images[0] }}" onerror="this.onerror=null; this.src='{{ currentExercisesArray[start + 3*i+offset].images[1] }}'"; alt="{{ currentExercisesArray[start + 3*i + offset].name }}">
+                    <div class="card card-style h-100 pt-4" id="instanceCard_{{currentArray[start + 3*i + offset].arrayIndex}}">
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ currentArray[start + 3*i + offset].images[0] }}" onerror="this.onerror=null; this.src='{{ currentArray[start + 3*i+offset].images[1] }}'"; alt="{{ currentArray[start + 3*i + offset].name }}">
                         <div class="card-body">
-                            <h2 class="card-title text-center" id="exerciseName_{{currentExercisesArray[start + 3*i + offset].arrayIndex}}">{{ currentExercisesArray[start + 3*i + offset].name }}</h2>
+                            <h2 class="card-title text-center" id="exerciseName_{{currentArray[start + 3*i + offset].arrayIndex}}">{{ currentArray[start + 3*i + offset].name }}</h2>
                             <p class="card-text">
                                 <ul class="exerciseAttributesList list-unstyled">
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="exerciseCategoryTxt_{{currentExercisesArray[start + 3*i + offset].arrayIndex}}"><b>Category: </b>{{ currentExercisesArray[start + 3*i + offset].category }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="exerciseEquipText_{{currentExercisesArray[start + 3*i + offset].arrayIndex}}"><b>Equipment: </b>{{ currentExercisesArray[start + 3*i + offset].equipment|join(', ') }}</li>
-                                    <li style="padding-left: 1em;" id="exerciseDescText_{{currentExercisesArray[start + 3*i + offset].arrayIndex}}"><b>Description: </b>{{ currentExercisesArray[start + 3*i + offset].description }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="exerciseCategoryTxt_{{currentArray[start + 3*i + offset].arrayIndex}}"><b>Category: </b>{{ currentArray[start + 3*i + offset].category }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="exerciseEquipText_{{currentArray[start + 3*i + offset].arrayIndex}}"><b>Equipment: </b>{{ currentArray[start + 3*i + offset].equipment|join(', ') }}</li>
+                                    <li style="padding-left: 1em;" id="exerciseDescText_{{currentArray[start + 3*i + offset].arrayIndex}}"><b>Description: </b>{{ currentArray[start + 3*i + offset].description }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('exercise_instance', arrayIndex=currentExercisesArray[start + 3*i + offset].arrayIndex) }}" id="exerciseCardPageLink_{{ start + 3*i + offset }}" class="stretched-link"></a>
+                            <a href="{{ url_for('exercise_instance', arrayIndex=currentArray[start + 3*i + offset].arrayIndex) }}" id="exerciseCardPageLink_{{ start + 3*i + offset }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
@@ -149,17 +149,17 @@
             {% for i in range(-numLeftOverChannels, 0) %}
                 <div class="col-md-4 p-4">
                     <div class="card card-style h-100 pt-4">
-                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ currentExercisesArray[end + 1 + i].images[0] }}" onerror="this.onerror=null; this.src='{{ currentExercisesArray[end + 1 + i].images[1] }}'"; alt="{{ currentExercisesArray[end + 1 + i].name }}">
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ currentArray[end + 1 + i].images[0] }}" onerror="this.onerror=null; this.src='{{ currentArray[end + 1 + i].images[1] }}'"; alt="{{ currentArray[end + 1 + i].name }}">
                         <div class="card-body">
-                            <h2 class="card-title text-center">{{ currentExercisesArray[end + 1 + i].name }}</h2>
+                            <h2 class="card-title text-center">{{ currentArray[end + 1 + i].name }}</h2>
                             <p class="card-text">
                                 <ul class="exerciseAttributesList list-unstyled">
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Category: </b>{{ currentExercisesArray[end + 1 + i].category }}</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Equipment: </b>{{ currentExercisesArray[end + 1 + i].equipment|join(', ') }}</li>
-                                    <li style="padding-left: 1em;"><b>Description: </b>{{ currentExercisesArray[end + 1 + i].description }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;"><b>Category: </b>{{ currentArray[end + 1 + i].category }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;"><b>Equipment: </b>{{ currentArray[end + 1 + i].equipment|join(', ') }}</li>
+                                    <li style="padding-left: 1em;"><b>Description: </b>{{ currentArray[end + 1 + i].description }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('exercise_instance', arrayIndex=currentExercisesArray[end + 1 + i].arrayIndex) }}" id="exerciseCardPageLink_{{ end + 1 + i }}" class="stretched-link"></a>
+                            <a href="{{ url_for('exercise_instance', arrayIndex=currentArray[end + 1 + i].arrayIndex) }}" id="exerciseCardPageLink_{{ end + 1 + i }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
@@ -168,7 +168,7 @@
         {% endif %}
         </div>
 
-        {% if currentExercisesArray|length == 0 %}
+        {% if currentArray|length == 0 %}
             <h4 style="color: white;">Sorry! No instances meet your set requirements. Please reset the filters to see exercises.</h4>
         {% else %}
             <ul class="pagination justify-content-center" style="margin: 20px;">
@@ -176,15 +176,15 @@
                 {% if pageNumber == 1 %}
                     <li class="page-item disabled"><a class="page-link" href="">Previous</a></li>
                 {% else %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('exercises', pageNumber=pageNumber-1, currentArray=currentExercisesArray, operationUsed='Pagination') }}">Previous</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ url_for('exercises', pageNumber=pageNumber-1, currentArray=currentArray, operationUsed='Pagination') }}">Previous</a></li>
                 {% endif %}  
 
                 <!--All Pages Buttons-->
                 {% for i in range(1, numPages+1) %}
                     {% if i == pageNumber %}
-                        <li class="page-item active"><a class="page-link" href="{{ url_for('exercises', pageNumber=i, currentArray=currentExercisesArray, operationUsed='Pagination') }}">{{i}}</a></li>
+                        <li class="page-item active"><a class="page-link" href="{{ url_for('exercises', pageNumber=i, currentArray=currentArray, operationUsed='Pagination') }}">{{i}}</a></li>
                     {% else %}
-                        <li class="page-item"><a class="page-link" href="{{ url_for('exercises', pageNumber=i, currentArray=currentExercisesArray, operationUsed='Pagination') }}">{{i}}</a></li>
+                        <li class="page-item"><a class="page-link" href="{{ url_for('exercises', pageNumber=i, currentArray=currentArray, operationUsed='Pagination') }}">{{i}}</a></li>
                     {% endif %}    
                 {% endfor %}
 
@@ -192,7 +192,7 @@
                 {% if pageNumber == numPages %}
                     <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
                 {% else %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('exercises', pageNumber=pageNumber+1, currentArray=currentExercisesArray, operationUsed='Pagination') }}">Next</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ url_for('exercises', pageNumber=pageNumber+1, currentArray=currentArray, operationUsed='Pagination') }}">Next</a></li>
                 {% endif %}
             </ul>
         {% endif %}
@@ -204,7 +204,7 @@
     else $("#exercisesSortCriteriaMenu").val(localStorage.getItem("exercisesSortPhrase"));
 
     let items = document.getElementsByClassName("dropdown-item");
-    var data = $('#currentExercisesArrayData').data().arr;
+    var data = $('#currentArrayData').data().arr;
     var dataArr = processData(data);
 
     function filter() {

@@ -71,14 +71,14 @@ app.url_map.converters['list'] = ListConverter
 @app.route("/", methods=['GET'])
 def index():
     setup()
-    return MODEL_FACADE_INSTANCE.render_homepage()
+    return ModelFacade.render_homepage()
 
 
 # about page
 @app.route("/about", methods=['GET'])
 def about():
     setup()
-    return MODEL_FACADE_INSTANCE.render_about_page()
+    return ModelFacade.render_about_page()
 
 
 # exercises model page
@@ -92,7 +92,6 @@ def exercises(pageNumber, currentArray, operationUsed):
     return MODEL_FACADE_INSTANCE.render_model_page(modelType="exercise",
                                                    pageNumber=pageNumber,
                                                    flaskRequest=request,
-                                                   db=DATABASE,
                                                    currentArray=currentArray,
                                                    operationUsed=operationUsed)
 
@@ -107,7 +106,6 @@ def equipments(pageNumber, currentArray, operationUsed):
     return MODEL_FACADE_INSTANCE.render_model_page(modelType="equipment",
                                                    pageNumber=pageNumber,
                                                    flaskRequest=request,
-                                                   db=DATABASE,
                                                    currentArray=currentArray,
                                                    operationUsed=operationUsed)
 
@@ -122,7 +120,6 @@ def channels(pageNumber, currentArray, operationUsed):
     return MODEL_FACADE_INSTANCE.render_model_page(modelType="channel",
                                                    pageNumber=pageNumber,
                                                    flaskRequest=request,
-                                                   db=DATABASE,
                                                    currentArray=currentArray,
                                                    operationUsed=operationUsed)
 
@@ -132,19 +129,19 @@ def channels(pageNumber, currentArray, operationUsed):
 # exercise instance pages
 @app.route(EXERCISE_INSTANCE_URL_TEMPLATE.format('<int:arrayIndex>'), methods=['GET'])
 def exercise_instance(arrayIndex):
-    return MODEL_FACADE_INSTANCE.render_model_instance_page("exercise", arrayIndex, DATABASE)
+    return MODEL_FACADE_INSTANCE.render_instance_page("exercise", arrayIndex)
 
 
 # equipment instance pages
 @app.route(EQUIPMENT_INSTANCE_URL_TEMPLATE.format('<int:arrayIndex>'), methods=['GET'])
 def equipment_instance(arrayIndex):
-    return MODEL_FACADE_INSTANCE.render_model_instance_page("equipment", arrayIndex, DATABASE)
+    return MODEL_FACADE_INSTANCE.render_instance_page("equipment", arrayIndex)
 
 
 # channel instance pages
 @app.route(CHANNEL_INSTANCE_URL_TEMPLATE.format('<int:arrayIndex>'), methods=['GET'])
 def channel_instance(arrayIndex):
-    return MODEL_FACADE_INSTANCE.render_model_instance_page("channel", arrayIndex, DATABASE)
+    return MODEL_FACADE_INSTANCE.render_instance_page("channel", arrayIndex)
 
 
 # Start the Flask web-application when main.py file is run
