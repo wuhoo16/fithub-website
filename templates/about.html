@@ -1,226 +1,338 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% block head %}
+<title>About Me Page</title>
+{% endblock %} {% block body %}
+<div class="about-div container-fluid">
+  <div class="jumbotron-about jumbotron jumbotron-fluid text-center">
+    <h1>About Us</h1>
+  </div>
+  <div class="website-description">
+    <p id="websiteDescription1">
+      In today's world where desk jobs are prevalent, over 60-85% of people
+      around the world lead sedentary lifestyles. This lack of physical activity
+      can have serious implications for overall health and is attributed to
+      about 2 million deaths every year. In fact, the World Health Organization
+      states that "sedentary lifestyles increases all causes of mortality,
+      double the risk of cardiovascular diseases, diabetes, and obesity, and
+      increase the risks of colon cancer, high blood pressure, osteoporosis,
+      lipid disorders, depression and anxiety."
+    </p>
+    <br />
+    <p id="websiteDescription2">
+      Here at Fithub, we believe that everyone around the world should have the
+      resources and opportunity to improve their fitness and strive for a more
+      active lifestyle. We are aware of the dangers of a sedentary lifestyle and
+      want to provide detailed information to easily allow our users to
+      incorporate regular exercise into their lives.
+    </p>
+    <br />
+    <p id="websiteDescription3">
+      However, we are aware that it can be difficult to find the information you
+      need with so much scattered information over the web. In addition, we know
+      that the ongoing COVID-19 pandemic may have limited your access to public
+      gyms and imposed major challenges to finding and sticking to a workout
+      routine. As a result, we have aggregated a database of over 100 exercises
+      and provided links to common workout equipment and popular fitness
+      Youtubers to help your overcome these challenges. With our database, you
+      can easily:
+    </p>
+    <ul id="websiteDescription4">
+      <li>
+        Filter exercises by category or target muscle groups to easily build
+        your own tailored workout routine
+      </li>
+      <li>
+        Read detailed guides about how to perform specific exercises and easily
+        navigate to instructional videos
+      </li>
+      <li>Check the equipment needed to perform certain exercises at home</li>
+      <li>Check the price of various fitness equipment/gear</li>
+      <li>Check the rating of the vendors selling fitness equipment/gear</li>
+      <li>
+        Find discounts on fitness products with links to Youtube influencers
+        with sponsors
+      </li>
+      <li>
+        Find deals on fitness products using links to Youtube channels with
+        related sponsorships
+      </li>
+      <li>
+        Learn more about specific exercises and equipment referenced in fitness
+        Youtube videos
+      </li>
+    </ul>
+    <p id="websiteDescription5">
+      Athletes and fitness enthusiasts of all ages and experience levels are
+      welcome to explore our comprehensive database about specific exercises,
+      equipment, and Youtubers!
+    </p>
+  </div>
 
-{% block head %}
-    <title>About Me Page</title>
-{% endblock %}
+  <h1 class="about-header-text">Meet Team A13!</h1>
 
-{% block body %}
-    <div class="about-div container-fluid">
-        <div class="jumbotron-about jumbotron jumbotron-fluid text-center">
-            <h1>About Us</h1>
-        </div>
-        <div class="website-description">
-            <p id="websiteDescription1">
-                In today's world where desk jobs are prevalent, over 60-85% of people around the world lead sedentary lifestyles.
-                This lack of physical activity can have serious implications for overall health and is attributed to about 2 million deaths every year.
-                In fact, the World Health Organization states that "sedentary lifestyles increases all causes of mortality,
-                double the risk of cardiovascular diseases, diabetes, and obesity, and increase the risks of colon cancer, high blood pressure,
-                osteoporosis, lipid disorders, depression and anxiety."
-            </p>
-            <br>
-            <p id="websiteDescription2">
-                Here at Fithub, we believe that everyone around the world should have the resources
-                and opportunity to improve their fitness and strive for a more active lifestyle. We are aware of the dangers
-                of a sedentary lifestyle and want to provide detailed information to easily allow our users to incorporate regular exercise into their lives.
-            </p>
-            <br>
-            <p id="websiteDescription3">
-                However, we are aware that it can be difficult to find the information you need with so much scattered information
-                over the web. In addition, we know that the ongoing COVID-19 pandemic may have limited your access to public gyms
-                and imposed major challenges to finding and sticking to a workout routine.
-                As a result, we have aggregated a database of over 100 exercises and provided links to common workout equipment and
-                popular fitness Youtubers to help your overcome these challenges. With our database, you can easily:
-            </p>
-            <ul id="websiteDescription4">
-                <li>Filter exercises by category or target muscle groups to easily build your own tailored workout routine</li>
-                <li>Read detailed guides about how to perform specific exercises and easily navigate to instructional videos</li>
-                <li>Check the equipment needed to perform certain exercises at home</li>
-                <li>Check the price of various fitness equipment/gear</li>
-                <li>Check the rating of the vendors selling fitness equipment/gear</li>
-                <li>Find discounts on fitness products with links to Youtube influencers with sponsors</li>
-                <li>Find deals on fitness products using links to Youtube channels with related sponsorships</li>
-                <li>Learn more about specific exercises and equipment referenced in fitness Youtube videos</li>
-            </ul>
-            <p id="websiteDescription5">
-                Athletes and fitness enthusiasts of all ages and experience levels are welcome to explore our comprehensive database about specific exercises, equipment, and Youtubers!
-            </p>
-        </div>
-
-        <h1 class="about-header-text">Meet Team A13!</h1>
-
-        <div class="card-deck">
-            <div class="card" id="andyCard">
-                <img class="card-img-top" src="{{ url_for('static', filename='andy.jpg') }}" alt="Photo of Andy">
-                <div class="card-body">
-                    <h3 class="card-title">Andy Wu</h3>
-                    <p class="card-text">
-                        I am a junior at UT Austin with experience in backend development and cloud technologies. I have
-                        always enjoyed sports and fitness and have played tennis, basketball, soccer, and volleyball growing up.
-                        In my free time, I enjoy options trading, working out, watching Netflix shows, and  Ultimate Frisbee.
-                        One fun fact about me is that I used to compete in state archery tournaments back in middle school.
-                    </p>
-                    <p class="card-text">Major: Electrical and Computer Engineering with a focus in Software Engineering and Systems</p>
-                </div>
-                <div class="card-footer">
-                    <small class="text-muted">Primary responsibilities: Youtube Data API framework, SERPSTACK API debugging, Youtube channels page, Equipment page & instances, About page, Python infrastructure, MongoDB infrastructure, Cross-Model backend support, Github code/branch integration </small>
-                </div>
-            </div>
-
-            <div class="card" id="kayleeCard">
-                <img class="card-img-top" src="{{ url_for('static', filename='kaylee.jpg') }}" alt="Photo of Kaylee">
-                <div class="card-body">
-                    <h3 class="card-title">Kaylee Trevino</h3>
-                    <p class="card-text">
-                        I am currently a senior at UT Austin with a strong interest in software engineering.
-                        I am also interested in learning about web development and data science.
-                        For my personal interests, I like painting and hiking.
-                    </p>
-                    <p class="card-text">Major: Electrical and Computer Engineering with a focus in Software Engineering & Systems and Data Science & Information Processing</p>
-                </div>
-                <div class="card-footer">
-                    <small class="text-muted">Primary responsibilities: Youtube channels pages, Youtube APIs, Homepage</small>
-                </div>
-            </div>
-
-            <div class="card" id="michelleCard">
-                <img class="card-img-top" src="{{ url_for('static', filename='michelle.jpg') }}" alt="Photo of Michelle">
-                <div class="card-body">
-                    <h3 class="card-title">Michelle Wen</h3>
-                    <p class="card-text">
-                        My hometown is Plano, TX, and I went to the Texas Academy of Math and Science for high school.
-                        I'm currently a junior at UT Austin, and I enjoy doing robotics research, being an officer for Women in Electrical and Computer Engineering, and working on creative technical projects.
-                        In my free time, I enjoy painting with acrylics and watercolor, watching animated films, and exploring the outdoors.
-                        Fun fact: I danced Chinese folk dance for 9 years, and I was a Girl Scout for 11 years.
-                    </p>
-                    <p class="card-text">Major: Electrical and Computer Engineering with a focus in Software Engineering and Systems</p>
-                </div>
-                <div class="card-footer">
-                    <small class="text-muted">Primary responsibilities: WGER API framework, Google Custom Search API, Exercise page + instances, About page, Home page, Website UI/UX </small>
-                </div>
-            </div>
-
-            <div class="card" id="christopherCard">
-                <img class="card-img-top" src="{{ url_for('static', filename='christopher.jpg') }}" alt="Photo of Christopher">
-                <div class="card-body">
-                    <h3 class="card-title">Christopher Saenz</h3>
-                    <p class="card-text">
-                        My name is Christopher Saenz. I'm a senior at the University of Texas at Austin studying software development.
-                        I specialize in backend development, algorithms, and creative problem solving.
-                        I enjoy drawing and music in my free time, as well as playing/making video-games.
-                    </p>
-                    <p class="card-text">Major: Electrical and Computer Engineering with a focus in Software Engineering and Systems</p>
-                </div>
-                <div class="card-footer">
-                    <small class="text-muted">Primary responsibilities: Equipment page, About page Tools, README</small>
-                </div>
-            </div>
-        </div>
-
-        <hr><hr>
-
-        <h1 class="about-header-text">Additional Information</h1>
-        <h4 class="about-info-text">Data and Links:</h4>
-        <ul id="data-links">
-            <li>
-                <a href="https://developers.google.com/youtube/v3/getting-started">Youtube Data V3 API Guide</a>
-                <p>This API was used to setup and activate the Youtube API. It includes supported API operations and syntax examples to get different details about channels related to fitness.
-                Channels, search, playlists, and video API operations were used.
-                </p>
-            </li>
-            <li>
-                <a href="https://wger.de/en/software/api">wger REST API</a>
-                <p>This API was used to grab data on 700+ exercises with information like exercise category, muscle groups, equipment, images, comments, etc. 
-                Out of the 700+ exercises, only 110 exercises were used since they were approved, in english, and had information for name, description, category, and equipment.
-                The request made to the API was parsed into a JSON format. Then, the 110 exercises were filtered out along with specific information for each exercise. 
-                Since over half of the exercises didn't come with images, the Google Custom Search JSON API was used to search for images related to each exercise.
-                </p>
-            </li>
-            <li>
-                <a href="https://developers.google.com/custom-search/v1/overview">Google Custom Search JSON API</a>
-                <p>
-                    This API was used to do a Google image search. We sent an HTTP GET request to the URI and passed in specific parameters like image file type, API key, search engine key, and search string.
-                    The call returns a response which contains a Search instance. The Search instance contains information from the search result which we used to grab the image URLs.
-                    The image URLs were saved corresponding to the exercise. This API can also be used to grab videos or other multimedia.
-                </p>
-            </li>
-            <li>
-                <a href="https://serpstack.com/documentation">SERPSTACK API Documentation</a>
-                <p>
-                    SERPSTACK was the API we initially used for finding results for fitness equipments. Unfortunately,
-                    the API returned many incorrect or broken images, resulting in numerous cases where equipment would
-                    be misrepresented by their thumbnails and image carousels. Nevertheless, we may revisit this API in
-                    the future to aggregate rating and vendor information if possible.
-                </p>
-            </li>
-            <li>
-                <a href="https://developer.ebay.com/api-docs/buy/browse/overview.html">eBay Browse API</a>
-                <p>
-                    In lieu of SERPSTACK, we used eBay's Browse API for finding fitness equipment results. Multiple calls
-                    to the API were made, one for each specified search keyword. The dictionaries obtained from the API
-                    from each call were then converted into Equipment objects and stored into our database.
-                </p>
-            </li>
-        </ul>
-
-        <h4 class="about-info-text">Tools:</h4>
-        <ul id="tools">
-            <li>
-                <b>GitHub</b>
-                <p>
-                    GitHub was our source for collaboration and code merging. Most individual work was done in individual
-                    branches and was then merged to the 'dev' branch.
-                    We also used issue tracking to fix problems with our project and GitHub project boards to keep track of user stories. 
-                </p>
-            </li>
-            <li>
-                <b>Slack</b>
-                <p>
-                    Our group used Slack for communication and for assigning tasks. We integrated our Slack with our Github
-                    repository so we would be notified about updates, issues, and tasks.
-                    In Slack, we have several channels like general, imdb-web-app, sources-and-links, and aboutme to organize our communication better.
-                </p>
-            </li>
-            <li>
-                <b>Bootstrap4</b>
-                <p>
-                    We used Bootstrap4 as a CSS framework for building a responsive website faster and easier. We used Bootstrap4 elements such as a carousel and cards.
-                    In future phases, we will use pagination, filters, and possibly dropdowns.    
-                </p>
-            </li>
-            <li>
-                <b>Flask</b>
-                <p>
-                    We used the Flask web framework to easily build our website. 
-                </p>
-            </li>
-            <li>
-                <b>Google App Engine</b>
-                <p>
-                    We used the Google App Engine to deploy our website.
-                </p>
-            </li>
-            <li>
-                <b>MongoDB</b>
-                <p>
-                    We used MongoDB to store our data gathered from the APIs. Instead of having to call the API multiple times when the user is on the website, 
-                    we store all that data into a database for easier and faster access. This decreases the # of API calls made and ensures faster access to information displayed on the website.
-                </p>
-            </li>
-            <li>
-                <b>Selenium</b>
-                <p>
-                    We used Selenium to test multiple components of our website frontend and GUI. These components include the three model pages, instance pages, homepage, and about page. Within these components, we tested the content, validity of the pages, carousel, navigation bar, attributes, pagination, etc.
-                </p>
-            </li>
-            <li>
-                <b>Unittest</b>
-                <p>
-                    We used Python unittest, a unit testing framework, to easily verify that the Python backend methods that communicate to our MongoDB database are working as intended.   
-                </p>
-            </li>
-        </ul>
-        <h4 class="about-info-text"><a href="https://github.com/UT-SWLab/TeamA13">Github Repository for UT-SWLab/TeamA13</a></h4>
-        <br>
+  <div class="card-deck">
+    <div class="card" id="andyCard">
+      <img
+        class="card-img-top"
+        src="{{ url_for('static', filename='andy.jpg') }}"
+        alt="Photo of Andy"
+      />
+      <div class="card-body">
+        <h3 class="card-title">Andy Wu</h3>
+        <p class="card-text">
+          I am a junior at UT Austin with experience in backend development and
+          cloud technologies. I have always enjoyed sports and fitness and have
+          played tennis, basketball, soccer, and volleyball growing up. In my
+          free time, I enjoy options trading, working out, watching Netflix
+          shows, and Ultimate Frisbee. One fun fact about me is that I used to
+          compete in state archery tournaments back in middle school.
+        </p>
+        <p class="card-text">
+          Major: Electrical and Computer Engineering with a focus in Software
+          Engineering and Systems
+        </p>
+      </div>
+      <div class="card-footer">
+        <small class="text-muted"
+          >Primary responsibilities: Youtube Data API framework, SERPSTACK API
+          debugging, Youtube channels page, Equipment page & instances, About
+          page, Python infrastructure, MongoDB infrastructure, Cross-Model
+          backend support, Github code/branch integration
+        </small>
+      </div>
     </div>
+
+    <div class="card" id="kayleeCard">
+      <img
+        class="card-img-top"
+        src="{{ url_for('static', filename='kaylee.jpg') }}"
+        alt="Photo of Kaylee"
+      />
+      <div class="card-body">
+        <h3 class="card-title">Kaylee Trevino</h3>
+        <p class="card-text">
+          I am currently a senior at UT Austin with a strong interest in
+          software engineering. I am also interested in learning about web
+          development and data science. For my personal interests, I like
+          painting and hiking.
+        </p>
+        <p class="card-text">
+          Major: Electrical and Computer Engineering with a focus in Software
+          Engineering & Systems and Data Science & Information Processing
+        </p>
+      </div>
+      <div class="card-footer">
+        <small class="text-muted"
+          >Primary responsibilities: Youtube channels pages, Youtube APIs,
+          Homepage, Code Refactoring, Search, Stacking of Search, Sort, and
+          Filter</small
+        >
+      </div>
+    </div>
+
+    <div class="card" id="michelleCard">
+      <img
+        class="card-img-top"
+        src="{{ url_for('static', filename='michelle.jpg') }}"
+        alt="Photo of Michelle"
+      />
+      <div class="card-body">
+        <h3 class="card-title">Michelle Wen</h3>
+        <p class="card-text">
+          My hometown is Plano, TX, and I went to the Texas Academy of Math and
+          Science for high school. I'm currently a junior at UT Austin, and I
+          enjoy doing robotics research, being an officer for Women in
+          Electrical and Computer Engineering, and working on creative technical
+          projects. In my free time, I enjoy painting with acrylics and
+          watercolor, watching animated films, and exploring the outdoors. Fun
+          fact: I danced Chinese folk dance for 9 years, and I was a Girl Scout
+          for 11 years.
+        </p>
+        <p class="card-text">
+          Major: Electrical and Computer Engineering with a focus in Software
+          Engineering and Systems
+        </p>
+      </div>
+      <div class="card-footer">
+        <small class="text-muted"
+          >Primary responsibilities: WGER API framework, Google Custom Search
+          API, Exercise page + instances, About page, Home page, Website UI/UX
+        </small>
+      </div>
+    </div>
+
+    <div class="card" id="christopherCard">
+      <img
+        class="card-img-top"
+        src="{{ url_for('static', filename='christopher.jpg') }}"
+        alt="Photo of Christopher"
+      />
+      <div class="card-body">
+        <h3 class="card-title">Christopher Saenz</h3>
+        <p class="card-text">
+          My name is Christopher Saenz. I'm a senior at the University of Texas
+          at Austin studying software development. I specialize in backend
+          development, algorithms, and creative problem solving. I enjoy drawing
+          and music in my free time, as well as playing/making video-games.
+        </p>
+        <p class="card-text">
+          Major: Electrical and Computer Engineering with a focus in Software
+          Engineering and Systems
+        </p>
+      </div>
+      <div class="card-footer">
+        <small class="text-muted"
+          >Primary responsibilities: Equipment page, About page Tools,
+          README</small
+        >
+      </div>
+    </div>
+  </div>
+
+  <hr />
+  <hr />
+
+  <h1 class="about-header-text">Additional Information</h1>
+  <h4 class="about-info-text">Data and Links:</h4>
+  <ul id="data-links">
+    <li>
+      <a href="https://developers.google.com/youtube/v3/getting-started"
+        >Youtube Data V3 API Guide</a
+      >
+      <p>
+        This API was used to setup and activate the Youtube API. It includes
+        supported API operations and syntax examples to get different details
+        about channels related to fitness. Channels, search, playlists, and
+        video API operations were used.
+      </p>
+    </li>
+    <li>
+      <a href="https://wger.de/en/software/api">wger REST API</a>
+      <p>
+        This API was used to grab data on 700+ exercises with information like
+        exercise category, muscle groups, equipment, images, comments, etc. Out
+        of the 700+ exercises, only 110 exercises were used since they were
+        approved, in english, and had information for name, description,
+        category, and equipment. The request made to the API was parsed into a
+        JSON format. Then, the 110 exercises were filtered out along with
+        specific information for each exercise. Since over half of the exercises
+        didn't come with images, the Google Custom Search JSON API was used to
+        search for images related to each exercise.
+      </p>
+    </li>
+    <li>
+      <a href="https://developers.google.com/custom-search/v1/overview"
+        >Google Custom Search JSON API</a
+      >
+      <p>
+        This API was used to do a Google image search. We sent an HTTP GET
+        request to the URI and passed in specific parameters like image file
+        type, API key, search engine key, and search string. The call returns a
+        response which contains a Search instance. The Search instance contains
+        information from the search result which we used to grab the image URLs.
+        The image URLs were saved corresponding to the exercise. This API can
+        also be used to grab videos or other multimedia.
+      </p>
+    </li>
+    <li>
+      <a href="https://serpstack.com/documentation"
+        >SERPSTACK API Documentation</a
+      >
+      <p>
+        SERPSTACK was the API we initially used for finding results for fitness
+        equipments. Unfortunately, the API returned many incorrect or broken
+        images, resulting in numerous cases where equipment would be
+        misrepresented by their thumbnails and image carousels. Nevertheless, we
+        may revisit this API in the future to aggregate rating and vendor
+        information if possible.
+      </p>
+    </li>
+    <li>
+      <a href="https://developer.ebay.com/api-docs/buy/browse/overview.html"
+        >eBay Browse API</a
+      >
+      <p>
+        In lieu of SERPSTACK, we used eBay's Browse API for finding fitness
+        equipment results. Multiple calls to the API were made, one for each
+        specified search keyword. The dictionaries obtained from the API from
+        each call were then converted into Equipment objects and stored into our
+        database.
+      </p>
+    </li>
+  </ul>
+
+  <h4 class="about-info-text">Tools:</h4>
+  <ul id="tools">
+    <li>
+      <b>GitHub</b>
+      <p>
+        GitHub was our source for collaboration and code merging. Most
+        individual work was done in individual branches and was then merged to
+        the 'dev' branch. We also used issue tracking to fix problems with our
+        project and GitHub project boards to keep track of user stories.
+      </p>
+    </li>
+    <li>
+      <b>Slack</b>
+      <p>
+        Our group used Slack for communication and for assigning tasks. We
+        integrated our Slack with our Github repository so we would be notified
+        about updates, issues, and tasks. In Slack, we have several channels
+        like general, imdb-web-app, sources-and-links, and aboutme to organize
+        our communication better.
+      </p>
+    </li>
+    <li>
+      <b>Bootstrap4</b>
+      <p>
+        We used Bootstrap4 as a CSS framework for building a responsive website
+        faster and easier. We used Bootstrap4 elements such as a carousel and
+        cards. In future phases, we will use pagination, filters, and possibly
+        dropdowns.
+      </p>
+    </li>
+    <li>
+      <b>Flask</b>
+      <p>We used the Flask web framework to easily build our website.</p>
+    </li>
+    <li>
+      <b>Google App Engine</b>
+      <p>We used the Google App Engine to deploy our website.</p>
+    </li>
+    <li>
+      <b>MongoDB</b>
+      <p>
+        We used MongoDB to store our data gathered from the APIs. Instead of
+        having to call the API multiple times when the user is on the website,
+        we store all that data into a database for easier and faster access.
+        This decreases the # of API calls made and ensures faster access to
+        information displayed on the website.
+      </p>
+    </li>
+    <li>
+      <b>Selenium</b>
+      <p>
+        We used Selenium to test multiple components of our website frontend and
+        GUI. These components include the three model pages, instance pages,
+        homepage, and about page. Within these components, we tested the
+        content, validity of the pages, carousel, navigation bar, attributes,
+        pagination, etc.
+      </p>
+    </li>
+    <li>
+      <b>Unittest</b>
+      <p>
+        We used Python unittest, a unit testing framework, to easily verify that
+        the Python backend methods that communicate to our MongoDB database are
+        working as intended.
+      </p>
+    </li>
+  </ul>
+  <h4 class="about-info-text">
+    <a href="https://github.com/UT-SWLab/TeamA13"
+      >Github Repository for UT-SWLab/TeamA13</a
+    >
+  </h4>
+  <br />
+</div>
 
 {% endblock %}

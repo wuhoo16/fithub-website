@@ -3,10 +3,18 @@ import main
 
 from pymongo import MongoClient
 from unittest import TestCase
+from templates.api.exercise_api import ExerciseAPI
+from templates.api.equipment_api import EquipmentAPI
+from templates.api.channel_api import ChannelAPI
+from templates.backend.model_interface import ModelInterface
+from templates.backend.exercise_backend import ExerciseBackend
+from templates.backend.equipment_backend import EquipmentBackend
+from templates.backend.channel_backend import ChannelBackend
+from templates.api.mongodb_initialization_driver import clean_database
 unittest.TestLoader.sortTestMethodsUsing = None
 
 
-class TestMain(TestCase):
+class TestMongoDBCommunication(TestCase):
     @classmethod
     def setUpClass(cls):
         print('Setting up before TestMain class...')
@@ -38,15 +46,15 @@ class TestMain(TestCase):
         :return: None
         """
         # Invoke wger API to initialize the exercises collection in the test database
-        main.initialize_mongoDB_exercises_collection(TestMain.TEST_DATABASE)
-        ACTUAL_NUM_EXERCISE_DOCUMENTS = TestMain.TEST_DATABASE.exercises.estimated_document_count()
+        ExerciseAPI.initialize_mongoDB_collection(TestMongoDBCommunication.TEST_DATABASE)
+        ACTUAL_NUM_EXERCISE_DOCUMENTS = TestMongoDBCommunication.TEST_DATABASE.exercises.estimated_document_count()
         EXPECTED_MIN_NUM_EXERCISE_DOCUMENTS = 100
         # 1.) Verify there are at least 100 exercise documents stored
         self.assertTrue(ACTUAL_NUM_EXERCISE_DOCUMENTS >= EXPECTED_MIN_NUM_EXERCISE_DOCUMENTS)
         # 2.) Verify every exercise document has a valid name, valid unique id, and a valid + in-order arrayIndex
         exercise_id_set = set()
         arrayIndexCounter = 0
-        for exerciseDoc in TestMain.TEST_DATABASE.exercises.find():
+        for exerciseDoc in TestMongoDBCommunication.TEST_DATABASE.exercises.find():
             EXERCISE_NAME = exerciseDoc['name']
             EXERCISE_ID = exerciseDoc['id']
             EXERCISE_ARRAY_INDEX = exerciseDoc['arrayIndex']
@@ -68,15 +76,15 @@ class TestMain(TestCase):
         :return: None
         """
         # Invoke ebay API to initialize the exercises collection in the test database
-        main.initialize_mongoDB_equipment_collection(TestMain.TEST_DATABASE)
-        ACTUAL_NUM_EQUIPMENT_DOCUMENTS = TestMain.TEST_DATABASE.equipments.estimated_document_count()
+        EquipmentAPI.initialize_mongoDB_collection(TestMongoDBCommunication.TEST_DATABASE)
+        ACTUAL_NUM_EQUIPMENT_DOCUMENTS = TestMongoDBCommunication.TEST_DATABASE.equipments.estimated_document_count()
         EXPECTED_MIN_NUM_EQUIPMENT_DOCUMENTS = 40
         # 1.) Verify there are at least 40 equipment documents stored
         self.assertTrue(ACTUAL_NUM_EQUIPMENT_DOCUMENTS >= EXPECTED_MIN_NUM_EQUIPMENT_DOCUMENTS)
         # 2.) Verify every equipment document has a valid name, valid unique id, and a valid + in-order arrayIndex
         equipment_id_set = set()
         arrayIndexCounter = 0
-        for equipmentDoc in TestMain.TEST_DATABASE.equipments.find():
+        for equipmentDoc in TestMongoDBCommunication.TEST_DATABASE.equipments.find():
             EQUIPMENT_NAME = equipmentDoc['name']
             EQUIPMENT_ID = equipmentDoc['id']
             EQUIPMENT_ARRAY_INDEX = equipmentDoc['arrayIndex']
@@ -98,15 +106,15 @@ class TestMain(TestCase):
         :return: None
         """
         # Invoke Youtube API to initialize the channels collection in the test database
-        main.initialize_mongoDB_channel_collection(TestMain.TEST_DATABASE)
-        ACTUAL_NUM_CHANNEL_DOCUMENTS = TestMain.TEST_DATABASE.channels.estimated_document_count()
+        ChannelAPI.initialize_mongoDB_collection(TestMongoDBCommunication.TEST_DATABASE)
+        ACTUAL_NUM_CHANNEL_DOCUMENTS = TestMongoDBCommunication.TEST_DATABASE.channels.estimated_document_count()
         EXPECTED_MIN_NUM_CHANNEL_DOCUMENTS = 40
         # 1.) Verify there are at least 40 channel documents stored
         self.assertTrue(ACTUAL_NUM_CHANNEL_DOCUMENTS >= EXPECTED_MIN_NUM_CHANNEL_DOCUMENTS)
         # 2.) Verify every channel document has a valid name, valid unique id, and a valid + in-order arrayIndex
         channel_id_set = set()
         arrayIndexCounter = 0
-        for channelDoc in TestMain.TEST_DATABASE.channels.find():
+        for channelDoc in TestMongoDBCommunication.TEST_DATABASE.channels.find():
             CHANNEL_NAME = channelDoc['name']
             CHANNEL_ID = channelDoc['id']
             CHANNEL_ARRAY_INDEX = channelDoc['arrayIndex']
@@ -126,13 +134,14 @@ class TestMain(TestCase):
         Then check each Exercise object in the returned exercise array
         :return: None
         """
-        EXISTING_COLLECTIONS_BEFORE = TestMain.TEST_DATABASE.list_collection_names()
-        if TestMain.EXERCISE_COLLECTION_NAME not in EXISTING_COLLECTIONS_BEFORE:
+        EXISTING_COLLECTIONS_BEFORE = TestMongoDBCommunication.TEST_DATABASE.list_collection_names()
+        if TestMongoDBCommunication.EXERCISE_COLLECTION_NAME not in EXISTING_COLLECTIONS_BEFORE:
             print("test_phase2Database is missing the 'exercises' collection prior to loading test. Initializing now...")
             self.test_initialize_mongoDB_exercises_collection()
 
         # Call method from main.py to initialize the exerciseArray
-        TEST_EXERCISE_ARRAY = main.load_exercises_from_db(TestMain.TEST_DATABASE)
+        ExerciseBackend.load_and_return_model_array_from_db(TestMongoDBCommunication.TEST_DATABASE)
+        TEST_EXERCISE_ARRAY = ModelInterface.TEST_EXERCISE_ARRAY
 
         # Assert loaded exercise array has 100 or more objects
         self.assertTrue(len(TEST_EXERCISE_ARRAY) >= 100)
@@ -157,13 +166,14 @@ class TestMain(TestCase):
         Then verify each object in the returned equipment array
         :return: None
         """
-        EXISTING_COLLECTIONS_BEFORE = TestMain.TEST_DATABASE.list_collection_names()
-        if TestMain.EQUIPMENT_COLLECTION_NAME not in EXISTING_COLLECTIONS_BEFORE:
-            print(f"test_phase2Database is missing the '{ TestMain.EQUIPMENT_COLLECTION_NAME }' collection prior to loading test. Initializing now...")
+        EXISTING_COLLECTIONS_BEFORE = TestMongoDBCommunication.TEST_DATABASE.list_collection_names()
+        if TestMongoDBCommunication.EQUIPMENT_COLLECTION_NAME not in EXISTING_COLLECTIONS_BEFORE:
+            print(f"test_phase2Database is missing the '{ TestMongoDBCommunication.EQUIPMENT_COLLECTION_NAME }' collection prior to loading test. Initializing now...")
             self.test_initialize_mongoDB_equipment_collection()
 
         # Call method from main.py to initialize the equipment array
-        TEST_EQUIPMENT_ARRAY = main.load_equipments_from_db(TestMain.TEST_DATABASE)
+        EquipmentBackend.load_and_return_model_array_from_db(TestMongoDBCommunication.TEST_DATABASE)
+        TEST_EQUIPMENT_ARRAY = ModelInterface.EQUIPMENT_ARRAY
 
         # Assert loaded equipment array has 40 or more objects
         self.assertTrue(len(TEST_EQUIPMENT_ARRAY) >= 40)
@@ -188,13 +198,14 @@ class TestMain(TestCase):
         Then check each channel object in the returned channel array
         :return: None
         """
-        EXISTING_COLLECTIONS_BEFORE = TestMain.TEST_DATABASE.list_collection_names()
-        if TestMain.CHANNEL_COLLECTION_NAME not in EXISTING_COLLECTIONS_BEFORE:
-            print(f"test_phase2Database is missing the '{ TestMain.CHANNEL_COLLECTION_NAME }' collection prior to loading test. Initializing now...")
+        EXISTING_COLLECTIONS_BEFORE = TestMongoDBCommunication.TEST_DATABASE.list_collection_names()
+        if TestMongoDBCommunication.CHANNEL_COLLECTION_NAME not in EXISTING_COLLECTIONS_BEFORE:
+            print(f"test_phase2Database is missing the '{ TestMongoDBCommunication.CHANNEL_COLLECTION_NAME }' collection prior to loading test. Initializing now...")
             self.test_initialize_mongoDB_channel_collection()
 
         # Call method from main.py to initialize the channels array
-        TEST_CHANNEL_ARRAY = main.load_channels_from_db(TestMain.TEST_DATABASE)
+        ChannelBackend.load_and_return_model_array_from_db(TestMongoDBCommunication.TEST_DATABASE)
+        TEST_CHANNEL_ARRAY = ModelInterface.CHANNEL_ARRAY
 
         # Assert loaded channel array has 40 or more objects
         self.assertTrue(len(TEST_CHANNEL_ARRAY) >= 40)
@@ -217,22 +228,22 @@ class TestMain(TestCase):
         """Assert that all 3 collections exist prior to this method, if so then verifies that dropping all 3 collections is successful
            in the remote mongoDB
         """
-        EXISTING_COLLECTIONS_BEFORE = TestMain.TEST_DATABASE.list_collection_names()
-        if TestMain.EXERCISE_COLLECTION_NAME not in EXISTING_COLLECTIONS_BEFORE:
+        EXISTING_COLLECTIONS_BEFORE = TestMongoDBCommunication.TEST_DATABASE.list_collection_names()
+        if TestMongoDBCommunication.EXERCISE_COLLECTION_NAME not in EXISTING_COLLECTIONS_BEFORE:
             self.test_initialize_mongoDB_exercises_collection()
-        if TestMain.EQUIPMENT_COLLECTION_NAME not in EXISTING_COLLECTIONS_BEFORE:
+        if TestMongoDBCommunication.EQUIPMENT_COLLECTION_NAME not in EXISTING_COLLECTIONS_BEFORE:
             self.test_initialize_mongoDB_equipment_collection()
-        if TestMain.CHANNEL_COLLECTION_NAME not in EXISTING_COLLECTIONS_BEFORE:
+        if TestMongoDBCommunication.CHANNEL_COLLECTION_NAME not in EXISTING_COLLECTIONS_BEFORE:
             self.test_initialize_mongoDB_channel_collection()
 
-        # Call method from main.py to drop all 3 collections
-        main.clean_database(TestMain.TEST_DATABASE)
+        # Call method from mongodb_initialization_driver.py to drop all 3 collections
+        clean_database(TestMongoDBCommunication.TEST_DATABASE)
 
         # Verify all 3 collections have been dropped successfully
-        EXISTING_COLLECTIONS_AFTER = TestMain.TEST_DATABASE.list_collection_names()
-        self.assertTrue(TestMain.EXERCISE_COLLECTION_NAME not in EXISTING_COLLECTIONS_AFTER)
-        self.assertTrue(TestMain.EQUIPMENT_COLLECTION_NAME not in EXISTING_COLLECTIONS_AFTER)
-        self.assertTrue(TestMain.CHANNEL_COLLECTION_NAME not in EXISTING_COLLECTIONS_AFTER)
+        EXISTING_COLLECTIONS_AFTER = TestMongoDBCommunication.TEST_DATABASE.list_collection_names()
+        self.assertTrue(TestMongoDBCommunication.EXERCISE_COLLECTION_NAME not in EXISTING_COLLECTIONS_AFTER)
+        self.assertTrue(TestMongoDBCommunication.EQUIPMENT_COLLECTION_NAME not in EXISTING_COLLECTIONS_AFTER)
+        self.assertTrue(TestMongoDBCommunication.CHANNEL_COLLECTION_NAME not in EXISTING_COLLECTIONS_AFTER)
 
 
 if __name__ == '__main__':
