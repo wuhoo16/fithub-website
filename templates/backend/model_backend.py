@@ -79,7 +79,7 @@ class ModelBackend(ModelBackendInterface, ABC):
         for relatedDoc in relatedCursor:
             if relatedDoc['arrayIndex'] in validArrayIndexSet:
                 relatedInstances.append(globalArray[relatedDoc['arrayIndex']])
-        return relatedInstances
+        return list(set(relatedInstances))
 
     @staticmethod
     def paginate(pageNumber, currentArray):

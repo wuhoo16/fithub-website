@@ -64,7 +64,7 @@ class ModelFacade:
         Cleans the current phase's database by dropping all 3 model collections.
         :return: None
         """
-        self.db .exercises.drop()
+        self.db.exercises.drop()
         self.db.equipments.drop()
         self.db.channels.drop()
 
@@ -162,7 +162,8 @@ class ModelFacade:
             elif operationUsed == "Search":
                 return self.__handle_search_operation(modelType, flaskRequest, currentArray, pageNumber)
             else:
-                raise NameError(f"operationUsed={operationUsed} is not valid! Must be either 'Search', 'Sort', or 'Filter' for a POST request!")
+                raise NameError(
+                    f"operationUsed={operationUsed} is not valid! Must be either 'Search', 'Sort', or 'Filter' for a POST request!")
         elif flaskRequest.method == 'GET':
             if operationUsed == "Pagination":
                 return ModelBackend.render_model_page(pageNumber, currentArray, 0, modelType)
@@ -217,12 +218,14 @@ class ModelFacade:
         # Query the entire exercises collection on each of the selected exercise category terms and append matching Exercise objects
         filteredExercises = []
         for exerciseCategory in selectedExerciseCategories:
-            filteredExercises += ModelBackend.find_related_objects_for_filter_operation(self.db.exercises.find({'category': exerciseCategory}), currentArray, self.EXERCISES_ARRAY)
+            filteredExercises += ModelBackend.find_related_objects_for_filter_operation(
+                self.db.exercises.find({'category': exerciseCategory}), currentArray, self.EXERCISES_ARRAY)
 
         # Query the entire exercises collection on each of the selected equipment category terms and append matching Exercise objects
         # NOTE THAT WE ARE TAKING THE UNION OF SELECTED FILTERING CHECKBOXES NOT THE INTERSECTION
         for equipmentCategory in selectedEquipmentCategories:
-            filteredExercises += ModelBackend.find_related_objects_for_filter_operation(self.db.exercises.find({'equipment': equipmentCategory}), currentArray, self.EXERCISES_ARRAY)
+            filteredExercises += ModelBackend.find_related_objects_for_filter_operation(
+                self.db.exercises.find({'equipment': equipmentCategory}), currentArray, self.EXERCISES_ARRAY)
 
         # Return all of matching Exercise objects after filtering on the currentArray
         return list(set(filteredExercises))
@@ -236,12 +239,15 @@ class ModelFacade:
         filteredEquipments = []
         for priceString in selectedPriceRanges:
             priceRangeList = priceString.split(" ")
-            filteredEquipments += ModelBackend.find_related_objects_for_filter_operation(self.db.equipments.find({'price': {'$gte': float(priceRangeList[0]), '$lt': float(priceRangeList[1])}}), currentArray, self.EQUIPMENT_ARRAY)
+            filteredEquipments += ModelBackend.find_related_objects_for_filter_operation(
+                self.db.equipments.find({'price': {'$gte': float(priceRangeList[0]), '$lt': float(priceRangeList[1])}}),
+                currentArray, self.EQUIPMENT_ARRAY)
 
         # Query the entire exercises collection on each of the selected equipment category terms and add the Exercise objects with matching equipment categories
         # NOTE THAT WE ARE TAKING THE UNION OF SELECTED FILTERING CHECKBOXES NOT THE INTERSECTION
         for equipmentCategory in selectedEquipmentCategories:
-            filteredEquipments += ModelBackend.find_related_objects_for_filter_operation(self.db.equipments.find({'equipmentCategory': equipmentCategory}), currentArray, self.EQUIPMENT_ARRAY)
+            filteredEquipments += ModelBackend.find_related_objects_for_filter_operation(
+                self.db.equipments.find({'equipmentCategory': equipmentCategory}), currentArray, self.EQUIPMENT_ARRAY)
 
         # Return all of filtered Exercise objects
         return list(set(filteredEquipments))
@@ -256,19 +262,25 @@ class ModelFacade:
         filteredChannels = []
         for subscriberRangeString in selectedSubscriberRange:
             subscriberRangeList = subscriberRangeString.split(" ")
-            filteredChannels += ModelBackend.find_related_objects(self.db.channels.find({'subscriberCount': {'$gte': int(subscriberRangeList[0]), '$lt': int(subscriberRangeList[1])}}), currentArray, self.CHANNEL_ARRAY)
+            filteredChannels += ModelBackend.find_related_objects_for_filter_operation(self.db.channels.find(
+                {'subscriberCount': {'$gte': int(subscriberRangeList[0]), '$lt': int(subscriberRangeList[1])}}),
+                                                                  currentArray, self.CHANNEL_ARRAY)
 
         # Query the entire exercises collection on selected ranges and append matching Exercise objects
         # UNION OF PREVIOUS FILTER RESULTS
         for totalViewsString in selectedTotalViewsRange:
             totalViewsList = totalViewsString.split(" ")
-            filteredChannels += ModelBackend.find_related_objects(self.db.channels.find({'viewCount': {'$gte': int(totalViewsList[0]), '$lt': int(totalViewsList[1])}}), currentArray, self.CHANNEL_ARRAY)
+            filteredChannels += ModelBackend.find_related_objects_for_filter_operation(
+                self.db.channels.find({'viewCount': {'$gte': int(totalViewsList[0]), '$lt': int(totalViewsList[1])}}),
+                currentArray, self.CHANNEL_ARRAY)
 
         # Query the entire exercises collection on each of the selected ranges and append matching Exercise objects
         # UNION OF PREVIOUS FILTER RESULTS
         for videoRangeString in selectedVideosRange:
             videoRangeList = videoRangeString.split(" ")
-            filteredChannels += ModelBackend.find_related_objects(self.db.channels.find({'videoCount': {'$gte': int(videoRangeList[0]), '$lt': int(videoRangeList[1])}}), currentArray, self.CHANNEL_ARRAY)
+            filteredChannels += ModelBackend.find_related_objects_for_filter_operation(
+                self.db.channels.find({'videoCount': {'$gte': int(videoRangeList[0]), '$lt': int(videoRangeList[1])}}),
+                currentArray, self.CHANNEL_ARRAY)
 
         # Return all of filtered Exercise objects
         return list(set(filteredChannels))
@@ -278,7 +290,7 @@ class ModelFacade:
         # At this point modelType has already been checked to be one of these cases
         if modelType == 'exercise':
             related_2D_array = self.__get_related_objects_for_exercise_instance(instanceObjectID)
-            print(f'2D array related to exercise instance is: { related_2D_array }')
+            print(f'2D array related to exercise instance is: {related_2D_array}')
             return related_2D_array
         elif modelType == 'equipment':
             related_2D_array = self.__get_related_objects_for_equipment_instance(instanceObjectID)
@@ -288,8 +300,10 @@ class ModelFacade:
             related_2D_array = self.__get_related_objects_for_channel_instance(instanceObjectID)
             return self.__get_related_objects_for_channel_instance(instanceObjectID)
             return related_2D_array
+
     def __get_related_objects_for_exercise_instance(self, id):
-        attributes = ModelBackend.get_current_instance_object_attributes(id, self.db.exercises, ('category', 'subcategory', 'equipment'))
+        attributes = ModelBackend.get_current_instance_object_attributes(id, self.db.exercises,
+                                                                         ('category', 'subcategory', 'equipment'))
         category = attributes[0]
         subcategory = attributes[1]
         equipmentCategoryList = attributes[2]
@@ -300,9 +314,13 @@ class ModelFacade:
                                                                                   self.EXERCISES_ARRAY)
         relatedEquipments = []
         for equipmentCategory in equipmentCategoryList:
-            relatedEquipments += ModelBackend.find_related_objects(self.db.equipments.find({'equipmentCategory': equipmentCategory}), self.EQUIPMENT_ARRAY)
+            relatedEquipments += ModelBackend.find_related_objects(
+                self.db.equipments.find({'equipmentCategory': equipmentCategory}), self.EQUIPMENT_ARRAY)
 
-        relatedChannels = ModelBackend.find_related_objects_based_on_subcategory(subcategory, self.db.channels, ['exerciseCategory', category], ['exerciseSubcategory', subcategory], self.CHANNEL_ARRAY)
+        relatedChannels = ModelBackend.find_related_objects_based_on_subcategory(subcategory, self.db.channels,
+                                                                                 ['exerciseCategory', category],
+                                                                                 ['exerciseSubcategory', subcategory],
+                                                                                 self.CHANNEL_ARRAY)
 
         return [relatedExercises, relatedEquipments, relatedChannels]
 
@@ -310,7 +328,8 @@ class ModelFacade:
         attributes = ModelBackend.get_current_instance_object_attributes(id, self.db.equipments, ['equipmentCategory'])
         equipmentCategory = attributes[0]
 
-        relatedExercises = ModelBackend.find_related_objects(self.db.exercises.find({'equipment': equipmentCategory}), self.EXERCISES_ARRAY)
+        relatedExercises = ModelBackend.find_related_objects(self.db.exercises.find({'equipment': equipmentCategory}),
+                                                             self.EXERCISES_ARRAY)
 
         # Use the first related exercise object to determine what exercise category/subcategory to use when querying channels collection
         topExerciseDoc = self.db.exercises.find_one({'_id': relatedExercises[0].id})
@@ -318,25 +337,39 @@ class ModelFacade:
             exerciseCategory = topExerciseDoc['category']
             exerciseSubcategory = topExerciseDoc['subcategory']
 
-        relatedEquipments = ModelBackend.find_related_objects(self.db.equipments.find({'equipmentCategory': equipmentCategory}), self.EQUIPMENT_ARRAY)
-        relatedChannels = ModelBackend.find_related_objects_based_on_subcategory(exerciseSubcategory, self.db.channels, ['exerciseCategory', exerciseCategory], ['exerciseSubcategory', exerciseSubcategory], self.CHANNEL_ARRAY)
+        relatedEquipments = ModelBackend.find_related_objects(
+            self.db.equipments.find({'equipmentCategory': equipmentCategory}), self.EQUIPMENT_ARRAY)
+        relatedChannels = ModelBackend.find_related_objects_based_on_subcategory(exerciseSubcategory, self.db.channels,
+                                                                                 ['exerciseCategory', exerciseCategory],
+                                                                                 ['exerciseSubcategory',
+                                                                                  exerciseSubcategory],
+                                                                                 self.CHANNEL_ARRAY)
         return [relatedExercises, relatedEquipments, relatedChannels]
 
     def __get_related_objects_for_channel_instance(self, id):
         db = self.db
-        attributes = ModelBackend.get_current_instance_object_attributes(id, db.channels, ('exerciseCategory', 'exerciseSubcategory'))
+        attributes = ModelBackend.get_current_instance_object_attributes(id, db.channels,
+                                                                         ('exerciseCategory', 'exerciseSubcategory'))
         category = attributes[0]
         subcategory = attributes[1]
 
-        relatedExercises = ModelBackend.find_related_objects_based_on_subcategory(subcategory, db.exercises, ['category', category], ['subcategory', subcategory], self.EXERCISES_ARRAY)
+        relatedExercises = ModelBackend.find_related_objects_based_on_subcategory(subcategory, db.exercises,
+                                                                                  ['category', category],
+                                                                                  ['subcategory', subcategory],
+                                                                                  self.EXERCISES_ARRAY)
 
         # Use the first related exercise object to determine what equipmentCategory to use when querying equipments collection
         topExerciseDoc = db.exercises.find_one({'_id': relatedExercises[0].id})
         if topExerciseDoc:
-            equipmentCategory = topExerciseDoc['equipment'][0]  # Select the first equipment term in the equipment array attribute to use
+            equipmentCategory = topExerciseDoc['equipment'][
+                0]  # Select the first equipment term in the equipment array attribute to use
 
-        relatedEquipments = ModelBackend.find_related_objects(db.equipments.find({'equipmentCategory': equipmentCategory}), self.EQUIPMENT_ARRAY)
-        relatedChannels = ModelBackend.find_related_objects_based_on_subcategory(subcategory, db.channels, ['exerciseCategory', category], ['exerciseSubcategory', subcategory], self.CHANNEL_ARRAY)
+        relatedEquipments = ModelBackend.find_related_objects(
+            db.equipments.find({'equipmentCategory': equipmentCategory}), self.EQUIPMENT_ARRAY)
+        relatedChannels = ModelBackend.find_related_objects_based_on_subcategory(subcategory, db.channels,
+                                                                                 ['exerciseCategory', category],
+                                                                                 ['exerciseSubcategory', subcategory],
+                                                                                 self.CHANNEL_ARRAY)
 
         return [relatedExercises, relatedEquipments, relatedChannels]
 
@@ -347,7 +380,7 @@ class ModelFacade:
             filteredArray = self.__get_filtered_exercises(flaskRequest.form, currentArray)
         elif modelType == 'equipment':
             filteredArray = self.__get_filtered_equipments(flaskRequest.form, currentArray)
-        elif modelType == ' channel':
+        elif modelType == 'channel':
             filteredArray = self.__get_filtered_channels(flaskRequest.form, currentArray)
         return ModelBackend.render_model_page(pageNumber, filteredArray, 0, modelType)
 
@@ -376,4 +409,3 @@ class ModelFacade:
                     searchedArray.append(obj)
                     break
         return ModelBackend.render_model_page(pageNumber, searchedArray, 0, modelType)
-

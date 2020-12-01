@@ -12,6 +12,15 @@ document.addEventListener("DOMContentLoaded", () => {
     resetLocalStorage();
   }
 
+  // on DOM load, set the sort and search bar to match localStorage state
+    $("#searchBar").val(localStorage.getItem("equipmentsSearchPhrase"));
+    if (localStorage.getItem("equipmentsSortPhrase") == null || localStorage.getItem("equipmentsSortPhrase") == "null") {
+        $("#equipmentsSortCriteriaMenu").val("select");
+    }
+    else {
+        $("#equipmentsSortCriteriaMenu").val(localStorage.getItem("equipmentsSortPhrase"));
+    }
+
   // For each checkbox, persist the checkbox state based on the previous state stored in local storage
   $.each(checkboxValues, function (key, value) {
     $("#" + key).prop("checked", value);

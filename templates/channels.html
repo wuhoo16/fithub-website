@@ -220,11 +220,6 @@
 </div>
 
     <script>
-        $("#searchBar").val(localStorage.getItem("channelsSearchPhrase"));
-
-        if (localStorage.getItem("channelsSortPhrase") == null || localStorage.getItem("channelsSortPhrase") == "null") $("#channelsSortCriteriaMenu").val("select");
-        else $("#channelsSortCriteriaMenu").val(localStorage.getItem("channelsSortPhrase"));
-
         let items = document.getElementsByClassName("dropdown-item");
         var data = $('#currentArrayData').data().arr;
         var dataArr = processData(); //holds current array

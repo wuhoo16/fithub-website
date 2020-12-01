@@ -199,10 +199,6 @@
     </div>
 </div>
 <script>
-    $("#searchBar").val(localStorage.getItem("exercisesSearchPhrase"));
-    if (localStorage.getItem("exercisesSortPhrase") == null || localStorage.getItem("exercisesSortPhrase") == "null") $("#exercisesSortCriteriaMenu").val("select");
-    else $("#exercisesSortCriteriaMenu").val(localStorage.getItem("exercisesSortPhrase"));
-
     let items = document.getElementsByClassName("dropdown-item");
     var data = $('#currentArrayData').data().arr;
     var dataArr = processData(data);

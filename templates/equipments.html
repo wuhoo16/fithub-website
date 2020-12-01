@@ -193,10 +193,6 @@
     </div>
 </div>
 <script>
-    $("#searchBar").val(localStorage.getItem("equipmentsSearchPhrase"));
-    if (localStorage.getItem("equipmentsSortPhrase") == null || localStorage.getItem("equipmentsSortPhrase") == "null") $("#equipmentsSortCriteriaMenu").val("select");
-    else $("#equipmentsSortCriteriaMenu").val(localStorage.getItem("equipmentsSortPhrase"));
-
     let items = document.getElementsByClassName("dropdown-item");
     var data = $('#currentArrayData').data().arr;
     var dataArr = processData();
