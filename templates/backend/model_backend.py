@@ -1,41 +1,35 @@
-from abc import ABC, abstractmethod
+from abc import ABC
+from flask import render_template
+
 from templates.backend.model_interface import ModelBackendInterface
 import math
 
 
 # Concrete superclass of all 3 model backend classes to pull out shared code among all models such as...
-# 1.) Finding the current object and related cross-model instances
+# 1.) Finding the current object attributes in the mongoDB
 # 2.) Pagination if given the current selected page number and currentArray of objects
 class ModelBackend(ModelBackendInterface, ABC):
-    # All are initialized from our mongoDB the first time the homepage is visited
-    EXERCISES_ARRAY = []
-    EQUIPMENT_ARRAY = []
-    CHANNEL_ARRAY = []
+    @staticmethod
+    def render_model_page(pageNumber, currentArray, resetLocalStorageFlag, modelType):
+        MODEL_HTML_FILE_NAME = '{}s.html'
+        start, end, numPages = ModelBackend.paginate(pageNumber, currentArray)
+        return render_template(MODEL_HTML_FILE_NAME.format(modelType),
+                               currentArray=currentArray,
+                               start=start,
+                               end=end,
+                               pageNumber=pageNumber,
+                               numPages=numPages,
+                               resetLocalStorageFlag=resetLocalStorageFlag)
 
     @staticmethod
-    @abstractmethod
-    def load_and_return_model_array_from_db(db):
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def get_related_objects_for_instance(id, db):
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def filter(page_number, arr):
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def render_model_page(page_number, arr):
-        pass
-
-    @staticmethod
-    @abstractmethod
-    def render_instance_page(instance_obj, related_objects):
-        pass
+    def render_instance_page(instanceObject, relatedObjects, modelType):
+        # The modelType param should be one of the following strings: 'exercise', 'equipment', 'channel'
+        if modelType != 'exercise' and modelType != 'equipment' and modelType != 'channel':
+            raise NameError(
+                f"Caught error before rendering the instance page! Passed in modelType={modelType} but must be a string equal to 'exercise', 'equipment', or 'channel'")
+        INSTANCE_HTML_FILE_NAME = '{}Instance.html'
+        return render_template(INSTANCE_HTML_FILE_NAME.format(modelType), instanceObject=instanceObject,
+                               relatedObjects=relatedObjects)
 
     # Defined helper functions of all shared code definition among the 3 model type backend classes
     # Includes querying the mondoDB for finding related objects as well as pagination logic
@@ -54,22 +48,27 @@ class ModelBackend(ModelBackendInterface, ABC):
         return attributes
 
     @staticmethod
-    def find_related_objects_based_on_subcategory(subcategory, collection, invalid_input, valid_input, arr):
+    def find_related_objects_based_on_subcategory(subcategory, collection, invalid_input, valid_input, globalArray):
         """
         Query a collection for all instances that match current exerciseCategory/Subcategory based on if the subcategory is None
         """
         if subcategory is None:
             relatedCursor = collection.find({invalid_input[0]: invalid_input[1]})
-        else: # exerciseSubcategory is not None
+        else:  # exerciseSubcategory is not None
             relatedCursor = collection.find({valid_input[0]: valid_input[1]})
 
-        return ModelBackend.find_related_objects(relatedCursor, arr, arr)
+        return ModelBackend.find_related_objects(relatedCursor, globalArray)
 
-    # TODO: WE SHOULD SEPARATE THIS FUNCTION TO THE TWO DIFFERENT STATIC METHODS THAT ARE USED BY <modelType>_BACKEND filter() vs. get_related_object_for_instance... They have different parameter requirements
-    # since filtering needs a third parameter of the globalArray to correct handle logic of querying the mongoDB while getting related objects ALWAYS passed in the globalArray (it also has more complex logic to prevent
-    # array out of bounds error)
     @staticmethod
-    def find_related_objects(relatedCursor, currentArray, globalArray):
+    def find_related_objects(relatedCursor, globalArray):
+        relatedInstances = []
+
+        for relatedDoc in relatedCursor:
+            relatedInstances.append(globalArray[relatedDoc['arrayIndex']])
+        return relatedInstances
+
+    @staticmethod
+    def find_related_objects_for_filter_operation(relatedCursor, currentArray, globalArray):
         relatedInstances = []
 
         # Only allow database results if it is contained in the passed array (may be a subset of the collection)

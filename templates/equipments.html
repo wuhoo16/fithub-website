@@ -1,4 +1,4 @@
-<!-- Variables accessible with Jinja 2: currentEquipmentArray, start, end, pageNumber, numPages, resetLocalStorageFlag-->
+<!-- Variables accessible with Jinja 2: currentArray, start, end, pageNumber, numPages, resetLocalStorageFlag-->
 
 {% extends 'base.html' %}
 
@@ -16,7 +16,7 @@
     </div>
     <div id="mySidenav" class="sidenav">
         <a href="javascript:void(0)" id="closeNavButton" class="closebtn" onclick="closeNav()">&times;</a>
-        <form id="equipmentsFilterForm" action="{{ url_for('equipments', pageNumber=1, currentArray=currentEquipmentArray, operationUsed='Filter') }}" method="post">
+        <form id="equipmentsFilterForm" action="{{ url_for('equipments', pageNumber=1, currentArray=currentArray, operationUsed='Filter') }}" method="post">
             <ul class="checkbox-menu">
                 <li class="dropdown-header">Price</li>
                 <li>
@@ -56,16 +56,16 @@
 
     <!-- Sorting Dropdown and Search Bar-->
     {% set dataArr = [] %}
-    {% for obj in currentEquipmentArray %}
+    {% for obj in currentArray %}
         {% set dataArr = dataArr.append({"name": obj.name, "price": obj.price, "category": obj.equipmentCategory, "location": obj.location}) %}
     {% endfor %}
-    <meta id="currentEquipmentArrayData" data-arr='{{dataArr}}'/>
+    <meta id="currentArrayData" data-arr='{{dataArr}}'/>
     <div class="container-fluid" style="display: inline-block;">
-        {% if currentEquipmentArray | length != 0 %}
+        {% if currentArray | length != 0 %}
             <button class="filter-open-button" id="openNavButton" onclick="openNav()">Filter ></button>
 
             <!-- Sorting Dropdown -->
-            <form class="d-inline-block sorting-form" id="equipmentsSortForm" action="{{ url_for('equipments', pageNumber=1, currentArray=currentEquipmentArray, operationUsed='Sort') }}" method="post">
+            <form class="d-inline-block sorting-form" id="equipmentsSortForm" action="{{ url_for('equipments', pageNumber=1, currentArray=currentArray, operationUsed='Sort') }}" method="post">
                 <label for="equipmentsSortCriteriaMenu" id="equipmentsSortMenuLabel" style="color: white; margin-top: 1rem;"></label>
                 <select class="sort-form-style" id="equipmentsSortCriteriaMenu" name="equipmentsSortCriteriaMenu">
                     <option value="select" id="select" selected disabled>Sort by</option>
@@ -80,13 +80,13 @@
 
             <!--Search Bar-->
             <div class="dropdown d-inline-block">
-                <form id="equipmentsSearchForm" action="{{ url_for('equipments', pageNumber=1, currentArray=currentEquipmentArray, operationUsed='Search') }}" method="post" style="display: none;">
+                <form id="equipmentsSearchForm" action="{{ url_for('equipments', pageNumber=1, currentArray=currentArray, operationUsed='Search') }}" method="post" style="display: none;">
                     <input id="equipmentsSearchItems" name="equipmentsSearchItems">
                 </form>
                 <input class="input form-control ml-3 dropdown-toggle" id = "searchBar" type="search" placeholder="Search"/>
                 <div id="menu" class="dropdown-menu" aria-labelledby="dropdown_coins" style="width: 85%">
                     <div id="menuItems">
-                        {% for obj in currentEquipmentArray %}
+                        {% for obj in currentArray %}
                             <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b></a>
                             <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Price: {{ obj.price }}</a>
                             <a class="button dropdown-item" href="{{ url_for('equipment_instance', arrayIndex=obj.arrayIndex) }}"><b>{{ obj.name }}</b> - Category: {{ obj.equipmentCategory }}</a>
@@ -111,21 +111,21 @@
             {% for offset in range(3) %}
                 <div class="col-md-4 p-4">
                     <div class="card card-style h-100 pt-4">
-                    {% if currentEquipmentArray[start + 3*i+offset].replacePictureFlag %}
-                        <img class="card-img-top card-image-style img-fluid mx-auto" src="/../static/{{ currentEquipmentArray[start+3*i+offset].picture }}" alt="{{ currentEquipmentArray[start + 3*i+offset].name }}">
+                    {% if currentArray[start + 3*i+offset].replacePictureFlag %}
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="/../static/{{ currentArray[start+3*i+offset].picture }}" alt="{{ currentArray[start + 3*i+offset].name }}">
                     {% else %}
-                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ currentEquipmentArray[start+3*i+offset].picture }}" onerror="this.onerror=null; this.src='{{ currentEquipmentArray[start + 3*i+offset].picture }}'"; alt="{{ currentEquipmentArray[start + 3*i+offset].name }}">
+                        <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ currentArray[start+3*i+offset].picture }}" onerror="this.onerror=null; this.src='{{ currentArray[start + 3*i+offset].picture }}'"; alt="{{ currentArray[start + 3*i+offset].name }}">
                     {% endif %}
                         <div class="card-body">
-                            <h2 id="name_{{ start + 3*i+offset }}" class="card-title text-center">{{ currentEquipmentArray[start + 3*i+offset].name }}</h2>
+                            <h2 id="name_{{ start + 3*i+offset }}" class="card-title text-center">{{ currentArray[start + 3*i+offset].name }}</h2>
                             <p class="card-text">
                                 <ul class="equipmentData list-unstyled">
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ start + 3*i+offset }}"><b>Price: </b>{{ currentEquipmentArray[start + 3*i+offset].price }} USD</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="categoryText_{{ start + 3*i+offset }}"><b>Category: </b>{{ currentEquipmentArray[start + 3*i+offset].equipmentCategory }}</li>
-                                    <li style="padding-left: 1em;" id="sellerLocationText_{{ start + 3*i+offset }}"><b>Seller Location: </b>{{ currentEquipmentArray[start + 3*i+offset].location }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ start + 3*i+offset }}"><b>Price: </b>{{ currentArray[start + 3*i+offset].price }} USD</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="categoryText_{{ start + 3*i+offset }}"><b>Category: </b>{{ currentArray[start + 3*i+offset].equipmentCategory }}</li>
+                                    <li style="padding-left: 1em;" id="sellerLocationText_{{ start + 3*i+offset }}"><b>Seller Location: </b>{{ currentArray[start + 3*i+offset].location }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('equipment_instance', arrayIndex=currentEquipmentArray[start + 3*i+offset].arrayIndex) }}" class="stretched-link" id="instancePageLink_{{ start + 3*i+offset }}"></a>
+                            <a href="{{ url_for('equipment_instance', arrayIndex=currentArray[start + 3*i+offset].arrayIndex) }}" class="stretched-link" id="instancePageLink_{{ start + 3*i+offset }}"></a>
                         </div>
                     </div>
                 </div>
@@ -138,21 +138,21 @@
             {% for i in range(-remainder, 0) %}
                 <div class="col-md-4 p-4">
                     <div class="card card-style h-100 pt-4">
-                        {% if currentEquipmentArray[end + 1 + i].replacePictureFlag %}
-                            <img class="card-img-top card-image-style img-fluid mx-auto" src="/../static/{{ currentEquipmentArray[end + 1 + i].picture }}" alt="{{ currentEquipmentArray[end + 1 + i].name }}">
+                        {% if currentArray[end + 1 + i].replacePictureFlag %}
+                            <img class="card-img-top card-image-style img-fluid mx-auto" src="/../static/{{ currentArray[end + 1 + i].picture }}" alt="{{ currentArray[end + 1 + i].name }}">
                         {% else %}
-                            <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ currentEquipmentArray[end + 1 + i].picture }}" onerror="this.onerror=null; this.src='{{ currentEquipmentArray[end + 1 + i].picture }}'"; alt="{{ currentEquipmentArray[end + 1 + i].name }}">
+                            <img class="card-img-top card-image-style img-fluid mx-auto" src="{{ currentArray[end + 1 + i].picture }}" onerror="this.onerror=null; this.src='{{ currentArray[end + 1 + i].picture }}'"; alt="{{ currentArray[end + 1 + i].name }}">
                         {% endif %}
                         <div class="card-body">
-                            <h2 class="card-title text-center">{{ currentEquipmentArray[end + 1 + i].name }}</h2>
+                            <h2 class="card-title text-center">{{ currentArray[end + 1 + i].name }}</h2>
                             <p class="card-text">
                                 <ul class="equipmentData list-unstyled">
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ end + 1 + i }}"><b>Price: </b>{{ currentEquipmentArray[end + 1 + i].price }} USD</li>
-                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="categoryText_{{ end + 1 + i }}"><b>Category: </b>{{ currentEquipmentArray[end + 1 + i].equipmentCategory }}</li>
-                                    <li style="padding-left: 1em;" id="sellerLocationText_{{ end + 1 + i }}"><b>Seller Location: </b>{{ currentEquipmentArray[end + 1 + i].location }}</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em; padding-top: 1em;" id="priceText_{{ end + 1 + i }}"><b>Price: </b>{{ currentArray[end + 1 + i].price }} USD</li>
+                                    <li style="padding-bottom: 0.5em; padding-left: 1em;" id="categoryText_{{ end + 1 + i }}"><b>Category: </b>{{ currentArray[end + 1 + i].equipmentCategory }}</li>
+                                    <li style="padding-left: 1em;" id="sellerLocationText_{{ end + 1 + i }}"><b>Seller Location: </b>{{ currentArray[end + 1 + i].location }}</li>
                                 </ul>
                             </p>
-                            <a href="{{ url_for('equipment_instance', arrayIndex=currentEquipmentArray[end + 1 + i].arrayIndex) }}" class="stretched-link"></a>
+                            <a href="{{ url_for('equipment_instance', arrayIndex=currentArray[end + 1 + i].arrayIndex) }}" class="stretched-link"></a>
                         </div>
                     </div>
                 </div>
@@ -161,7 +161,7 @@
         {% endif %}
         </div>
 
-        {% if currentEquipmentArray|length == 0 %}
+        {% if currentArray|length == 0 %}
             <h4 style="color: white;">Sorry! No instances meet your set requirements. Please reset the filters to see equipments.</h4>
         {% else %}
             <ul class="pagination justify-content-center" style="margin: 20px;">
@@ -169,16 +169,16 @@
                 {% if pageNumber == 1 %}
                     <li class="page-item disabled"><a class="page-link" href="">Previous</a></li>
                 {% else %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('equipments', pageNumber=pageNumber-1, currentArray=currentEquipmentArray, operationUsed='Pagination') }}">Previous</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ url_for('equipments', pageNumber=pageNumber-1, currentArray=currentArray, operationUsed='Pagination') }}">Previous</a></li>
                 {% endif %}
 
 
                 <!--All Pages Buttons-->
                 {% for i in range(1, numPages+1) %}
                     {% if i == pageNumber %}
-                        <li class="page-item active"><a class="page-link" href="{{ url_for('equipments', pageNumber=i, currentArray=currentEquipmentArray, operationUsed='Pagination') }}">{{i}}</a></li>
+                        <li class="page-item active"><a class="page-link" href="{{ url_for('equipments', pageNumber=i, currentArray=currentArray, operationUsed='Pagination') }}">{{i}}</a></li>
                     {% else %}
-                        <li class="page-item"><a class="page-link" href="{{ url_for('equipments', pageNumber=i, currentArray=currentEquipmentArray, operationUsed='Pagination') }}">{{i}}</a></li>
+                        <li class="page-item"><a class="page-link" href="{{ url_for('equipments', pageNumber=i, currentArray=currentArray, operationUsed='Pagination') }}">{{i}}</a></li>
                     {% endif %}    
                 {% endfor %}
 
@@ -186,19 +186,15 @@
                 {% if pageNumber == numPages %}
                     <li class="page-item disabled"><a class="page-link" href="">Next</a></li>
                 {% else %}
-                    <li class="page-item"><a class="page-link" href="{{ url_for('equipments', pageNumber=pageNumber+1, currentArray=currentEquipmentArray, operationUsed='Pagination') }}">Next</a></li>
+                    <li class="page-item"><a class="page-link" href="{{ url_for('equipments', pageNumber=pageNumber+1, currentArray=currentArray, operationUsed='Pagination') }}">Next</a></li>
                 {% endif %}
             </ul>
         {% endif %}
     </div>
 </div>
 <script>
-    $("#searchBar").val(localStorage.getItem("equipmentsSearchPhrase"));
-    if (localStorage.getItem("equipmentsSortPhrase") == null || localStorage.getItem("equipmentsSortPhrase") == "null") $("#equipmentsSortCriteriaMenu").val("select");
-    else $("#equipmentsSortCriteriaMenu").val(localStorage.getItem("equipmentsSortPhrase"));
-
     let items = document.getElementsByClassName("dropdown-item");
-    var data = $('#currentEquipmentArrayData').data().arr;
+    var data = $('#currentArrayData').data().arr;
     var dataArr = processData();
 
     function filter() {
