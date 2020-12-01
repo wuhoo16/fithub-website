@@ -111,6 +111,15 @@ Website Link: [FitHub](https://fithub-291802.uc.r.appspot.com/)
         - Worked on corner/edge cases such as stacking resulting in no more instances: Estimated Completion Hours: 4
         - Added testing to test the search bar functionality: Estimated Completion Hours: 4
         - Added testing to test the search bar functionality: Estimated Completion Hours: 3
+      - Phase 4:
+        - Full code refactor to modularize code and move code into classes and interfaces: Estimated Completion Time: 8 hrs
+        - Full code refactor to modularize code and move code into classes and interfaces: Actual Completion Time: 10 hrs
+        - Full code refactor to improve website stability, remove backend server logic, and support multi-client usage (pair-programmed with Andy): Estimated Completion Time: 10
+        - Full code refactor to improve website stability, remove backend server logic, and support multi-client usage (pair-programmed with Andy): Estimated Completion Time: 14
+        - Implementation of Model Facade Pattern: Estimated Completion Time: 4
+        - Implementation of Model Facade Pattern: Estimated Completion Time: 5
+        - Refactoring frontend to increase code reusability: Estimated Completion Time: 3
+        - Refactoring frontend to increase code reusability: Actual Completion Time: 3
         
 
   Christopher Saenz
