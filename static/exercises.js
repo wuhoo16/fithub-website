@@ -49,6 +49,7 @@ function resetFreshState() {
   saveCheckBoxStateToLocalStorage();
   resetArrayState();
 }
+
 function resetLocalStorage() {
   resetSearchSort();
   let checkboxes = $(":checkbox");

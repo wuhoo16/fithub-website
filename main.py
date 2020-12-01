@@ -11,7 +11,7 @@ from model_facade import ModelFacade
 # NOTE THAT THIS IS NECESSARY TO COMMUNICATE BETWEEN FRONTEND AND BACKEND!!! (The currentArray variable matches the last state)
 class ListConverter(BaseConverter):
     def to_python(self, value):
-        splitStringArray = value.split('+%+')
+        splitStringArray = value.split('+')
         if len(splitStringArray) == 0:
             print('In to_python() method, empty string passed in from frontend to backend...')
             return []
@@ -29,7 +29,7 @@ class ListConverter(BaseConverter):
             print('Warning! In to_url() method, the values parameter passed in was an empty list!')
             pass
             # Might need to handle case where the list is empty
-        return '+%+'.join(super(ListConverter, self).to_url(value) for value in values)
+        return '+'.join(super(ListConverter, self).to_url(value) for value in values)
 
 
 # GLOBAL VARIABLES

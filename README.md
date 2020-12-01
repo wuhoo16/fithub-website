@@ -61,6 +61,8 @@ Website Link: [FitHub](https://imbdproject.wn.r.appspot.com/)
        - Phase 4:
         - Full code refactor to improve website stability, remove backend server logic, and support multi-client usage: Estimated Completion Hours: 5
         - Full code refactor to improve website stability, remove backend server logic, and support multi-client usage: Actual Completion Hours: 16
+        - Final debugging and deployment: Estimated Completion Hours: 5
+        - Final debugging and deployment: Actual Completion Hours: 7
   
   Kaylee N Trevino
    - EID: knt658
