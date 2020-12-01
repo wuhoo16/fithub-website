@@ -2,7 +2,7 @@
 
 Welcome to the Github Repository for TeamA13's IMBD web application project! Note that all code in this repo is production-ready and should match the current deployed, functional state. The buildfiles for this project to run on Google App Engine includes the requirements.txt and app.yaml files. Requirements.txt lists all of the python libraries and dependencies that our web app needs to deploy.
 
-Website Link: [FitHub](https://imbdproject.wn.r.appspot.com/)
+Website Link: [FitHub](https://fithub-291802.uc.r.appspot.com/)
 
 # Team Members:
   Andy Wu
@@ -58,7 +58,7 @@ Website Link: [FitHub](https://imbdproject.wn.r.appspot.com/)
         - Sorting Implementation for all 3 model pages: Actual Completion Hours: 3
         - Selenium Testing for filtering functionality and final deployment: Estimated Completion Hours: 5
         - Selenium Testing for filtering functionality and final deployment: Actual Completion Hours: 5
-       - Phase 4:
+      - Phase 4:
         - Full code refactor to improve website stability, remove backend server logic, and support multi-client usage: Estimated Completion Hours: 5
         - Full code refactor to improve website stability, remove backend server logic, and support multi-client usage: Actual Completion Hours: 16
         - Final debugging and deployment: Estimated Completion Hours: 5
@@ -210,5 +210,14 @@ Website Link: [FitHub](https://imbdproject.wn.r.appspot.com/)
         - Added styling to search bar: Actual Completion Hours: 1
         - Added Selenium Tests to Exercises model and instance pages: Estimated Completion Hours: 1
         - Added Selenium Tests to Exercises model and instance pages: Actual Completion Hours: 2
+      - Phase 4:
+        - Presentation Slides: Estimated Completion Hours: 1
+        - Presentation Slides: Actual Completion Hours: 2.5
+        - Technical Report: Estimated Completion Hours: 2
+        - Technical Report: Actual Completion Hours: 3.5
+        - Information Hiding in Design Report: Estimated Completion Hours: 1
+        - Information Hiding in Design Report: Actual Completion Hours: 2.5
+        - Debugging Phase 4 Bugs and Deployment: Estimated Completion Hours: 1 
+        - Debugging Phase 4 Bugs and Deployment: Actual Completion Hours: 3
         
         
