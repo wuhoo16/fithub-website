@@ -155,6 +155,8 @@ Website Link: [FitHub](https://fithub-291802.uc.r.appspot.com/)
       - Phase 4:
         - Test cases for issues found in Phase 3: Estimated Completion Hours: 4
         - Test cases for issues found in Phase 3: Actual Completion Hours: 2
+        - Design Report and Technical Report: Estimated Completion Hours: 2
+        - Design Report and Technical Report: Actual Completion Hours: 3
 
 
   Michelle Wen
