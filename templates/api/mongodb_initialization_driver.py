@@ -4,7 +4,7 @@ from pymongo import MongoClient
 from model_facade import ModelFacade
 
 # MongoDB Variables
-client = MongoClient("mongodb+srv://Admin:Pass1234@apidata.lr4ia.mongodb.net/phase4Database?retryWrites=true&w=majority")
+client = MongoClient(System.getenv("MONGODB_URI")
 DATABASE = client.phase4Database
 
 if __name__ == "__main__":
